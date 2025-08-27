@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -168,17 +167,20 @@
                 <div id="custom-nav-links-container" class="space-y-2"></div>
 
                 <button id="add-new-link-btn" class="w-full flex items-center p-3 mt-2 text-sm text-[var(--text-secondary)] rounded-lg hover:bg-[var(--primary-light)]">
-                    <i data-lucide="square-plus" class="w-6 h-6 mr-4 flex-shrink-0"></i><span>Añadir Nuevo</span>
+                    <i data-lucide="square-plus" class="w-6 h-6 mr-4 flex-shrink-0"></i><span>Añadir Nuevo Recursos</span>
                 </button>
             </nav>
 
-            <!-- Sidebar Footer -->
+            
+<!-- Sidebar Footer -->
             <div class="px-2 py-4 mt-auto border-t border-[var(--border-color)] space-y-2">
                 <div id="admin-profile-section" class="flex items-center p-3 rounded-lg gap-3 cursor-pointer hover:bg-[var(--primary-light)]">
-                    <img id="admin-avatar" src="https://i.pravatar.cc/150?u=admin" alt="Admin" class="w-10 h-10 rounded-full flex-shrink-0" />
+                    <img id="admin-avatar" src="https://bucket.mlcdn.com/a/3336/3336910/images/720acb42aae5c4c7657fe94291a91807c55c356a.png" alt="Admin" class="w-10 h-10 rounded-full flex-shrink-0" />
                     <div class="overflow-hidden">
-                        <p id="admin-user-name" class="font-semibold whitespace-nowrap">Usuario Administrador</p>
+                        <p id="admin-user-name" class="font-semibold whitespace-nowrap">Administrador</p>
                     </div>
+
+
                     <button id="notification-btn" class="p-2 rounded-md hover:bg-[var(--primary-light)] ml-auto" title="Mostrar Notificación">
                         <i data-lucide="bell" class="w-5 h-5"></i>
                     </button>
@@ -243,7 +245,7 @@
             theme: 'light',
             view: 'list',
             searchTerm: '',
-            admin: { name: 'Usuario Administrador', avatar: 'https://i.pravatar.cc/150?u=admin' },
+            admin: { name: 'Administrador', avatar: 'https://bucket.mlcdn.com/a/3336/3336910/images/720acb42aae5c4c7657fe94291a91807c55c356a.png' },
             isDataLive: false,
             customNavLinks: [],
         };
@@ -509,11 +511,11 @@
                     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
                          <h2 class="text-3xl font-bold">Cuentas de Usuario</h2>
                          <div class="relative w-full md:w-auto md:max-w-xs">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <i data-lucide="search" class="w-5 h-5 text-[var(--text-secondary)]"></i>
-                            </div>
-                            <input type="text" id="search-input" value="${state.searchTerm}" placeholder="Buscar usuarios..." class="w-full pl-10 pr-4 py-2 border rounded-md bg-[var(--bg-secondary)] border-[var(--border-color)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" />
-                        </div>
+                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                 <i data-lucide="search" class="w-5 h-5 text-[var(--text-secondary)]"></i>
+                             </div>
+                             <input type="text" id="search-input" value="${state.searchTerm}" placeholder="Buscar usuarios..." class="w-full pl-10 pr-4 py-2 border rounded-md bg-[var(--bg-secondary)] border-[var(--border-color)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" />
+                         </div>
                     </div>
                     <div class="bg-[var(--bg-secondary)] p-4 rounded-lg shadow-[var(--shadow)] border border-[var(--border-color)]">
                         <div class="flex items-center justify-between gap-2 mb-4">
@@ -794,7 +796,7 @@ function doPost(e) {
                                 <div class="border border-[var(--border-color)] rounded-lg p-4 md:col-span-4">
                                      <label for="status-update" class="text-sm font-medium mb-2 block">Actualizar Estado:</label>
                                      <select id="status-update" data-userid="${user.UserID}" class="w-full p-2 border rounded-md bg-[var(--bg-primary)] border-[var(--border-color)] focus:ring-2 focus:ring-[var(--primary)] focus:outline-none">
-                                        ${Object.values(UserStatus).map(s => `<option value="${s}" ${user.Status === s ? 'selected' : ''}>${s}</option>`).join('')}
+                                         ${Object.values(UserStatus).map(s => `<option value="${s}" ${user.Status === s ? 'selected' : ''}>${s}</option>`).join('')}
                                      </select>
                                 </div>
                             </div>
@@ -1045,14 +1047,62 @@ function doPost(e) {
         };
 
 
+        // --- EVENT LISTENERS ---
+        const addUsersPageEventListeners = () => {
+            document.getElementById('search-input').addEventListener('input', (e) => {
+                state.searchTerm = e.target.value;
+                renderUserList();
+            });
+            document.getElementById('create-user-btn').addEventListener('click', () => {
+                // This would open a modal to create a new user.
+                // For now, let's just log it.
+                console.log("Create new user button clicked");
+                // A more complete implementation would be: openCreateUserModal();
+                 showToast('La función para crear usuarios no está implementada en esta demostración.', 'error');
+            });
+            document.getElementById('view-grid-btn').addEventListener('click', () => {
+                state.view = 'grid';
+                renderUsersPage();
+            });
+            document.getElementById('view-list-btn').addEventListener('click', () => {
+                state.view = 'list';
+                renderUsersPage();
+            });
+            document.getElementById('download-csv-btn').addEventListener('click', downloadCSV);
+            document.getElementById('download-pdf-btn').addEventListener('click', downloadPDF);
+        };
+
+        const addTemplatesPageEventListeners = () => {
+            document.getElementById('template-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const name = document.getElementById('template-name').value;
+                const message = document.getElementById('template-message').value;
+                state.templates.push({ id: `template-${new Date().getTime()}`, name, message });
+                saveToStorage('whatsappTemplates', state.templates);
+                renderTemplateList();
+                e.target.reset();
+            });
+        };
+
+        const addSettingsPageEventListeners = () => {
+            document.getElementById('save-settings-btn').addEventListener('click', () => {
+                state.settings.scriptUrl = document.getElementById('scriptUrl').value;
+                state.settings.imagekitKey = document.getElementById('imagekitKey').value;
+                saveToStorage('appSettings', state.settings);
+                fetchUsers(); // Re-fetch data with new settings
+            });
+        };
+
         // --- INITIALIZATION ---
         const init = async () => {
+            // Load state from local storage or set defaults
             state.theme = getFromStorage('theme', 'light');
             state.templates = getFromStorage('whatsappTemplates', [{ id: '1', name: "Bienvenida a Bordo", message: "¡Hola {{Username}}! Bienvenido/a a EasyListings." }]);
             state.settings = getFromStorage('appSettings', { scriptUrl: '', imagekitKey: '' });
-            state.admin = getFromStorage('adminProfile', { name: 'Usuario Administrador', avatar: 'https://i.pravatar.cc/150?u=admin' });
+            state.admin = getFromStorage('adminProfile', { name: 'Administrador', avatar: 'https://bucket.mlcdn.com/a/3336/3336910/images/720acb42aae5c4c7657fe94291a91807c55c356a.png' });
             state.customNavLinks = getFromStorage('customNavLinks', []);
             
+            // Initial UI setup
             renderAdminProfile();
             applyTheme(state.theme);
             renderCustomNavLinks();
