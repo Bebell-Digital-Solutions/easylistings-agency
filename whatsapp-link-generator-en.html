@@ -19,30 +19,26 @@
     
     <style>
       :root {
-            --primary: #DF1783;
-            --primary-light: #fff7fd;
+            --primary: #df1783; /* WhatsApp green */
+            --primary-light: #fdeefa;
             --secondary: #2d3748;
             --accent: #4fd1c5;
-            --text-primary: #2d3748;
-            --text-secondary: #718096;
-            --bg-primary: #f7fafc;
-            --bg-secondary: #ffffff;
+            --text: #2d3748;
+            --text-light: #a0aec0;
+            --bg: #f7fafc;
+            --card-bg: #ffffff;
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             --border-color: #e2e8f0;
         }
 
-        .dark {
-            --primary: #DF1783;
-            --primary-light: #3a2230;
-            --secondary: #1a202c;
-            --accent: #4fd1c5;
-            --text-primary: #f7fafc;
-            --text-secondary: #a0aec0;
-            --bg-primary: #1a202c;
-            --bg-secondary: #2d3748;
-            --shadow: 0 4px 6px -1px rgba(0,0,0,0.4), 0 2px 4px -1px rgba(0,0,0,0.2);
+
+        
+        .dark-mode {
+            --text: #f7fafc; --text-light: #a0aec0; --bg: #1a202c;
+            --card-bg: #2d3748; --shadow: 0 4px 6px -1px rgba(0,0,0,0.4), 0 2px 4px -1px rgba(0,0,0,0.2);
             --border-color: #4a5568;
         }
+
 
 
 
@@ -205,7 +201,7 @@
         }
 
         .btn:hover {
-            background-color: #128C7E;
+            background-color: #c42578;
         }
 
         .btn:active {
@@ -378,6 +374,7 @@ padding-top: 30px;
     line-height: 1.5;
     margin: 0;
     padding: 30px;
+    margin-bottom: 60px;
     color: var(--text-light);
 }
 
@@ -409,22 +406,6 @@ padding-top: 30px;
 
 <body>
 
-
-
-  <div class="custom-image-widget" style="position: relative; display: inline-block;"> <!-- ADD THESE STYLES -->
-    <a href="https://bebell-digital-solutions.github.io/whatsapp-link-generator/spanish">
-        <img class="custom-image" 
-             src="https://bucket.mlcdn.com/a/3336/3336910/images/138f14304ea21715dfae64ae5fe1d71b08c2d451.png" 
-             alt="Spanish Translation"
-             style="display: block;"> <!-- Ensure image is block-level -->
-    </a>
-
-</div>
-   
-
-
-
-
 	
     <div class="container">
         <div class="top-menu-bar">
@@ -437,11 +418,17 @@ padding-top: 30px;
 	        <div class="top-menu-actions">
 		  
 	
-			<!-- Settings Icon -->
-                <div class="fab" id="settingsBtn" title="Settings"><i class="fas fa-cog"></i></div> 
-                	    <!-- Support Icon -->
-                <div class="fab" id="supportBtn" title="Support" onclick="window.open('https://helpcenter.easygallery.website', '_blank')"><i class="fa fa-info-circle"></i></div>
-			<!-- Theme Toggle Icon -->
+			
+
+                <div class="fab" title="Spanish/Español 🇪🇸" onclick="window.open('https://bebell-digital-solutions.github.io/easylistings-agency-dashboard/whatsapp-link-generator/spanish', '_self')"><i class="fa fa-globe"></i></div>                
+
+
+<!-- Support Icon -->
+                <div class="fab" id="supportBtn" title="Support" onclick="window.open('https://helpcenter.easygallery.website', '_blank')"><i class="fa fa-info-circle"></i></div>			
+
+
+
+<!-- Theme Toggle Icon -->
                 <div class="fab" id="darkModeToggle" title="Toggle Theme"><i class="fas fa-moon"></i></div>
                 </div>
             </div>
@@ -485,9 +472,12 @@ padding-top: 30px;
                     <button class="copy-btn" id="copyBtn">Copy</button>
                 </div>
             </div>
-        </div>
+       
         
          
+
+
+
         
         <div class="footer">
             <p>Simple tool to generate WhatsApp URLs with pre-filled messages</p>
@@ -495,8 +485,46 @@ padding-top: 30px;
 
             </div>
         </div>
-    </div>
 
+   </div>
+  </div>
+
+
+
+
+
+ <footer class="mt-16 text-center text-sm text-gray-700 dark:text-gray-400">
+
+                  <div class="social-links">
+            <a href="https://bebell-digital-solutions.github.io/checklist-creator" class="social-link" rel="noopener">
+                <span>☑️</span> Checklist Creator
+            </a>
+            <a href="https://bebell-digital-solutions.github.io/tasks-manager/en-v03" class="social-link" rel="noopener">
+                <span>🎯</span> Tasks Manager
+            </a>
+            <a href="https://bebell-digital-solutions.github.io/bookmark-page/en-v03" class="social-link" rel="noopener">
+                <span>🔗</span> Links Manager
+            </a>
+            <a href="https://bebell-digital-solutions.github.io/magic-toolbox-database/en-v03" class="social-link" rel="noopener">
+                <span>🧰</span> Magic Toolbox
+            </a>
+            <a href="mailto:soporte@bebelldigitalsolutions.com" class="social-link"  rel="noopener">
+                <span>📨</span> Tech Support
+            </a>
+        </div>
+                    
+                               <div class="bebell-footer mt-8 p-4 rounded-lg bg-gray-100 dark:bg-gray-800 max-w-md mx-auto">
+                <p class="m-0">
+                    Developed with <span class="heart">💖</span> by 
+                    <a href="https://bebelldigitalsolutions.com" class="bebell-link font-medium text-gray-700 dark:text-gray-300" target="_blank" rel="noopener">
+                        Bebell Digital Solutions
+                    </a>.
+                    <br>
+                    Copyright © 2024 • All rights reserved.
+                </p>
+            </div>
+        </footer>
+    </div>
 
 
 
