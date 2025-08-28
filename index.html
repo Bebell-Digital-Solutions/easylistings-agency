@@ -1,1072 +1,949 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EasyListings Admin Dashboard</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Easy Listings</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&display=swap" rel="stylesheet">
+<!-- Favicon -->
+<link rel="icon" href="https://bucket.mlcdn.com/a/3336/3336910/images/fa62e06dd2b6ed2d1d9e77e5dd944bef2904d5d1.png">
+<style>
+:root {
+    --primary: #DF1783;
+    --primary-light: #f8a4d4;
+    --secondary: #2d3748;
+    --accent: #4fd1c5;
+    --text: #2d3748;
+    --text-light: #a0aec0;
+    --bg: #f7fafc;
+    --card-bg: #ffffff;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --border-color: #e2e8f0;
+}
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+.dark-mode {
+    --text: #f7fafc; --text-light: #a0aec0; --bg: #1a202c;
+    --card-bg: #2d3748; --shadow: 0 4px 6px -1px rgba(0,0,0,0.4), 0 2px 4px -1px rgba(0,0,0,0.2);
+    --border-color: #4a5568;
+}
 
-    <style>
-        :root {
-            --primary: #DF1783;
-            --primary-light: #fdeefa;
-            --secondary: #2d3748;
-            --accent: #4fd1c5;
-            --text-primary: #2d3748;
-            --text-secondary: #718096;
-            --bg-primary: #f7fafc;
-            --bg-secondary: #ffffff;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --border-color: #e2e8f0;
-        }
+html { box-sizing: border-box; overflow-x: hidden; scroll-behavior: smooth; }
+*, *:before, *:after { box-sizing: inherit; margin: 0; padding: 0; }
 
-        .dark {
-            --primary: #DF1783;
-            --primary-light: #3a2230;
-            --secondary: #1a202c;
-            --accent: #4fd1c5;
-            --text-primary: #f7fafc;
-            --text-secondary: #a0aec0;
-            --bg-primary: #1a202c;
-            --bg-secondary: #2d3748;
-            --shadow: 0 4px 6px -1px rgba(0,0,0,0.4), 0 2px 4px -1px rgba(0,0,0,0.2);
-            --border-color: #4a5568;
-        }
-        
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-        }
-        
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: var(--bg-primary);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: var(--primary);
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #c71575;
-        }
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    transition: background-color 0.3s, color 0.3s;
+    overflow-x: hidden;
+}
 
-        /* Desktop layout */
-        @media (min-width: 781px) {
-            .sidebar {
-                width: 16rem; /* w-64 */
-            }
-            .main-content {
-                width: calc(100% - 16rem);
-            }
-        }
+.top-menu-bar {
+    position: fixed; top: 2rem; left: 50%; transform: translateX(-50%);
+    width: calc(100% - 4rem); max-width: 1400px; z-index: 1100;
+    background-color: var(--card-bg); box-shadow: var(--shadow);
+    border: 1px solid var(--border-color); border-radius: 12px;
+    padding: 0 1.5rem; transition: top 0.3s ease-in-out;
+}
+.top-menu-bar.hidden { top: -100px; }
+.top-menu-content { height: 70px; display: flex; align-items: center; justify-content: space-between; }
+.logo-container { display: flex; align-items: center; gap: 1rem; }
+#appLogo { height: 40px; width: 40px; object-fit: cover; border-radius: 8px; }
+#appBrandNameDisplay { font-size: 1.5rem; font-weight: 600; color: var(--text); }
+.top-menu-actions { display: flex; align-items: center; gap: 1rem; }
+.fab {
+    width: 40px; height: 40px; border-radius: 50%; background-color: var(--bg);
+    color: var(--text); border: 1px solid var(--border-color); display: flex;
+    justify-content: center; align-items: center; cursor: pointer; transition: all 0.2s ease;
+}
+.fab:hover { background-color: var(--border-color); }
 
-        /* Mobile layout */
-        @media (max-width: 780px) {
-            .sidebar {
-                position: fixed;
-                top: 0;
-                left: 0;
-                height: 100%;
-                width: 100%;
-                z-index: 50;
-                transform: translateX(-100%);
-                transition: transform 0.3s ease-in-out;
-            }
-            .sidebar-mobile-open {
-                transform: translateX(0);
-            }
-            .main-content {
-                width: 100%;
-            }
-        }
-        .nav-link .delete-link-btn {
-            display: none;
-        }
-        .nav-link:hover .delete-link-btn {
-            display: inline-flex;
-        }
-    </style>
+.header-banner {
+    width: 100%; padding: 170px 2rem 4rem 2rem; text-align: center;
+    position: relative; background-size: cover; background-position: center;
+    color: white; overflow: hidden;
+}
+.header-banner::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0,0,0,0.5); z-index: 1;
+}
+.header-content { position: relative; z-index: 2; max-width: 1400px; margin: 0 auto; }
+.admin-greeting {
+    background-color: var(--primary); color: white; padding: 8px 20px;
+    border-radius: 25px; font-size: 1.5rem; font-weight: 500;
+    display: inline-block; margin-bottom: 1.5rem; font-family: 'Caveat', cursive;
+    transition: transform 0.2s ease, filter 0.2s ease;
+}
+.admin-greeting:hover { transform: translateY(-2px); filter: brightness(1.1); }
+.header-banner h1 { font-size: 2.8rem; color: white; margin-bottom: 1rem; min-height: 50px; }
+#brand-anim-span::after { content: '|'; animation: blink 1s infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+.header-banner p { font-size: 1.2rem; color: rgba(255,255,255,0.9); margin-bottom: 2rem; }
+.header-banner .controls-container { background-color: var(--card-bg); box-shadow: var(--shadow); margin-bottom: 0; }
+
+.container { max-width: 1400px; margin: 0 auto; padding: 2rem 4rem; }
+.controls-container {
+    display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
+    gap: 1.5rem; padding: 2.3rem; border-radius: 12px;
+    max-width: 800px; width: 100%; margin-left: auto; margin-right: auto;
+}
+.search-bar { position: relative; flex-grow: 1; max-width: 700px; }
+.search-bar input { width: 100%; padding: 12px 20px 12px 45px; border-radius: 30px; border: 1px solid var(--border-color); background-color: var(--bg); color: var(--text); font-size: 1rem; }
+.search-bar i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-light); }
+.btn { background-color: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; text-align: center; }
+.btn.btn-danger { background-color: #e53e3e; }
+.btn.btn-secondary { background-color: var(--secondary); }
+.btn:hover { opacity: 0.85; transform: translateY(-2px); }
+
+.tag-filters { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; margin-bottom: 2.5rem; }
+.tag-filter-btn { background-color: var(--card-bg); color: var(--text); border: 1px solid var(--border-color); padding: 8px 16px; border-radius: 20px; cursor: pointer; font-weight: 500; transition: all 0.3s ease; }
+.tag-filter-btn:hover { background-color: var(--border-color); transform: translateY(-2px); }
+.tag-filter-btn.active { background-color: var(--primary); color: white; border-color: var(--primary); }
+
+.listing-section { margin-bottom: 3rem; }
+.section-header { text-align: center; margin-bottom: 2rem; }
+.section-header h2 { font-size: 2rem; color: var(--text); margin-bottom: 0.5rem; }
+.section-header p { font-size: 1.1rem; color: var(--text-light); max-width: 600px; margin: 0 auto; }
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.5rem;
+}
+
+.card {
+    background-color: var(--card-bg); border-radius: 12px;
+    overflow: hidden; box-shadow: var(--shadow);
+    display: flex; flex-direction: column; position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+.card-admin-controls {
+    position: absolute; top: 10px; left: 10px; z-index: 3;
+    display: none; gap: 8px;
+}
+body.admin-logged-in .card-admin-controls { display: flex; }
+.admin-btn {
+    background-color: rgba(0,0,0,0.6); color: white; border: none;
+    width: 35px; height: 35px; border-radius: 50%; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.9rem; transition: background-color 0.2s;
+}
+.admin-btn:hover { background-color: rgba(0,0,0,0.8); }
+
+.card-carousel {
+    position: relative; aspect-ratio: 16 / 10;
+    background-color: var(--border-color); overflow: hidden;
+}
+.carousel-track { display: flex; height: 100%; transition: transform 0.5s ease-in-out; }
+.carousel-slide { min-width: 100%; height: 100%; }
+.carousel-slide img { width: 100%; height: 100%; object-fit: cover; }
+.carousel-badge {
+    position: absolute; top: 1rem; right: 1rem; z-index: 2;
+    background-color: var(--primary); color: white;
+    padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;
+}
+.card-body { padding: 1.5rem; flex-grow: 1; display: flex; flex-direction: column; }
+.card-title { font-size: 1.4rem; font-weight: 700; color: var(--text); margin-bottom: 0.25rem; }
+.card-subtitle { font-size: 1rem; color: var(--primary); margin-bottom: 1rem; font-weight: 500; }
+.card-description { font-size: 0.9rem; color: var(--text-light); line-height: 1.6; margin-bottom: 1.5rem; }
+.card-details-title { font-weight: 600; margin-bottom: 0.75rem; color: var(--text); }
+.card-details-list { list-style: none; padding-left: 0; margin-bottom: 1.5rem; }
+.card-details-list li { margin-bottom: 0.5rem; color: var(--text-light); }
+.card-price { font-size: 1.5rem; font-weight: 700; color: var(--accent); margin-bottom: 1.5rem; }
+.card-price .negotiable { font-size: 0.9rem; font-weight: 400; color: var(--text-light); }
+.card-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; }
+.card-tag { background-color: var(--primary-light); color: var(--primary); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 500; }
+.card-ctas { margin-top: auto; display: flex; gap: 1rem; }
+.card-ctas .btn { flex: 1; border-radius: 8px; }
+
+#getInTouchBlock {
+    display: none;
+    text-align: center;
+    padding: 3rem 1rem;
+    margin: 4rem auto;
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    max-width: 800px;
+}
+.get-in-touch-profile-pic {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    margin: 0 auto 1rem auto;
+    border: 4px solid var(--primary);
+    position: relative;
+}
+.waving-hand {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    font-size: 2.5rem;
+    animation: wave-animation 2.5s infinite;
+    transform-origin: 70% 70%;
+}
+@keyframes wave-animation {
+    0% { transform: rotate(0.0deg) }
+    10% { transform: rotate(14.0deg) }
+    20% { transform: rotate(-8.0deg) }
+    30% { transform: rotate(14.0deg) }
+    40% { transform: rotate(-4.0deg) }
+    50% { transform: rotate(10.0deg) }
+    60% { transform: rotate(0.0deg) }
+    100% { transform: rotate(0.0deg) }
+}
+#getInTouchBlock h3 {
+    font-size: 1.8rem;
+    color: var(--text);
+    margin-bottom: 1.5rem;
+}
+
+#mapContainer { width: 100%; max-width: 1400px; margin: 4rem auto 0 auto; height: 450px; background-color: var(--border-color); border-radius: 12px; }
+#mapContainer iframe { width: 100%; height: 100%; border:0; border-radius: 12px; }
+
+.footer { padding: 2rem 1rem; text-align: center; color: var(--text-light); border-top: 1px solid var(--border-color); margin-top: 4rem; }
+.bebell-footer { padding: 20px; font-size: 12px; }
+.bebell-footer p { margin: 0; line-height: 1.6; }
+.bebell-link { color: var(--text-light); text-decoration: none; }
+.bebell-link:hover { color: var(--primary); text-decoration: underline; }
+
+/* Modal Styles */
+.modal {
+    position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; 
+    background-color: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center;
+}
+.modal.active { display: flex; }
+.modal-content { 
+    background-color: var(--card-bg); padding: 2rem; border-radius: 12px; 
+    width: 90%; max-width: 600px; position: relative; 
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto; 
+}
+.modal-content h3 { margin-bottom: 1.5rem; }
+.modal-content h4 { margin-top: 2rem; margin-bottom: 1rem; }
+.modal-close { position: absolute; top: 15px; right: 15px; font-size: 1.5rem; color: var(--text-light); cursor: pointer; }
+.form-group { margin-bottom: 1rem; }
+.form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
+.form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; background-color: var(--bg); color: var(--text); }
+.profile-pic-uploader { display: flex; flex-direction: column; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+.profile-pic-preview { width: 120px; height: 120px; border-radius: 50%; border: 3px dashed var(--primary); display: flex; align-items: center; justify-content: center; cursor: pointer; background-size: cover; background-position: center; color: var(--text-light); }
+.profile-pic-preview i { font-size: 2rem; }
+.profile-pic-uploader input[type="file"] { display: none; }
+.recommendations { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
+.recommendation-btn { background: var(--bg); border: 1px solid var(--border-color); padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
+.share-url-container { display: flex; gap: 0.5rem; }
+.image-input-group { margin-top: 0.5rem; }
+.toggle-container { display: flex; align-items: center; gap: 10px; margin-top: 1rem; font-size: 0.9rem; }
+.toggle-switch { position: relative; display: inline-block; width: 50px; height: 28px; flex-shrink: 0; }
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 28px; }
+.slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+input:checked + .slider { background-color: var(--primary); }
+input:checked + .slider:before { transform: translateX(22px); }
+hr { border: 0; border-top: 1px solid var(--border-color); margin: 2rem 0; }
+.checkbox-group { display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; }
+.checkbox-group input[type="checkbox"] { width: auto; }
+
+.notification-banner { 
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+    background-color: var(--accent); color: white; 
+    padding: 1.5rem 2.5rem; border-radius: 12px; 
+    box-shadow: var(--shadow); z-index: 3000; font-weight: 500; 
+    opacity: 0; visibility: hidden; transition: all 0.3s ease-in-out; 
+}
+.notification-banner.show { opacity: 1; visibility: visible; }
+
+#backToTopBtn {
+    display: none; position: fixed; bottom: 20px; right: 30px; z-index: 99;
+    border: none; outline: none; background-color: var(--primary); color: white;
+    cursor: pointer; padding: 0; width: 50px; height: 50px; border-radius: 50%;
+    font-size: 18px; box-shadow: var(--shadow);
+}
+#backToTopBtn:hover { opacity: 0.8; }
+
+/* Responsive Grid Layout */
+@media (max-width: 1024px) {
+    .grid-container {
+        grid-template-columns: repeat(2, 1fr); /* 2 columns for tablets */
+    }
+}
+
+@media (max-width: 768px) {
+    .container { padding: 1rem; }
+    .header-banner .controls-container .btn {
+        width: 100%;
+    }
+    .logo-container { max-width: 150px; }
+    #appBrandNameDisplay { font-size: 16px; }
+    #supportBtn { display: none; }
+
+    .tag-filters {
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 1rem;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+    .tag-filters::-webkit-scrollbar { display: none; }
+    .tag-filter-btn { flex-shrink: 0; }
+
+    .grid-container {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        gap: 1.5rem;
+        padding-bottom: 1rem;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+    .grid-container::-webkit-scrollbar { display: none; }
+    .card {
+        flex: 0 0 80%;
+        width: 80%;
+        scroll-snap-align: start;
+    }
+}
+</style>
 </head>
-<body class="antialiased">
+<body>
 
-    <div class="flex h-screen overflow-hidden">
-        <!-- Sidebar -->
-        <aside id="sidebar" class="bg-[var(--bg-secondary)] border-r border-[var(--border-color)] flex-shrink-0 flex flex-col sidebar">
-            <!-- Logo & Mobile Close Button -->
-            <div class="p-4 border-b border-[var(--border-color)] flex justify-between items-center">
-                <a href="#" class="flex items-center gap-3">
-                    <img src="https://bucket.mlcdn.com/a/3336/3336910/images/fa62e06dd2b6ed2d1d9e77e5dd944bef2904d5d1.png" alt="Logo" class="w-10 h-10 rounded-lg flex-shrink-0">
-                    <div class="overflow-hidden">
-                        <h1 class="text-xl font-bold whitespace-nowrap">EasyListings</h1>
-                        <p class="text-xs text-[var(--text-secondary)] whitespace-nowrap">Admin Panel</p>
-                    </div>
-                </a>
-                <button id="sidebar-close-btn" class="p-2 rounded-md hover:bg-[var(--primary-light)] md:hidden">
-                    <i data-lucide="x" class="w-6 h-6"></i>
-                </button>
-            </div>
-            
-            <!-- Navigation -->
-            <nav id="nav-links" class="flex-1 px-2 py-4 space-y-2 overflow-y-auto">
-                <a href="#" data-page="dashboard" class="nav-link flex items-center p-3 rounded-lg"><i data-lucide="layout-dashboard" class="w-6 h-6 mr-4 flex-shrink-0"></i><span>Dashboard</span></a>
-                <a href="#" data-page="users" class="nav-link flex items-center p-3 rounded-lg"><i data-lucide="users" class="w-6 h-6 mr-4 flex-shrink-0"></i><span>User Accounts</span></a>
-                <a href="#" data-page="templates" class="nav-link flex items-center p-3 rounded-lg"><i data-lucide="message-square-text" class="w-6 h-6 mr-4 flex-shrink-0"></i><span>WhatsApp Templates</span></a>
-                <a href="#" data-page="settings" class="nav-link flex items-center p-3 rounded-lg"><i data-lucide="settings" class="w-6 h-6 mr-4 flex-shrink-0"></i><span>Settings</span></a>
-                <hr class="my-2 border-[var(--border-color)]">
-                <a href="#" data-page="whatsapp-generator" data-url="https://www.wati.io/free-whatsapp-link-generator/" data-title="WhatsApp Link Generator" class="nav-link flex items-center p-3 rounded-lg"><i data-lucide="link-2" class="w-6 h-6 mr-4 flex-shrink-0"></i><span>WhatsApp Generator</span></a>
-                <a href="#" data-page="spreadsheet-id" data-url="https://commentpicker.com/google-spreadsheet-id.php" data-title="Spreadsheet ID Finder" class="nav-link flex items-center p-3 rounded-lg"><i data-lucide="file-spreadsheet" class="w-6 h-6 mr-4 flex-shrink-0"></i><span>Spreadsheet ID Finder</span></a>
-                
-                <div id="custom-nav-links-container" class="space-y-2"></div>
+<div id="notification" class="notification-banner"></div>
 
-                <button id="add-new-link-btn" class="w-full flex items-center p-3 mt-2 text-sm text-[var(--text-secondary)] rounded-lg hover:bg-[var(--primary-light)]">
-                    <i data-lucide="plus-circle" class="w-6 h-6 mr-4 flex-shrink-0"></i><span>+ Add New</span>
-                </button>
-            </nav>
-
-            <!-- Sidebar Footer -->
-            <div class="px-2 py-4 mt-auto border-t border-[var(--border-color)] space-y-2">
-                <div id="admin-profile-section" class="flex items-center p-3 rounded-lg gap-3 cursor-pointer hover:bg-[var(--primary-light)]">
-                    <img id="admin-avatar" src="https://i.pravatar.cc/150?u=admin" alt="Admin" class="w-10 h-10 rounded-full flex-shrink-0" />
-                    <div class="overflow-hidden">
-                        <p id="admin-user-name" class="font-semibold whitespace-nowrap">Admin User</p>
-                    </div>
-                    <button id="notification-btn" class="p-2 rounded-md hover:bg-[var(--primary-light)] ml-auto" title="Show Notification">
-                        <i data-lucide="bell" class="w-5 h-5"></i>
-                    </button>
-                </div>
-
-                <button id="theme-toggle" class="w-full flex items-center p-3 rounded-lg hover:bg-[var(--primary-light)]">
-                    <i id="theme-icon" data-lucide="moon" class="w-6 h-6 mr-4 flex-shrink-0"></i><span>Toggle Theme</span>
-                </button>
-            </div>
-        </aside>
-
-        <!-- Main Content -->
-        <main id="main-content" class="flex-1 overflow-y-auto">
-            <!-- Mobile Header -->
-             <header class="md:hidden sticky top-0 z-30 flex items-center justify-between p-2 border-b border-[var(--border-color)] bg-[var(--bg-secondary)]">
-                <button id="sidebar-open-btn" class="p-2 rounded-md hover:bg-[var(--primary-light)]">
-                    <i data-lucide="menu" class="w-6 h-6"></i>
-                </button>
-                <div class="text-sm font-bold" id="mobile-page-title">Dashboard</div>
-                <div class="w-10"></div> <!-- Spacer -->
-            </header>
-
-            <div id="page-container" class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
-                <!-- Page content will be injected here -->
-            </div>
-        </main>
+<div class="top-menu-bar">
+    <div class="top-menu-content">
+        <div class="logo-container">
+            <img id="appLogo" src="https://bucket.mlcdn.com/a/3336/3336910/images/fa62e06dd2b6ed2d1d9e77e5dd944bef2904d5d1.png" alt="App Logo">
+            <span id="appBrandNameDisplay">Easy Listings</span>
+        </div>
+        <div class="top-menu-actions">
+            <div class="fab" id="settingsBtn" title="Settings"><i class="fas fa-cog"></i></div>
+            <div class="fab" id="supportBtn" title="Support" onclick="window.open('https://helpcenter.easylistings.website', '_blank')"><i class="fa fa-info-circle"></i></div>
+            <div class="fab" id="darkModeToggle" title="Toggle Theme"><i class="fas fa-moon"></i></div>
+        </div>
     </div>
-    
-    <!-- Sidebar Overlay for Mobile -->
-    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden md:hidden"></div>
-    
-    <!-- Modals Container -->
-    <div id="modal-container" class="fixed inset-0 z-50 items-center justify-center hidden"></div>
+</div>
 
-     <!-- Toast Notification -->
-    <div id="toast" class="fixed bottom-5 right-5 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-all duration-300">
-        Toast message
+<header class="header-banner" id="mainHeader">
+    <div class="header-content">
+        <div id="adminGreeting" class="admin-greeting">Hey there! 👋</div>
+        <h1 id="main-header-title">Welcome to <span id="brand-anim-span"></span></h1>
+        <p id="main-header-subtitle">Your professional hub for managing and showcasing property listings.</p>
+        <div class="controls-container">
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Search listings...">
+            </div>
+            <button class="btn" id="addNewEntryBtn"><i class="fas fa-plus"></i> Add New Listing</button>
+        </div>
     </div>
+</header>
 
+<main class="container">
+    <div class="tag-filters" id="tagFilters"></div>
+    <div class="content-wrapper">
+        <div id="listingPlaceholder">
+            <div id="listingsContainer"></div>
+        </div>
+    </div>
+    <div id="getInTouchBlock">
+        <div class="get-in-touch-profile-pic" id="getInTouchPic">
+            <div class="waving-hand">👋</div>
+        </div>
+        <h3>Let's get in touch!</h3>
+        <a href="#" id="getInTouchBtn" class="btn btn-secondary">Contact via WhatsApp</a>
+    </div>
+    <div id="mapContainer"></div>
+</main>
 
-    <script>
-    document.addEventListener('DOMContentLoaded', () => {
+<footer class="footer" id="mainFooter"></footer>
+<button id="backToTopBtn" title="Go to top"><i class="fas fa-arrow-up"></i></button>
 
-        // --- GLOBAL STATE & CONSTANTS ---
-        const UserStatus = {
-            WAITING: 'Waiting for Approval',
-            PUBLISHED: 'Published',
-            WHITE_LABEL: 'White Label',
-            AGENCY: 'Agency',
-            BLOCKED: 'Blocked',
-        };
-        const pageContainer = document.getElementById('page-container');
-        const modalContainer = document.getElementById('modal-container');
-        const sidebar = document.getElementById('sidebar');
-        let chartInstances = {};
+<!-- MODALS -->
+<div id="loginModal" class="modal">
+    <div class="modal-content">
+        <span class="modal-close">&times;</span>
+        <h3>Restricted Access</h3>
+        <p id="login-message"></p>
+        <form id="loginForm">
+            <div class="form-group"><label for="loginEmail">Email Address</label><input type="email" id="loginEmail" required></div>
+            <div class="form-group"><label for="loginPassword">Password</label><input type="password" id="loginPassword" required></div>
+            <button type="submit" class="btn" style="width: 100%;">Confirm Admin Access</button>
+        </form>
+        <div id="lifetimeAccessBtnContainer" style="display:none; margin-top: 1rem;"></div>
+    </div>
+</div>
+
+<div id="setupModal" class="modal">
+    <div class="modal-content">
+        <span class="modal-close">&times;</span>
+        <h3>Let's Get You Started! 🎉</h3>
+        <p>Your account is approved. Complete your profile to launch your directory.</p>
+        <form id="setupForm">
+            <input type="hidden" id="setupEmail">
+            <div class="profile-pic-uploader"><label for="setupProfilePic" class="profile-pic-preview" id="setupProfilePicPreview"><i class="fas fa-camera"></i></label><input type="file" id="setupProfilePic" accept="image/*"></div>
+            <div class="form-group"><label for="setupBrandName">Brand Name</label><input type="text" id="setupBrandName" required></div>
+            <div class="form-group"><label for="setupUsername">Username</label><input type="text" id="setupUsername" required></div>
+            <div class="form-group"><label for="setupListingsSheetId">Listings Google Sheet ID</label><input type="text" id="setupListingsSheetId" required></div>
+            <div class="form-group">
+                <label for="setupListingsScriptUrl">Listings Script URL</label>
+                <input type="text" id="setupListingsScriptUrl" required>
+                <p class="field-instructions" style="margin-top: 10px;">
+                    <strong>Need help?</strong> <a href="https://helpcenter.easylistings.website" target="_blank" rel="noopener noreferrer">Follow our guide to get your Sheet ID and Listings Script URL.</a>
+                </p>
+            </div>
+            <button type="submit" class="btn" style="width: 100%;">Launch My Listings</button>
+        </form>
+    </div>
+</div>
+
+<div id="settingsModal" class="modal">
+    <div class="modal-content">
+        <span class="modal-close" data-modal-id="settingsModal">&times;</span>
+        <h3>Settings</h3>
+        <div class="settings-profile">
+            <div id="settingsProfilePic" class="profile-pic-container"><i class="fas fa-user"></i></div>
+            <div>
+                <h4>Welcome, <span id="settingsUsernameDisplay">Admin</span>! 🎉</h4>
+                <p style="font-size: 0.9rem; color: var(--text-light); margin: 0;">You have access to all administrative features.</p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="shareableUrl">Your Shareable Listings URL</label>
+            <div class="share-url-container">
+                <input type="text" id="shareableUrl" readonly>
+                <button id="copyShareableUrlBtn" class="btn" title="Copy URL"><i class="fas fa-copy"></i></button>
+            </div>
+        </div>
+        <hr>
+        <h4>Contact Settings</h4>
+        <div class="form-group"><label for="settingsWhatsappNumber">WhatsApp Phone Number</label><input type="tel" id="settingsWhatsappNumber"></div>
+        <div class="form-group"><label for="settingsWhatsappMessage">Default WhatsApp Message</label><textarea id="settingsWhatsappMessage" rows="3"></textarea></div>
+        <hr>
+        <div id="whiteLabelSettings" style="display: none;">
+            <h4>White Label Settings</h4>
+            <div class="toggle-container">
+                <label class="toggle-switch">
+                    <input type="checkbox" id="enableLeadForm">
+                    <span class="slider"></span>
+                </label>
+                <span>Enable Lead Capture Form (replaces WhatsApp button)</span>
+            </div>
+        </div>
+        <button id="saveSettingsBtn" class="btn" style="width: 100%;">Save Customizations</button>
+    </div>
+</div>
+
+<div id="editCardModal" class="modal">
+    <div class="modal-content">
+        <span class="modal-close">&times;</span>
+        <h3 id="editModalTitle">Add New Listing</h3>
+        <input type="hidden" id="listingPropertyId">
+        <div class="form-group">
+            <label for="listingTitle">Title</label>
+            <input type="text" id="listingTitle" required>
+        </div>
+        <div class="form-group">
+            <label for="listingSubtitle">Subtitle</label>
+            <input type="text" id="listingSubtitle">
+        </div>
+        <div class="form-group">
+            <label for="listingDescription">Description</label>
+            <textarea id="listingDescription" rows="4"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="listingPrice">Price (optional)</label>
+            <input type="number" id="listingPrice">
+        </div>
+        <div class="checkbox-group">
+            <input type="checkbox" id="listingNegotiable">
+            <label for="listingNegotiable">Negotiable</label>
+        </div>
+        <div class="form-group">
+            <label for="listingCategory">Category</label>
+            <input type="text" id="listingCategory" placeholder="e.g., Downtown Apartments">
+        </div>
+        <div class="form-group">
+            <label for="listingCategoryDescription">Category Description</label>
+            <input type="text" id="listingCategoryDescription" placeholder="A brief description for this group of listings.">
+        </div>
+        <div class="form-group">
+            <label for="listingTags">Tags</label>
+            <input type="text" id="listingTags">
+            <div class="recommendations" id="tagRecommendations"></div>
+        </div>
+        <hr>
+        <h4>Secondary CTA Button (Optional)</h4>
+        <div class="form-group">
+            <label for="secondaryCtaText">Button Text</label>
+            <input type="text" id="secondaryCtaText">
+        </div>
+        <div class="form-group">
+            <label for="secondaryCtaLink">Button Link</label>
+            <input type="text" id="secondaryCtaLink">
+        </div>
+        <button type="submit" id="saveListingBtn" class="btn" style="width:100%">Save Listing</button>
+    </div>
+</div>
+
+<div id="leadCaptureModal" class="modal">
+    <div class="modal-content">
+        <span class="modal-close">&times;</span>
+        <h3>Inquire About This Property</h3>
+        <form id="leadCaptureForm">
+            <input type="hidden" id="leadPropertyId">
+            <div class="form-group">
+                <label for="leadName">Full Name</label>
+                <input type="text" id="leadName" required>
+            </div>
+            <div class="form-group">
+                <label for="leadEmail">Email</label>
+                <input type="email" id="leadEmail" required>
+            </div>
+            <div class="form-group">
+                <label for="leadPhone">Phone Number</label>
+                <input type="tel" id="leadPhone">
+            </div>
+            <div class="form-group">
+                <label for="leadMessage">Message</label>
+                <textarea id="leadMessage" rows="4"></textarea>
+            </div>
+            <button type="submit" class="btn" style="width:100%">Submit Inquiry</button>
+        </form>
+    </div>
+</div>
+
+<div id="confirmationModal" class="modal">
+    <div class="modal-content" style="max-width: 400px;">
+        <h3 id="confirmationTitle">Are you sure?</h3>
+        <p id="confirmationMessage">This action cannot be undone.</p>
+        <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem;">
+            <button id="confirmCancelBtn" class="btn" style="background-color: var(--secondary);">Cancel</button>
+            <button id="confirmDeleteBtn" class="btn btn-danger">Delete</button>
+        </div>
+    </div>
+</div>
+
+<canvas id="confetti-canvas" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999;"></canvas>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script type="module">
+    import confetti from 'https://cdn.skypack.dev/canvas-confetti';
+    window.triggerConfetti = function() {
+        const canvas = document.getElementById('confetti-canvas');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        confetti({ particleCount: 400, spread: 400, origin: { x: 0.5, y: 0.5 }, colors: ['#DF1783', '#f8a4d4', '#4fd1c5', '#2d3748', '#ffffff'] });
+    };
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // --- CONFIGURATION ---
+    const ADMIN_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwFHCC9E0etIqCxmbBfWfXBAN6V5w_3oguWA-HaseHHGeaSiPQQ2KtDEIR-LmnuktF60A/exec';
+    const LIFETIME_DEAL_URL = 'https://your-lifetime-deal-url.com';
+
+    // --- STATE ---
+    let appConfig = {};
+    let isLoggedIn = false;
+    let currentTypingTimeout;
+    let allListings = [];
+    let carouselIntervals = {};
+
+    // --- DOM ELEMENTS ---
+    const topMenuBar = document.querySelector('.top-menu-bar');
+    const mainHeader = document.getElementById('mainHeader');
+    const brandAnimSpan = document.getElementById('brand-anim-span');
+    const appBrandNameDisplay = document.getElementById('appBrandNameDisplay');
+    const mapContainer = document.getElementById('mapContainer');
+    const mainFooter = document.getElementById('mainFooter');
+    const loginModal = document.getElementById('loginModal');
+    const setupModal = document.getElementById('setupModal');
+    const settingsModal = document.getElementById('settingsModal');
+    const loginMessage = document.getElementById('login-message');
+    const listingsContainer = document.getElementById('listingsContainer');
+    const notificationBanner = document.getElementById('notification');
+    const tagFiltersContainer = document.getElementById('tagFilters');
+    const searchInput = document.getElementById('searchInput');
+    const backToTopBtn = document.getElementById('backToTopBtn');
+    const getInTouchBlock = document.getElementById('getInTouchBlock');
+
+    // --- INITIALIZATION ---
+    function initializeApp() {
+        lucide.createIcons();
+        setupEventListeners();
+        applyTheme();
         
-        let state = {
-            currentPage: 'dashboard',
-            users: [],
-            templates: [],
-            settings: { scriptUrl: '', imagekitKey: '' },
-            theme: 'light',
-            view: 'list',
-            searchTerm: '',
-            admin: { name: 'Admin User', avatar: 'https://i.pravatar.cc/150?u=admin' },
-            isDataLive: false,
-            customNavLinks: [],
-        };
-
-        // --- MOCK DATA (Fallback) ---
-        const mockUsers = [
-            { UserID: "USR001", BrandName: "Prestige Homes", Username: "CarlaM", Email: "carla.m@prestige.com", ProfilePicURL: "https://i.pravatar.cc/150?u=USR001", LogoURL: "https://bucket.mlcdn.com/a/3336/3336910/images/fa62e06dd2b6ed2d1d9e77e5dd944bef2904d5d1.png", PrimaryColor: "#004AAD", TopCTAText: "View Listings", TopCTALink: "https://example.com/listings", VideoScriptURL: "", Status: UserStatus.PUBLISHED, SheetID: "sheet_01", ShareableURL: "https://easylistings.website/carlam", WhatsAppURL: "18091234567", InstagramURL: "https://instagram.com/prestigehomes", FacebookURL: "https://facebook.com/prestigehomes", YouTubeURL: "", LinkedInURL: "https://linkedin.com/company/prestige", XURL: "https://x.com/prestige", TelegramURL: "", WebsiteURL: "https://prestige.com", DateRegistered: "2023-08-15", DateApproval: "2023-08-16" },
-            { UserID: "USR002", BrandName: "Urban Living", Username: "DavidP", Email: "david.p@urban.io", ProfilePicURL: "https://i.pravatar.cc/150?u=USR002", LogoURL: "", PrimaryColor: "#34D399", TopCTAText: "Book a Tour", TopCTALink: "https://urban.io/tour", VideoScriptURL: "", Status: UserStatus.WAITING, SheetID: "sheet_02", ShareableURL: "https://easylistings.website/davidp", WhatsAppURL: "18299876543", InstagramURL: "https://instagram.com/urbanliving", FacebookURL: "", YouTubeURL: "", LinkedInURL: "", XURL: "", TelegramURL: "", WebsiteURL: "https://urban.io", DateRegistered: "2023-08-20", DateApproval: "" },
-            { UserID: "USR003", BrandName: "Coastal Properties", Username: "MariaS", Email: "maria.s@coastal.net", ProfilePicURL: "https://i.pravatar.cc/150?u=USR003", LogoURL: "", PrimaryColor: "#F59E0B", TopCTAText: "See Our Portfolio", TopCTALink: "https://coastal.net/portfolio", VideoScriptURL: "", Status: UserStatus.BLOCKED, SheetID: "sheet_03", ShareableURL: "https://easylistings.website/marias", WhatsAppURL: "18493332222", InstagramURL: "", FacebookURL: "", YouTubeURL: "https://youtube.com/coastalprop", LinkedInURL: "", XURL: "", TelegramURL: "", WebsiteURL: "https://coastal.net", DateRegistered: "2023-07-01", DateApproval: "2023-07-02" },
-            { UserID: "USR004", BrandName: "Agency One", Username: "JohnA", Email: "john.a@agency.one", ProfilePicURL: "https://i.pravatar.cc/150?u=USR004", LogoURL: "", PrimaryColor: "#6366F1", TopCTAText: "Contact Us", TopCTALink: "https://agency.one/contact", VideoScriptURL: "", Status: UserStatus.AGENCY, SheetID: "sheet_04", ShareableURL: "https://easylistings.website/johna", WhatsAppURL: "18095551111", InstagramURL: "", FacebookURL: "", YouTubeURL: "", LinkedInURL: "", XURL: "", TelegramURL: "", WebsiteURL: "https://agency.one", DateRegistered: "2023-06-15", DateApproval: "2023-06-16" },
-            { UserID: "USR005", BrandName: "White Label Pro", Username: "SarahW", Email: "sarah.w@whitelabel.pro", ProfilePicURL: "https://i.pravatar.cc/150?u=USR005", LogoURL: "", PrimaryColor: "#3B82F6", TopCTAText: "Get Started", TopCTALink: "https://whitelabel.pro/start", VideoScriptURL: "", Status: UserStatus.WHITE_LABEL, SheetID: "sheet_05", ShareableURL: "https://easylistings.website/sarahw", WhatsAppURL: "18095552222", InstagramURL: "", FacebookURL: "", YouTubeURL: "", LinkedInURL: "", XURL: "", TelegramURL: "", WebsiteURL: "https://whitelabel.pro", DateRegistered: "2023-05-20", DateApproval: "2023-05-21" },
-        ];
-
-        // --- DATA FETCHING & UPDATING ---
-        const fetchUsers = async () => {
-            if (!state.settings.scriptUrl) {
-                console.warn("Google Apps Script URL not set. Using mock data.");
-                state.users = mockUsers;
-                state.isDataLive = false;
-            } else {
-                 showToast('Syncing data from Google Sheet...', 'loading');
-                try {
-                    const response = await fetch(state.settings.scriptUrl);
-                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                    const data = await response.json();
-                    state.users = data;
-                    state.isDataLive = true;
-                    console.log("Successfully fetched user data.");
-                    showToast('Data synced successfully!', 'success');
-                } catch (error) {
-                    console.error("Failed to fetch user data:", error);
-                    state.users = []; // Use empty array on error
-                    state.isDataLive = false;
-                    showToast('Could not fetch data from Script URL.', 'error');
-                }
-            }
-            renderCurrentPage();
-        };
-
-        const updateUserStatus = async (userId, newStatus) => {
-            if (!state.isDataLive) {
-                const userIndex = state.users.findIndex(u => u.UserID === userId);
-                if (userIndex !== -1) {
-                    state.users[userIndex].Status = newStatus;
-                    renderCurrentPage();
-                    showToast(`Demo user status updated to ${newStatus}.`, 'success');
-                }
-                return;
-            }
-            
-            showToast('Updating status...', 'loading');
-            try {
-                const response = await fetch(state.settings.scriptUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({ action: 'updateStatus', userId, newStatus })
-                });
-                const result = await response.json();
-                if (result.status === 'success') {
-                    const userIndex = state.users.findIndex(u => u.UserID === userId);
-                    if (userIndex !== -1) state.users[userIndex].Status = newStatus;
-                    renderCurrentPage();
-                    showToast('User status updated successfully!', 'success');
-                } else {
-                    throw new Error(result.message || 'Unknown error from Apps Script.');
-                }
-            } catch (error) {
-                console.error('Failed to update status:', error);
-                showToast('Failed to update status.', 'error');
-            }
-        };
-
-        const createNewUser = async (userData) => {
-            if (!state.isDataLive) {
-                const newUser = {
-                    ...userData,
-                    UserID: `USR${Math.floor(1000 + Math.random() * 9000)}`,
-                    DateRegistered: new Date().toISOString().split('T')[0],
-                    ProfilePicURL: 'https://i.pravatar.cc/150?u=new'
-                };
-                state.users.push(newUser);
-                renderCurrentPage();
-                showToast('Demo user created.', 'success');
-                closeModal();
-                return;
-            }
-
-            showToast('Creating new user...', 'loading');
-            try {
-                const response = await fetch(state.settings.scriptUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({ action: 'createUser', userData })
-                });
-                const result = await response.json();
-                if (result.status === 'success' && result.newUser) {
-                    state.users.push(result.newUser);
-                    renderCurrentPage();
-                    showToast('User created successfully!', 'success');
-                    closeModal();
-                } else {
-                    throw new Error(result.message || 'Failed to create user in Apps Script.');
-                }
-            } catch (error) {
-                console.error('Failed to create user:', error);
-                showToast('Failed to create user.', 'error');
-            }
-        };
-
-
-        // --- LOCAL STORAGE & UTILITIES ---
-        const getFromStorage = (key, defaultValue) => {
-            try {
-                const item = localStorage.getItem(key);
-                return item ? JSON.parse(item) : defaultValue;
-            } catch (error) {
-                console.error(`Error reading from localStorage key “${key}”:`, error);
-                return defaultValue;
-            }
-        };
-        const saveToStorage = (key, value) => {
-            try {
-                localStorage.setItem(key, JSON.stringify(value));
-            } catch (error) {
-                console.error(`Error saving to localStorage key “${key}”:`, error);
-            }
-        };
-
-        const calculateProfileProgress = (user) => {
-            const fields = ['ProfilePicURL', 'LogoURL', 'PrimaryColor', 'TopCTAText', 'TopCTALink', 'WhatsAppURL', 'InstagramURL', 'FacebookURL', 'YouTubeURL', 'LinkedInURL', 'XURL', 'TelegramURL', 'WebsiteURL'];
-            const filledFields = fields.filter(field => user[field] && String(user[field]).trim() !== '').length;
-            return Math.round((filledFields / fields.length) * 100);
-        };
-
-        const formatDate = (dateString) => {
-            if (!dateString) return 'N/A';
-            try { return new Date(dateString).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }); } 
-            catch (e) { return 'Invalid Date'; }
-        };
-        
-        const renderImage = (url, transformations = 'tr:w-200,h-200,fo-auto') => {
-            if (!url) return 'https://placehold.co/200x200/e2e8f0/718096?text=No+Image';
-            if (state.settings.imagekitKey && !url.includes('imagekit.io')) {
-                return `https://ik.imagekit.io/${state.settings.imagekitKey}/${transformations}/${url}`;
-            }
-            return url;
-        };
-
-        const getStatusBadge = (status) => {
-            const baseClasses = 'text-xs font-semibold px-2.5 py-0.5 rounded-full whitespace-nowrap';
-            switch (status) {
-                case UserStatus.PUBLISHED: return `<span class="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300 ${baseClasses}">Published</span>`;
-                case UserStatus.WAITING: return `<span class="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300 ${baseClasses}">Waiting...</span>`;
-                case UserStatus.WHITE_LABEL: return `<span class="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300 ${baseClasses}">White Label</span>`;
-                case UserStatus.AGENCY: return `<span class="bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300 ${baseClasses}">Agency</span>`;
-                case UserStatus.BLOCKED: return `<span class="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300 ${baseClasses}">Blocked</span>`;
-                default: return `<span class="bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300 ${baseClasses}">Unknown</span>`;
-            }
-        };
-
-        const copyToClipboard = (text, element) => {
-            navigator.clipboard.writeText(text).then(() => {
-                const originalIcon = element.innerHTML;
-                element.innerHTML = `<i data-lucide="check" class="w-4 h-4 text-green-500"></i>`;
-                lucide.createIcons();
-                setTimeout(() => { element.innerHTML = originalIcon; lucide.createIcons(); }, 2000);
-            }).catch(err => {
-                console.error('Copy failed', err);
-                showToast('Failed to copy.', 'error');
-            });
-        };
-        
-        // --- PAGE RENDERING ---
-        const destroyCharts = () => {
-            Object.values(chartInstances).forEach(chart => chart.destroy());
-            chartInstances = {};
-        };
-        
-        const renderDashboardPage = () => {
-            pageContainer.innerHTML = `
-                <div class="py-6 md:py-8">
-                    <h1 class="text-3xl font-bold">Hello, ${state.admin.name}!</h1>
-                    <p class="text-[var(--text-secondary)] mb-6">Here's a summary of your application.</p>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                        <div class="bg-[var(--bg-secondary)] p-6 rounded-lg shadow-[var(--shadow)] border border-[var(--border-color)]">
-                            <h3 class="text-lg font-semibold text-[var(--text-secondary)]">Total Users</h3>
-                            <p class="text-4xl font-bold">${state.users.length}</p>
-                        </div>
-                        <div class="bg-[var(--bg-secondary)] p-6 rounded-lg shadow-[var(--shadow)] border border-[var(--border-color)]">
-                            <h3 class="text-lg font-semibold text-[var(--text-secondary)]">Published</h3>
-                            <p class="text-4xl font-bold">${state.users.filter(u => u.Status === UserStatus.PUBLISHED).length}</p>
-                        </div>
-                        <div class="bg-[var(--bg-secondary)] p-6 rounded-lg shadow-[var(--shadow)] border border-[var(--border-color)]">
-                            <h3 class="text-lg font-semibold text-[var(--text-secondary)]">Waiting Approval</h3>
-                            <p class="text-4xl font-bold">${state.users.filter(u => u.Status === UserStatus.WAITING).length}</p>
-                        </div>
-                        <div class="bg-[var(--bg-secondary)] p-6 rounded-lg shadow-[var(--shadow)] border border-[var(--border-color)]">
-                            <h3 class="text-lg font-semibold text-[var(--text-secondary)]">Blocked</h3>
-                            <p class="text-4xl font-bold">${state.users.filter(u => u.Status === UserStatus.BLOCKED).length}</p>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div class="bg-[var(--bg-secondary)] p-6 rounded-lg shadow-[var(--shadow)] border border-[var(--border-color)]">
-                            <h3 class="text-xl font-bold mb-4 text-center">User Status Breakdown</h3>
-                            <canvas id="userStatusChart"></canvas>
-                        </div>
-                        <div class="bg-[var(--bg-secondary)] p-6 rounded-lg shadow-[var(--shadow)] border border-[var(--border-color)]">
-                            <h3 class="text-xl font-bold mb-4 text-center">Profile Completion</h3>
-                            <canvas id="profileCompletionChart"></canvas>
-                        </div>
-                    </div>
-                </div>`;
-            renderCharts();
-        };
-
-        const renderCharts = () => {
-            const statusCtxEl = document.getElementById('userStatusChart');
-            const completionCtxEl = document.getElementById('profileCompletionChart');
-            if (!statusCtxEl || !completionCtxEl || state.users.length === 0) return;
-            destroyCharts();
-            const isDarkMode = document.documentElement.classList.contains('dark');
-            const textColor = isDarkMode ? '#f7fafc' : '#2d3748';
-
-            const statusCounts = state.users.reduce((acc, user) => { acc[user.Status] = (acc[user.Status] || 0) + 1; return acc; }, {});
-            chartInstances.userStatus = new Chart(statusCtxEl.getContext('2d'), {
-                type: 'doughnut',
-                data: { 
-                    labels: Object.keys(statusCounts), 
-                    datasets: [{ 
-                        data: Object.values(statusCounts), 
-                        backgroundColor: ['#10B981', '#F59E0B', '#3B82F6', '#6366F1', '#EF4444'],
-                        borderColor: isDarkMode ? '#2d3748' : '#ffffff', 
-                        borderWidth: 2 
-                    }] 
-                },
-                options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { color: textColor } } } }
-            });
-            
-            const completionBins = { '0-25%': 0, '26-50%': 0, '51-75%': 0, '76-100%': 0 };
-            state.users.forEach(user => {
-                 const p = calculateProfileProgress(user);
-                 if (p <= 25) completionBins['0-25%']++; else if (p <= 50) completionBins['26-50%']++; else if (p <= 75) completionBins['51-75%']++; else completionBins['76-100%']++;
-            });
-            chartInstances.profileCompletion = new Chart(completionCtxEl.getContext('2d'), {
-                type: 'doughnut',
-                data: { 
-                    labels: Object.keys(completionBins), 
-                    datasets: [{ 
-                        data: Object.values(completionBins), 
-                        backgroundColor: ['#EF4444', '#F59E0B', '#3B82F6', '#10B981'], 
-                        borderColor: isDarkMode ? '#2d3748' : '#ffffff', 
-                        borderWidth: 2 
-                    }] 
-                },
-                options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { color: textColor } } } }
-            });
-        };
-
-        const renderUsersPage = () => {
-            destroyCharts();
-            pageContainer.innerHTML = `
-                <div class="py-6 md:py-8">
-                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-                         <h2 class="text-3xl font-bold">User Accounts</h2>
-                         <div class="relative w-full md:w-auto md:max-w-xs">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <i data-lucide="search" class="w-5 h-5 text-[var(--text-secondary)]"></i>
-                            </div>
-                            <input type="text" id="search-input" value="${state.searchTerm}" placeholder="Search users..." class="w-full pl-10 pr-4 py-2 border rounded-md bg-[var(--bg-secondary)] border-[var(--border-color)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" />
-                        </div>
-                    </div>
-                    <div class="bg-[var(--bg-secondary)] p-4 rounded-lg shadow-[var(--shadow)] border border-[var(--border-color)]">
-                        <div class="flex items-center justify-between gap-2 mb-4">
-                             <button id="create-user-btn" class="flex items-center gap-2 px-4 py-2 text-white bg-[var(--primary)] rounded-md hover:opacity-90"><i data-lucide="user-plus" class="w-4 h-4"></i> Create New User</button>
-                            <div class="flex items-center gap-2">
-                                <button id="view-grid-btn" class="p-2 rounded-md ${state.view === 'grid' ? 'bg-[var(--primary-light)] text-[var(--primary)]' : ''}" title="Grid View"><i data-lucide="layout-grid" class="w-5 h-5"></i></button>
-                                <button id="view-list-btn" class="p-2 rounded-md ${state.view === 'list' ? 'bg-[var(--primary-light)] text-[var(--primary)]' : ''}" title="List View"><i data-lucide="list" class="w-5 h-5"></i></button>
-                                <button id="download-csv-btn" class="flex items-center gap-2 px-4 py-2 rounded-md border border-[var(--border-color)] hover:bg-[var(--primary-light)]"><i data-lucide="file-down" class="w-4 h-4"></i> CSV</button>
-                                <button id="download-pdf-btn" class="flex items-center gap-2 px-4 py-2 rounded-md border border-[var(--border-color)] hover:bg-[var(--primary-light)]"><i data-lucide="file-down" class="w-4 h-4"></i> PDF</button>
-                            </div>
-                        </div>
-                        <div id="user-list-container"></div>
-                    </div>
-                </div>`;
-            
-            lucide.createIcons();
-            renderUserList();
-            addUsersPageEventListeners();
-        };
-
-        const getFilteredUsers = () => {
-            if (!state.searchTerm) return state.users;
-            const term = state.searchTerm.toLowerCase();
-            return state.users.filter(user =>
-                ['Username', 'Email', 'BrandName', 'UserID'].some(prop =>
-                    user[prop] && user[prop].toString().toLowerCase().includes(term)
-                )
-            );
-        };
-        
-        const renderUserList = () => {
-            const container = document.getElementById('user-list-container');
-            const filteredUsers = getFilteredUsers();
-
-            if (filteredUsers.length === 0) {
-                const message = state.isDataLive ? 'No users found matching your search.' : 'No demo users. Add Google Apps Script URL in Settings to sync.';
-                container.innerHTML = `<div class="text-center py-12"><i data-lucide="user-x" class="w-16 h-16 mx-auto text-[var(--text-secondary)] mb-4"></i><p class="text-[var(--text-secondary)]">${message}</p></div>`;
-                lucide.createIcons(); return;
-            }
-            container.className = state.view === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4' : 'flex flex-col gap-3';
-            container.innerHTML = filteredUsers.map(user => createUserCardHTML(user, state.view)).join('');
-            container.querySelectorAll('.user-card').forEach(card => { card.addEventListener('click', () => openUserModal(card.dataset.userid)); });
-        };
-
-        const createUserCardHTML = (user, view) => {
-            const progress = calculateProfileProgress(user);
-            const cardClasses = "user-card bg-[var(--bg-secondary)] p-4 rounded-lg border border-[var(--border-color)] shadow-sm cursor-pointer hover:border-[var(--primary)] hover:shadow-lg transition-all";
-            
-            if (view === 'list') {
-                return `
-                    <div data-userid="${user.UserID}" class="${cardClasses} w-full flex items-center gap-4">
-                        <img src="${renderImage(user.ProfilePicURL, 'tr:w-80,h-80,fo-auto')}" alt="${user.Username}" class="w-10 h-10 rounded-full object-cover flex-shrink-0" onerror="this.src='https://placehold.co/80x80/e2e8f0/718096?text=Err'"/>
-                        <div class="flex-1 min-w-0"><p class="font-bold truncate">${user.Username}</p><p class="text-sm text-[var(--text-secondary)] truncate">${user.BrandName}</p></div>
-                        <div class="hidden lg:block w-48"><div class="flex justify-between items-center mb-1"><span class="text-xs text-[var(--text-secondary)]">Profile</span><span class="text-xs font-semibold">${progress}%</span></div><div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5"><div class="bg-[var(--primary)] h-1.5 rounded-full" style="width: ${progress}%"></div></div></div>
-                        <div class="hidden sm:block text-sm text-[var(--text-secondary)] w-28 text-center">${formatDate(user.DateRegistered)}</div>
-                        <div class="w-28 text-center">${getStatusBadge(user.Status)}</div>
-                    </div>`;
-            }
-            return `
-                <div data-userid="${user.UserID}" class="${cardClasses} flex flex-col items-center text-center">
-                    <img src="${renderImage(user.ProfilePicURL, 'tr:w-160,h-160,fo-auto')}" alt="${user.Username}" class="w-20 h-20 rounded-full mb-4 object-cover" onerror="this.src='https://placehold.co/160x160/e2e8f0/718096?text=Err'"/>
-                    <h4 class="font-bold">${user.Username}</h4>
-                    <p class="text-sm text-[var(--text-secondary)] mb-2">${user.BrandName}</p>
-                    <div class="my-2">${getStatusBadge(user.Status)}</div>
-                    <div class="w-full my-2"><div class="flex justify-between items-center mb-1"><span class="text-xs text-[var(--text-secondary)]">Profile</span><span class="text-xs font-semibold">${progress}%</span></div><div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5"><div class="bg-[var(--primary)] h-1.5 rounded-full" style="width: ${progress}%"></div></div></div>
-                    <p class="text-xs text-[var(--text-secondary)] mt-2">Joined: ${formatDate(user.DateRegistered)}</p>
-                </div>`;
-        };
-
-        const renderTemplatesPage = () => {
-            destroyCharts();
-            pageContainer.innerHTML = `
-                <div class="py-6 md:py-8">
-                    <h2 class="text-3xl font-bold mb-6">WhatsApp Message Templates</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div class="bg-[var(--bg-secondary)] p-6 rounded-lg shadow-[var(--shadow)] border border-[var(--border-color)]">
-                            <h3 class="text-xl font-bold mb-4">Create New Template</h3>
-                            <form id="template-form" class="space-y-4">
-                                <div><label for="template-name" class="block mb-1 text-sm font-medium">Template Name</label><input type="text" id="template-name" placeholder="e.g., Onboarding Welcome" required class="w-full px-3 py-2 border rounded-md bg-[var(--bg-primary)] border-[var(--border-color)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" /></div>
-                                <div><label for="template-message" class="block mb-1 text-sm font-medium">Message Content</label><textarea id="template-message" rows="5" placeholder="Hello {{Username}}! Welcome to {{BrandName}}." required class="w-full px-3 py-2 border rounded-md bg-[var(--bg-primary)] border-[var(--border-color)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"></textarea>
-                                <p class="text-xs text-[var(--text-secondary)] mt-1">Available placeholders: {{Username}}, {{BrandName}}, {{UserID}}, {{Email}}, {{DateRegistered}}, {{Status}}</p></div>
-                                <button type="submit" class="w-full px-4 py-2 text-white bg-[var(--primary)] rounded-md hover:opacity-90">Save Template</button>
-                            </form>
-                        </div>
-                        <div class="bg-[var(--bg-secondary)] p-6 rounded-lg shadow-[var(--shadow)] border border-[var(--border-color)]"><h3 class="text-xl font-bold mb-4">Your Templates</h3><div id="template-list-container" class="space-y-3 max-h-96 overflow-y-auto"></div></div>
-                    </div>
-                </div>`;
-            renderTemplateList();
-            addTemplatesPageEventListeners();
-        };
-
-        const renderTemplateList = () => {
-            const container = document.getElementById('template-list-container');
-            if (state.templates.length === 0) {
-                container.innerHTML = `<p class="text-sm text-[var(--text-secondary)]">You have no saved templates.</p>`; return;
-            }
-            container.innerHTML = state.templates.map(template => `
-                <div class="p-3 border rounded-md border-[var(--border-color)]"><div class="flex justify-between items-center"><p class="font-semibold">${template.name}</p><button class="delete-template-btn p-1 text-red-500 hover:text-red-700" data-id="${template.id}" title="Delete Template"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div><p class="text-sm text-[var(--text-secondary)] mt-1 whitespace-pre-wrap">${template.message}</p></div>`).join('');
-            lucide.createIcons();
-            container.querySelectorAll('.delete-template-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    state.templates = state.templates.filter(t => t.id !== btn.dataset.id);
-                    saveToStorage('whatsappTemplates', state.templates);
-                    renderTemplateList();
-                });
-            });
-        };
-        
-        const renderSettingsPage = () => {
-            destroyCharts();
-            pageContainer.innerHTML = `
-                <div class="py-6 md:py-8">
-                    <h2 class="text-3xl font-bold mb-6">Settings & Integrations</h2>
-                    <div class="max-w-3xl mx-auto space-y-8">
-                        <div class="bg-[var(--bg-secondary)] p-6 rounded-lg shadow-[var(--shadow)] border border-[var(--border-color)]">
-                            <h3 class="text-xl font-bold mb-2">1. User Database (Google Sheets)</h3>
-                            <p class="text-sm text-[var(--text-secondary)] mb-4">Connect a Google Sheet to automatically sync user data, including status updates and new user creation.</p>
-                            <details class="mb-4"><summary class="cursor-pointer text-sm font-semibold text-[var(--primary)]">Click to view setup instructions and updated code</summary>
-                                <ol class="list-decimal list-inside space-y-2 text-sm mt-2">
-                                    <li>Open your Google Sheet, then go to <strong>Extensions &gt; Apps Script</strong>.</li>
-                                    <li>Copy the code below and paste it into the <code>Code.gs</code> file, replacing any existing content.</li>
-                                    <li>Click <strong>Deploy &gt; New deployment</strong>. Select type <strong>Web app</strong>.</li>
-                                    <li>In the configuration, set <strong>Execute as</strong> to "Me" and <strong>Who has access</strong> to "Anyone". Click <strong>Deploy</strong>.</li>
-                                    <li>Authorize the script permissions when prompted.</li>
-                                    <li>Copy the provided <strong>Web app URL</strong> and paste it in the field below.</li>
-                                </ol>
-                                <pre class="mt-2 p-3 bg-gray-100 dark:bg-gray-800 rounded-md text-xs overflow-x-auto"><code>const SHEET_NAME = "Sheet1"; // Change this if your sheet has a different name
-
-function handleResponse(data) {
-  return ContentService.createTextOutput(JSON.stringify(data))
-    .setMimeType(ContentService.MimeType.JSON);
-}
-
-function doGet(e) {
-  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
-  if (!sheet) return handleResponse({ status: 'error', message: 'Sheet not found.' });
-  const data = sheet.getDataRange().getValues();
-  const headers = data.shift();
-  
-  const result = data.map(row => {
-    let obj = {};
-    headers.forEach((header, index) => {
-      obj[header] = row[index];
-    });
-    return obj;
-  });
-
-  return handleResponse(result);
-}
-
-function doPost(e) {
-  try {
-    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
-    if (!sheet) return handleResponse({ status: 'error', message: 'Sheet not found.' });
-    const request = JSON.parse(e.postData.contents);
-    const data = sheet.getDataRange().getValues();
-    const headers = data.shift();
-
-    if (request.action === 'updateStatus') {
-      const { userId, newStatus } = request;
-      const userIdColIndex = headers.indexOf("UserID");
-      const statusColIndex = headers.indexOf("Status");
-
-      if (userIdColIndex === -1 || statusColIndex === -1) {
-        return handleResponse({ status: 'error', message: 'UserID or Status column not found.' });
-      }
-
-      for (let i = 0; i < data.length; i++) {
-        if (data[i][userIdColIndex] == userId) {
-          sheet.getRange(i + 2, statusColIndex + 1).setValue(newStatus);
-          return handleResponse({ status: 'success', message: 'Status updated for ' + userId });
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('user')) {
+            loadPublicView(urlParams.get('user'));
+        } else {
+            loadHomePage();
         }
-      }
-      return handleResponse({ status: 'error', message: 'User ID not found.' });
-    
-    } else if (request.action === 'createUser') {
-        const { userData } = request;
-        
-        // Generate new user ID
-        const userIdColIndex = headers.indexOf("UserID");
-        let lastId = 0;
-        if (userIdColIndex !== -1 && data.length > 0) {
-            const lastRow = data[data.length - 1];
-            const lastIdStr = lastRow[userIdColIndex];
-            if (lastIdStr && typeof lastIdStr === 'string' && lastIdStr.startsWith('USR')) {
-                lastId = parseInt(lastIdStr.replace('USR', '')) || 0;
-            }
-        }
-        const newId = 'USR' + ('000' + (lastId + 1)).slice(-3);
-
-        const newRow = headers.map(header => {
-            if (header === "UserID") return newId;
-            if (header === "DateRegistered") return new Date().toISOString();
-            // Use status from userData, otherwise default
-            if (header === "Status") return userData.Status || "Waiting for Approval";
-            return userData[header] || ""; // Match other userData to headers
-        });
-
-        sheet.appendRow(newRow);
-        
-        // Return the newly created user object
-        const createdUser = {};
-        headers.forEach((header, index) => {
-            createdUser[header] = newRow[index];
-        });
-
-        return handleResponse({ status: 'success', message: 'User created', newUser: createdUser });
     }
 
-    return handleResponse({ status: 'error', message: 'Invalid action.' });
-  } catch (err) {
-    return handleResponse({ status: 'error', message: err.message });
-  }
-}
-</code></pre>
-                            </details>
-                            <div><label for="scriptUrl" class="block mb-1 text-sm font-medium">Google Apps Script URL</label><input type="url" id="scriptUrl" value="${state.settings.scriptUrl}" placeholder="https://script.google.com/macros/s/..." class="w-full px-3 py-2 border rounded-md bg-[var(--bg-primary)] border-[var(--border-color)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" /></div>
-                        </div>
-                        <div class="bg-[var(--bg-secondary)] p-6 rounded-lg shadow-[var(--shadow)] border border-[var(--border-color)]">
-                            <h3 class="text-xl font-bold mb-2">2. Media Files Rendering (ImageKit.io)</h3>
-                            <p class="text-sm text-[var(--text-secondary)] mb-4">To automatically render profile pictures and logos from URLs, you can use ImageKit.io for optimization. This is optional. Get your key from <a href="https://imagekit.io/" target="_blank" class="text-[var(--primary)] hover:underline">ImageKit.io</a>.</p>
-                            <div><label for="imagekitKey" class="block mb-1 text-sm font-medium">ImageKit Public API Key</label><input type="text" id="imagekitKey" value="${state.settings.imagekitKey}" placeholder="public_xxxxxxxxxxxxxxxxxxxx" class="w-full px-3 py-2 border rounded-md bg-[var(--bg-primary)] border-[var(--border-color)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" /></div>
-                        </div>
-                        <button id="save-settings-btn" class="w-full px-6 py-3 text-white bg-[var(--primary)] rounded-md hover:opacity-90 font-bold">Save Settings & Sync</button>
-                    </div>
-                </div>`;
-            addSettingsPageEventListeners();
+    function applyTheme() {
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+            document.getElementById('darkModeToggle').querySelector('i').className = 'fas fa-sun';
+        } else {
+            document.body.classList.remove('dark-mode');
+            document.getElementById('darkModeToggle').querySelector('i').className = 'fas fa-moon';
+        }
+    }
+
+    function loadHomePage() {
+        applyCustomization({ brandname: 'Easy Listings' });
+        renderMapByIP();
+        allListings = [
+            { propertyId: 'P123', title: 'Modern Downtown Loft', subtitle: 'Financial District', description: 'A stunning loft with breathtaking city views, perfect for urban living.', price: 450000, negotiable: true, tags: ['2 Bedrooms', '2 Baths', 'Furnished'], images: ['https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=60', 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=60'], status: 'For Sale', category: 'Downtown Apartments', categoryDescription: 'Live in the heart of the city.' },
+            { propertyId: 'P124', title: 'Chic Studio with Balcony', subtitle: 'Arts District', description: 'A stylish and compact studio apartment with a private balcony, perfect for a young professional.', price: 320000, negotiable: false, tags: ['1 Bedroom', '1 Bath', 'Furnished'], images: ['https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=60'], status: 'For Sale', category: 'Downtown Apartments', categoryDescription: 'Live in the heart of the city.' },
+            { propertyId: 'P125', title: 'Penthouse with Rooftop Terrace', subtitle: 'City Center', description: 'Top-floor penthouse offering panoramic cityscapes from a private rooftop terrace. Includes premium amenities and modern finishes.', price: 890000, negotiable: true, tags: ['3 Bedrooms', '3 Baths', 'Furnished', 'Garage'], images: ['https://images.unsplash.com/photo-1605146769289-440113cc3d00?auto=format&fit=crop&w=800&q=60'], status: 'For Sale', category: 'Downtown Apartments', categoryDescription: 'Live in the heart of the city.' },
+            { propertyId: 'P456', title: 'Cozy Suburban Home', subtitle: 'Maple Creek Estates', description: 'Charming 3-bedroom home with a spacious backyard, ideal for families.', price: 280000, negotiable: false, tags: ['3 Bedrooms', '2 Baths', 'Garage'], images: ['https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=800&q=60'], status: 'Sold', category: 'Family Homes', categoryDescription: 'Perfect homes for growing families.' },
+            { propertyId: 'P457', title: 'Spacious Colonial with Pool', subtitle: 'Oakwood Neighborhood', description: 'Beautiful 4-bedroom colonial style home featuring a large in-ground pool and a beautifully landscaped yard.', price: 550000, negotiable: true, tags: ['4 Bedrooms', '3 Baths', 'Garage'], images: ['https://images.unsplash.com/photo-1572120360610-d971b9d7767c?auto=format&fit=crop&w=800&q=60'], status: 'For Sale', category: 'Family Homes', categoryDescription: 'Perfect homes for growing families.' },
+            { propertyId: 'P458', title: 'Modern Farmhouse on 5 Acres', subtitle: 'Green Valley', description: 'A newly built modern farmhouse with ample space for a family, surrounded by nature and tranquility.', price: 720000, negotiable: false, tags: ['4 Bedrooms', '3 Baths', 'Garage'], images: ['https://images.unsplash.com/photo-1588880331179-bc9b93a8cb5e?auto=format&fit=crop&w=800&q=60'], status: 'For Sale', category: 'Family Homes', categoryDescription: 'Perfect homes for growing families.' },
+            { propertyId: 'P789', title: 'Luxury Beachfront Villa', subtitle: 'Sunset Shores', description: 'An exquisite villa with direct beach access and panoramic ocean views.', price: 1250000, negotiable: true, tags: ['5 Bedrooms', '4 Baths', 'Furnished'], images: ['https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=800&q=60'], status: 'For Rent', category: 'Luxury Villas', categoryDescription: 'Experience the pinnacle of coastal living.' },
+            { propertyId: 'P790', title: 'Secluded Mountain Retreat', subtitle: 'Aspen Highlands', description: 'Escape to this breathtaking mountain retreat with stunning views, a private hot tub, and ski-in/ski-out access.', price: 2100000, negotiable: false, tags: ['5 Bedrooms', '5 Baths', 'Furnished', 'Garage'], images: ['https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?auto=format&fit=crop&w=800&q=60'], status: 'For Rent', category: 'Luxury Villas', categoryDescription: 'Experience the pinnacle of coastal living.' },
+            { propertyId: 'P791', title: 'Contemporary Architectural Gem', subtitle: 'Hillside Estates', description: 'A masterpiece of modern architecture with an infinity pool, home theater, and unparalleled privacy.', price: 3500000, negotiable: true, tags: ['5 Bedrooms', '6 Baths', 'Furnished', 'Garage'], images: ['https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=60'], status: 'For Rent', category: 'Luxury Villas', categoryDescription: 'Experience the pinnacle of coastal living.' }
+        ];
+        filterAndRenderListings();
+        renderTagFilters(allListings);
+        searchInput.disabled = false;
+    }
+
+    function loadPublicView(userId) {
+        // In a real app, you would fetch user data and listings here.
+        // For now, we'll use mock data and show the contact block.
+        const mockPublicUserData = {
+            brandname: 'John Doe Realty',
+            profilePicUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80',
+            whatsappNumber: '15551234567'
         };
+        applyCustomization(mockPublicUserData);
+        renderGetInTouchBlock(mockPublicUserData);
+        loadHomePage(); // Also load the listings
+    }
+    
+    // --- UI & CUSTOMIZATION ---
+    function applyCustomization(config) {
+        appConfig = config;
+        const brandName = config.brandname || 'Easy Listings';
+        appBrandNameDisplay.textContent = brandName;
+        const animationTexts = [`${brandName}`, "Our Listings Page"];
+        typeWriterAnimation(animationTexts);
+        mainHeader.style.backgroundImage = `url(${config.bannerimageurl || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=80'})`;
+        renderFooter(config);
+    }
+    
+    function typeWriterAnimation(words) {
+        clearTimeout(currentTypingTimeout);
+        brandAnimSpan.textContent = '';
+        let wordIndex = 0, charIndex = 0, isDeleting = false;
+        function type() {
+            const currentWord = words[wordIndex];
+            brandAnimSpan.textContent = isDeleting ? currentWord.substring(0, charIndex--) : currentWord.substring(0, charIndex++);
+            let typeSpeed = isDeleting ? 100 : 150;
+            if (!isDeleting && charIndex === currentWord.length + 1) { typeSpeed = 2000; isDeleting = true; } 
+            else if (isDeleting && charIndex === 0) { isDeleting = false; wordIndex = (wordIndex + 1) % words.length; typeSpeed = 500; }
+            currentTypingTimeout = setTimeout(type, typeSpeed);
+        }
+        type();
+    }
 
-        // --- MODAL LOGIC ---
-        const openModal = (modalHTML) => {
-            modalContainer.innerHTML = modalHTML;
-            lucide.createIcons();
-            modalContainer.classList.remove('hidden');
-            modalContainer.classList.add('flex');
-            modalContainer.querySelector('.modal-overlay').addEventListener('click', (e) => { if(e.target === e.currentTarget) closeModal(); });
-            modalContainer.querySelector('.close-modal-btn').addEventListener('click', closeModal);
-        };
-        const closeModal = () => { modalContainer.classList.add('hidden'); modalContainer.innerHTML = ''; };
+    function renderFooter(config) {
+        let footerHTML = (config.status === 'White Label' && config.brandname)
+            ? `<p>Copyright © 2024 • ${config.brandname}<br>All rights reserved.</p>`
+            : `<div class="bebell-footer"><p>Powered with 💖 by <a href="https://bebelldigitalsolutions.com" class="bebell-link" target="_blank">Bebell Digital Solutions.</a><br>Copyright © 2024 • All rights reserved.</p></div>`;
+        mainFooter.innerHTML = footerHTML;
+    }
 
-        const openUserModal = (userId) => {
-            const user = state.users.find(u => u.UserID === userId);
-            if (!user) return;
+    async function renderMapByIP() {
+        if (appConfig.googleMapsUrl) {
+            mapContainer.innerHTML = `<iframe src="${appConfig.googleMapsUrl}" allowfullscreen="" loading="lazy"></iframe>`;
+            return;
+        }
+        try {
+            const response = await fetch('https://ipapi.co/json/');
+            const data = await response.json();
+            const { latitude, longitude } = data;
+            const mapUrl = `https://maps.google.com/maps?q=${latitude},${longitude}&z=12&output=embed`;
+            mapContainer.innerHTML = `<iframe src="${mapUrl}" allowfullscreen="" loading="lazy"></iframe>`;
+        } catch (error) {
+            mapContainer.innerHTML = '<p style="text-align:center; padding: 2rem;">Could not determine location to display map.</p>';
+        }
+    }
 
-            const progress = calculateProfileProgress(user);
-            const progressEmoji = progress === 100 ? '🏆' : '🚀';
-            const infoRowHTML = (label, value, copyValue = null, isLink = false) => {
-                const displayValue = value || 'N/A';
-                const linkHTML = isLink && value ? `<a href="${value.startsWith('http') ? value : 'https://' + value}" target="_blank" rel="noopener noreferrer" class="text-[var(--primary)] hover:underline truncate">${value}</a>` : `<span class="truncate">${displayValue}</span>`;
-                const copyButton = copyValue && displayValue !== 'N/A' ? `<button class="copy-btn text-[var(--text-secondary)] hover:text-[var(--primary)] flex-shrink-0" data-copy="${copyValue}"><i data-lucide="copy" class="w-4 h-4"></i></button>` : '';
-                return `<div class="py-2.5 px-3 flex justify-between items-center bg-[var(--bg-primary)] rounded-md border border-[var(--border-color)]"><span class="font-medium text-[var(--text-secondary)] text-sm flex-shrink-0 mr-4">${label}</span><div class="flex items-center gap-2 text-sm text-right min-w-0">${linkHTML}${copyButton}</div></div>`;
-            };
+    function renderGetInTouchBlock(config) {
+        getInTouchBlock.style.display = 'block';
+        document.getElementById('getInTouchPic').style.backgroundImage = `url(${config.profilePicUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80'})`;
+        const whatsappUrl = `https://wa.me/${config.whatsappNumber || ''}`;
+        document.getElementById('getInTouchBtn').href = whatsappUrl;
+    }
+    
+    function filterAndRenderListings() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const activeTagBtn = tagFiltersContainer.querySelector('.active');
+        const selectedTag = activeTagBtn ? activeTagBtn.dataset.tag : 'all';
 
-            const modalHTML = `
-                <div class="w-full h-full p-4 flex items-center justify-center bg-black bg-opacity-50 modal-overlay">
-                    <div class="bg-[var(--bg-secondary)] rounded-lg w-full max-w-4xl max-h-[90vh] flex flex-col shadow-[var(--shadow)] border border-[var(--border-color)]">
-                        <div class="flex items-center justify-between p-4 border-b border-[var(--border-color)] flex-shrink-0">
-                            <h3 class="text-xl font-bold">User Details</h3>
-                            <button class="close-modal-btn p-2 rounded-full hover:bg-[var(--primary-light)]"><i data-lucide="x" class="w-6 h-6"></i></button>
-                        </div>
-                        <div class="p-6 overflow-y-auto space-y-6">
-                            <!-- Top Section -->
-                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                                <div class="border border-[var(--border-color)] rounded-lg p-4 flex items-center justify-center md:row-span-2">
-                                    <img src="${renderImage(user.ProfilePicURL, 'tr:w-400,h-400,fo-auto')}" class="w-32 h-32 rounded-full object-cover" alt="${user.Username}" onerror="this.src='https://placehold.co/400x400/e2e8f0/718096?text=Error'">
-                                </div>
-                                <div class="border border-[var(--border-color)] rounded-lg p-4 flex flex-col justify-center md:col-span-3">
-                                    <h4 class="text-2xl font-bold">${user.Username}</h4>
-                                    <p class="text-[var(--text-secondary)]">${user.BrandName}</p>
-                                </div>
-                                <div class="border border-[var(--border-color)] rounded-lg p-4 md:col-span-3">
-                                    <div class="flex justify-between items-center mb-1">
-                                        <h5 class="font-bold text-sm">Profile Progress</h5>
-                                        <span class="font-bold text-[var(--primary)] text-sm">${progress}%</span>
-                                    </div>
-                                    <div class="relative w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
-                                        <div class="bg-[var(--primary)] h-2.5 rounded-full" style="width: ${progress}%"></div>
-                                        <span class="absolute -top-1 text-lg" style="left: calc(${progress}% - 8px);">${progressEmoji}</span>
-                                    </div>
-                                </div>
-                                <div class="border border-[var(--border-color)] rounded-lg p-4 md:col-span-4">
-                                     <label for="status-update" class="text-sm font-medium mb-2 block">Update Status:</label>
-                                     <select id="status-update" data-userid="${user.UserID}" class="w-full p-2 border rounded-md bg-[var(--bg-primary)] border-[var(--border-color)] focus:ring-2 focus:ring-[var(--primary)] focus:outline-none">
-                                        ${Object.values(UserStatus).map(s => `<option value="${s}" ${user.Status === s ? 'selected' : ''}>${s}</option>`).join('')}
-                                     </select>
-                                </div>
-                            </div>
-
-                            <!-- Details Section -->
-                            <div class="border border-[var(--border-color)] rounded-lg p-4 space-y-2">
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-                                    ${infoRowHTML('User ID', user.UserID, user.UserID)}
-                                    ${infoRowHTML('Email', user.Email, user.Email)}
-                                    ${infoRowHTML('Shareable URL', user.ShareableURL, user.ShareableURL, true)}
-                                    ${infoRowHTML('Date Registered', formatDate(user.DateRegistered))}
-                                    ${infoRowHTML('Date Approved', formatDate(user.DateApproval))}
-                                    ${infoRowHTML('Primary Color', user.PrimaryColor, user.PrimaryColor)}
-                                    ${infoRowHTML('Top CTA Text', user.TopCTAText, user.TopCTAText)}
-                                    ${infoRowHTML('Top CTA Link', user.TopCTALink, user.TopCTALink, true)}
-                                    ${infoRowHTML('WhatsApp', user.WhatsAppURL, user.WhatsAppURL)}
-                                    ${infoRowHTML('Instagram', user.InstagramURL, user.InstagramURL, true)}
-                                    ${infoRowHTML('Facebook', user.FacebookURL, user.FacebookURL, true)}
-                                    ${infoRowHTML('YouTube', user.YouTubeURL, user.YouTubeURL, true)}
-                                    ${infoRowHTML('LinkedIn', user.LinkedInURL, user.LinkedInURL, true)}
-                                    ${infoRowHTML('X (Twitter)', user.XURL, user.XURL, true)}
-                                    ${infoRowHTML('Telegram', user.TelegramURL, user.TelegramURL, true)}
-                                    ${infoRowHTML('Website', user.WebsiteURL, user.WebsiteURL, true)}
-                                </div>
-                                <div class="border-t border-[var(--border-color)] my-2 pt-4">
-                                    <form id="whatsapp-form">
-                                        <label for="whatsapp-template" class="block mb-1 text-sm font-medium">Send WhatsApp Message</label>
-                                        <div class="flex gap-2">
-                                            <select id="whatsapp-template" ${!user.WhatsAppURL ? 'disabled' : ''} class="flex-1 p-2 border rounded-md bg-[var(--bg-primary)] border-[var(--border-color)] disabled:opacity-50">
-                                                <option value="">Select a template...</option>
-                                                ${state.templates.map((t, i) => `<option value="${i}">${t.name}</option>`).join('')}
-                                            </select>
-                                            <button type="submit" ${!user.WhatsAppURL ? 'disabled' : ''} class="px-4 py-2 text-white bg-green-500 rounded-md hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
-                                                <i data-lucide="send" class="w-4 h-4"></i> Send
-                                            </button>
-                                        </div>
-                                        ${!user.WhatsAppURL ? '<p class="text-xs text-red-500 mt-1">No WhatsApp number available.</p>' : ''}
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-            openModal(modalHTML);
-            
-            document.getElementById('status-update').addEventListener('change', (e) => updateUserStatus(e.target.dataset.userid, e.target.value));
-            document.getElementById('whatsapp-form').addEventListener('submit', (e) => {
-                e.preventDefault();
-                const selectedIndex = document.getElementById('whatsapp-template').value;
-                if (selectedIndex === "" || !user.WhatsAppURL) return;
-                let message = state.templates[selectedIndex].message;
-                const replacements = { '{{Username}}': user.Username, '{{BrandName}}': user.BrandName, '{{UserID}}': user.UserID, '{{Email}}': user.Email, '{{DateRegistered}}': formatDate(user.DateRegistered), '{{Status}}': user.Status };
-                message = message.replace(/{{Username}}|{{BrandName}}|{{UserID}}|{{Email}}|{{DateRegistered}}|{{Status}}/g, matched => replacements[matched]);
-                window.open(`https://wa.me/${user.WhatsAppURL}?text=${encodeURIComponent(message)}`, '_blank');
-            });
-            modalContainer.querySelectorAll('.copy-btn').forEach(btn => { btn.addEventListener('click', () => copyToClipboard(btn.dataset.copy, btn)); });
-        };
-
-        const openAdminModal = () => {
-            const modalHTML = `
-                <div class="w-full h-full p-4 flex items-center justify-center bg-black bg-opacity-50 modal-overlay">
-                    <div class="bg-[var(--bg-secondary)] rounded-lg w-full max-w-md max-h-[90vh] flex flex-col shadow-[var(--shadow)] border border-[var(--border-color)]">
-                        <div class="flex items-center justify-between p-4 border-b border-[var(--border-color)]"><h3 class="text-xl font-bold">Edit Admin Profile</h3><button class="close-modal-btn p-2 rounded-full hover:bg-[var(--primary-light)]"><i data-lucide="x" class="w-6 h-6"></i></button></div>
-                        <form id="admin-profile-form" class="p-6 space-y-4">
-                            <div><label for="admin-name-input" class="block mb-1 text-sm font-medium">Username</label><input type="text" id="admin-name-input" value="${state.admin.name}" class="w-full px-3 py-2 border rounded-md bg-[var(--bg-primary)] border-[var(--border-color)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" /></div>
-                            <div><label for="admin-avatar-input" class="block mb-1 text-sm font-medium">Avatar URL</label><input type="url" id="admin-avatar-input" value="${state.admin.avatar}" class="w-full px-3 py-2 border rounded-md bg-[var(--bg-primary)] border-[var(--border-color)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" /></div>
-                            <button type="submit" class="w-full px-4 py-2 text-white bg-[var(--primary)] rounded-md hover:opacity-90">Save Changes</button>
-                        </form>
-                    </div>
-                </div>`;
-            openModal(modalHTML);
-            document.getElementById('admin-profile-form').addEventListener('submit', (e) => {
-                e.preventDefault();
-                state.admin.name = document.getElementById('admin-name-input').value;
-                state.admin.avatar = document.getElementById('admin-avatar-input').value;
-                saveToStorage('adminProfile', state.admin);
-                renderAdminProfile();
-                renderCurrentPage(); // To update dashboard greeting
-                closeModal();
-            });
-        };
-
-        const openAddNewLinkModal = () => {
-            const modalHTML = `
-                <div class="w-full h-full p-4 flex items-center justify-center bg-black bg-opacity-50 modal-overlay">
-                    <div class="bg-[var(--bg-secondary)] rounded-lg w-full max-w-lg max-h-[90vh] flex flex-col shadow-[var(--shadow)] border border-[var(--border-color)]">
-                        <div class="flex items-center justify-between p-4 border-b border-[var(--border-color)]"><h3 class="text-xl font-bold">Add New Nav Link</h3><button class="close-modal-btn p-2 rounded-full hover:bg-[var(--primary-light)]"><i data-lucide="x" class="w-6 h-6"></i></button></div>
-                        <form id="add-new-link-form" class="p-6 space-y-4">
-                            <div><label for="link-name" class="block mb-1 text-sm font-medium">Button Name*</label><input type="text" id="link-name" required class="w-full px-3 py-2 border rounded-md bg-[var(--bg-primary)] border-[var(--border-color)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" /></div>
-                            <div><label for="link-url" class="block mb-1 text-sm font-medium">URL*</label><input type="url" id="link-url" required placeholder="https://example.com" class="w-full px-3 py-2 border rounded-md bg-[var(--bg-primary)] border-[var(--border-color)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" /></div>
-                            <button type="submit" class="w-full px-4 py-2 text-white bg-[var(--primary)] rounded-md hover:opacity-90">Add Link</button>
-                        </form>
-                    </div>
-                </div>`;
-            openModal(modalHTML);
-            document.getElementById('add-new-link-form').addEventListener('submit', (e) => {
-                e.preventDefault();
-                const name = document.getElementById('link-name').value;
-                const url = document.getElementById('link-url').value;
-                if (!name.trim() || !url.trim()) return;
-
-                const newLink = {
-                    id: `custom-${new Date().getTime()}`,
-                    name,
-                    url,
-                };
-
-                state.customNavLinks.push(newLink);
-                saveToStorage('customNavLinks', state.customNavLinks);
-                renderCustomNavLinks();
-                closeModal();
-                showToast('New link added successfully!', 'success');
-            });
-        };
-
-        // --- NAVIGATION & UI RENDERING ---
-        const renderCustomNavLinks = () => {
-            const container = document.getElementById('custom-nav-links-container');
-            if (!container) return;
-            container.innerHTML = state.customNavLinks.map(link => `
-                <a href="#" data-page="${link.id}" data-url="${link.url}" data-title="${link.name}" class="nav-link flex items-center justify-between p-3 rounded-lg group">
-                    <div class="flex items-center overflow-hidden">
-                        <i data-lucide="external-link" class="w-6 h-6 mr-4 flex-shrink-0"></i>
-                        <span class="truncate">${link.name}</span>
-                    </div>
-                    <button class="delete-link-btn p-1 text-red-500 hover:bg-red-100 dark:hover:bg-red-900 rounded-full" data-id="${link.id}" title="Delete Link">
-                        <i data-lucide="x" class="w-4 h-4"></i>
-                    </button>
-                </a>
-            `).join('');
-            lucide.createIcons();
-        };
-
-        const renderIframePage = (url, title) => {
-            pageContainer.innerHTML = `<iframe src="${url}" class="w-full h-full border-0 rounded-lg" title="${title}"></iframe>`;
-            document.getElementById('mobile-page-title').textContent = title;
-        };
-
-        const handleNavigation = (page, url = null, title = null) => {
-            state.currentPage = page;
-            
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.classList.toggle('bg-[var(--primary-light)]', link.dataset.page === page);
-                link.classList.toggle('text-[var(--primary)]', link.dataset.page === page);
-            });
-
-            if (url) {
-                renderIframePage(url, title);
-            } else {
-                renderCurrentPage();
-            }
-        };
-
-        const renderCurrentPage = () => {
-            const pageName = state.currentPage.charAt(0).toUpperCase() + state.currentPage.slice(1);
-            document.getElementById('mobile-page-title').textContent = pageName;
-            
-            switch(state.currentPage) {
-                case 'dashboard': renderDashboardPage(); break;
-                case 'users': renderUsersPage(); break;
-                case 'templates': renderTemplatesPage(); break;
-                case 'settings': renderSettingsPage(); break;
-                default: renderDashboardPage();
-            }
-        };
+        const filtered = allListings.filter(listing => {
+            const tagMatch = selectedTag === 'all' || (listing.tags && listing.tags.includes(selectedTag));
+            const searchMatch = !searchTerm || 
+                listing.title.toLowerCase().includes(searchTerm) ||
+                listing.subtitle.toLowerCase().includes(searchTerm) ||
+                listing.description.toLowerCase().includes(searchTerm) ||
+                (listing.tags && listing.tags.some(t => t.toLowerCase().includes(searchTerm)));
+            return tagMatch && searchMatch;
+        });
+        renderListings(filtered);
+    }
+    
+    function renderListings(listings) {
+        listingsContainer.innerHTML = '';
         
-        const renderAdminProfile = () => {
-            document.getElementById('admin-user-name').textContent = state.admin.name;
-            document.getElementById('admin-avatar').src = state.admin.avatar;
-            document.getElementById('admin-avatar').onerror = () => { document.getElementById('admin-avatar').src = 'https://i.pravatar.cc/150?u=admin-error'; };
-        };
+        // Clear all existing carousel intervals
+        Object.values(carouselIntervals).forEach(interval => clearInterval(interval));
+        carouselIntervals = {};
+        
+        const groupedByCategory = listings.reduce((acc, listing) => {
+            const category = (listing.category || '').trim() || 'Other Listings';
+            if (!acc[category]) {
+                acc[category] = {
+                    description: listing.categoryDescription || '',
+                    items: []
+                };
+            }
+            acc[category].items.push(listing);
+            return acc;
+        }, {});
 
-        const applyTheme = (theme) => {
-            const root = document.documentElement, themeIcon = document.getElementById('theme-icon');
-            if (theme === 'dark') { root.classList.add('dark'); themeIcon.setAttribute('data-lucide', 'sun'); } 
-            else { root.classList.remove('dark'); themeIcon.setAttribute('data-lucide', 'moon'); }
-            lucide.createIcons();
-            if (state.currentPage === 'dashboard') renderCharts();
-        };
+        for (const categoryName in groupedByCategory) {
+            const section = document.createElement('section');
+            section.className = 'listing-section';
 
-        // --- MOBILE NAVIGATION & SWIPE ---
-        const openMobileSidebar = () => {
-            sidebar.classList.add('sidebar-mobile-open');
-            document.getElementById('sidebar-overlay').classList.remove('hidden');
-        };
-        const closeMobileSidebar = () => {
-            sidebar.classList.remove('sidebar-mobile-open');
-            document.getElementById('sidebar-overlay').classList.add('hidden');
-        };
+            const header = document.createElement('header');
+            header.className = 'section-header';
+            header.innerHTML = `
+                <h2>${categoryName}</h2>
+                <p>${groupedByCategory[categoryName].description}</p>
+            `;
+            section.appendChild(header);
 
-        let touchstartX = 0;
-        let touchendX = 0;
-        const SWIPE_THRESHOLD = 50; // Minimum distance for a swipe
-        const SWIPE_EDGE_ZONE = 50;  // Px from edge to trigger open
+            const grid = document.createElement('div');
+            grid.className = 'grid-container';
+            groupedByCategory[categoryName].items.forEach(listing => {
+                grid.appendChild(createListingCard(listing));
+            });
+            section.appendChild(grid);
+            listingsContainer.appendChild(section);
+        }
+        initializeCarousels();
+    }
 
-        const handleGesture = () => {
-            const swipeDist = touchendX - touchstartX;
-            const isSidebarOpen = sidebar.classList.contains('sidebar-mobile-open');
-            // Swipe left
-            if (swipeDist < -SWIPE_THRESHOLD && isSidebarOpen) closeMobileSidebar();
-            // Swipe right
-            if (swipeDist > SWIPE_THRESHOLD && !isSidebarOpen && touchstartX < SWIPE_EDGE_ZONE) openMobileSidebar();
+    function renderTagFilters(listings) {
+        const allTags = listings.flatMap(l => l.tags || []);
+        const uniqueTags = [...new Set(allTags)];
+        tagFiltersContainer.innerHTML = `<button class="tag-filter-btn active" data-tag="all">All</button>` +
+            uniqueTags.map(tag => `<button class="tag-filter-btn" data-tag="${tag}">${tag}</button>`).join('');
+    }
+
+    function createListingCard(listing) {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.dataset.propertyId = listing.propertyId;
+
+        const priceHTML = listing.price ? `
+            <div class="card-price">
+                $${new Intl.NumberFormat().format(listing.price)}
+                ${listing.negotiable ? '<span class="negotiable">(Negotiable)</span>' : ''}
+            </div>` : '';
+        
+        const tagsHTML = (listing.tags || []).map(tag => `<span class="card-tag">${tag}</span>`).join('');
+
+        let primaryCtaHTML = '';
+        if (appConfig.enableLeadForm && appConfig.status === 'White Label') {
+            primaryCtaHTML = `<button class="btn btn-primary lead-btn">Inquire Now</button>`;
+        } else if (appConfig.whatsappNumber) {
+            const message = (appConfig.whatsappMessage || "Hello, I'm interested in the property with ID: [PropertyID].").replace('[PropertyID]', listing.propertyId);
+            const whatsappUrl = `https://wa.me/${appConfig.whatsappNumber}?text=${encodeURIComponent(message)}`;
+            primaryCtaHTML = `<a href="${whatsappUrl}" target="_blank" class="btn btn-secondary">Contact via WhatsApp</a>`;
         }
 
-        // --- DATA EXPORT ---
-        const downloadCSV = () => {
-            const users = getFilteredUsers();
-            if(users.length === 0) { showToast('No users to export.', 'error'); return; }
-            const headers = Object.keys(users[0]);
-            const csvRows = [headers.join(','), ...users.map(row => headers.map(fieldName => JSON.stringify(row[fieldName])).join(','))];
-            const blob = new Blob([csvRows.join('\n')], { type: 'text/csv' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.setAttribute('href', url);
-            a.setAttribute('download', 'users.csv');
-            a.click();
-            URL.revokeObjectURL(url);
-        };
-        
-        const downloadPDF = () => {
-            const users = getFilteredUsers();
-            if(users.length === 0) { showToast('No users to export.', 'error'); return; }
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            const head = [['UserID', 'Username', 'Brand', 'Email', 'Status', 'Registered']];
-            const body = users.map(u => [u.UserID, u.Username, u.BrandName, u.Email, u.Status, formatDate(u.DateRegistered)]);
-            
-            doc.autoTable({ head, body });
-            doc.save('users.pdf');
-        };
+        card.innerHTML = `
+            <div class="card-admin-controls">
+                <button class="admin-btn edit-btn" title="Edit"><i class="fas fa-pencil-alt"></i></button>
+                <button class="admin-btn delete-btn" title="Delete"><i class="fas fa-trash"></i></button>
+            </div>
+            <div class="card-carousel">
+                <div class="carousel-track">
+                    ${listing.images.map(img => `<div class="carousel-slide"><img src="${img}" alt="${listing.title}" onerror="this.src='https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=60'"></div>`).join('')}
+                </div>
+                <div class="carousel-badge">${listing.status}</div>
+            </div>
+            <div class="card-body">
+                <h3 class="card-title">${listing.title}</h3>
+                <p class="card-subtitle">${listing.subtitle}</p>
+                <p class="card-description">${listing.description}</p>
+                ${priceHTML}
+                <div class="card-tags">${tagsHTML}</div>
+                <div class="card-ctas">
+                    ${primaryCtaHTML}
+                </div>
+            </div>
+        `;
+        return card;
+    }
+    
+    function initializeCarousels() {
+        document.querySelectorAll('.card-carousel').forEach((carousel, index) => {
+            const track = carousel.querySelector('.carousel-track');
+            const slides = Array.from(track.children);
+            if (slides.length <= 1) return;
 
-        // --- NOTIFICATIONS ---
-        let toastTimeout;
-        const showToast = (message, type = 'success') => {
-            const toast = document.getElementById('toast');
-            clearTimeout(toastTimeout);
-            toast.textContent = message;
-            toast.className = 'fixed bottom-5 right-5 text-white px-4 py-2 rounded-lg shadow-lg transform transition-all duration-300'; // Reset
+            let currentIndex = 0;
             
-            if (type === 'error') toast.classList.add('bg-red-500');
-            else if (type === 'loading') toast.classList.add('bg-blue-500');
-            else toast.classList.add('bg-green-500');
-
-            toast.classList.remove('translate-y-20', 'opacity-0');
-            toastTimeout = setTimeout(() => {
-                toast.classList.add('translate-y-20', 'opacity-0');
+            // Clear any existing interval for this carousel
+            if (carouselIntervals[index]) {
+                clearInterval(carouselIntervals[index]);
+            }
+            
+            carouselIntervals[index] = setInterval(() => {
+                currentIndex = (currentIndex + 1) % slides.length;
+                track.style.transform = `translateX(-${currentIndex * 100}%)`;
             }, 3000);
-        };
 
-
-        // --- INITIALIZATION ---
-        const init = async () => {
-            state.theme = getFromStorage('theme', 'light');
-            state.templates = getFromStorage('whatsappTemplates', [{ id: '1', name: "Onboarding Welcome", message: "Hello {{Username}}! Welcome to EasyListings." }]);
-            state.settings = getFromStorage('appSettings', { scriptUrl: '', imagekitKey: '' });
-            state.admin = getFromStorage('adminProfile', { name: 'Admin User', avatar: 'https://i.pravatar.cc/150?u=admin' });
-            state.customNavLinks = getFromStorage('customNavLinks', []);
-            
-            renderAdminProfile();
-            applyTheme(state.theme);
-            renderCustomNavLinks();
-            lucide.createIcons();
-            handleNavigation('dashboard');
-            await fetchUsers();
-
-            // Mobile nav listeners
-            document.getElementById('sidebar-open-btn').addEventListener('click', openMobileSidebar);
-            document.getElementById('sidebar-close-btn').addEventListener('click', closeMobileSidebar);
-            document.getElementById('sidebar-overlay').addEventListener('click', closeMobileSidebar);
-
-            // General listeners
-            document.getElementById('nav-links').addEventListener('click', (e) => {
-                const link = e.target.closest('a.nav-link');
-                const deleteBtn = e.target.closest('.delete-link-btn');
-
-                if (deleteBtn) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    const linkId = deleteBtn.dataset.id;
-                    state.customNavLinks = state.customNavLinks.filter(l => l.id !== linkId);
-                    saveToStorage('customNavLinks', state.customNavLinks);
-                    renderCustomNavLinks();
-                    showToast('Link removed.', 'success');
-                    return;
-                }
-
-                if (link) {
-                    e.preventDefault();
-                    handleNavigation(link.dataset.page, link.dataset.url, link.dataset.title);
-                    if (window.innerWidth <= 780) closeMobileSidebar();
-                }
+            carousel.addEventListener('mouseenter', () => {
+                clearInterval(carouselIntervals[index]);
             });
+            
+            carousel.addEventListener('mouseleave', () => {
+                carouselIntervals[index] = setInterval(() => {
+                    currentIndex = (currentIndex + 1) % slides.length;
+                    track.style.transform = `translateX(-${currentIndex * 100}%)`;
+                }, 3000);
+            });
+        });
+    }
 
-            document.getElementById('add-new-link-btn').addEventListener('click', openAddNewLinkModal);
-            document.getElementById('theme-toggle').addEventListener('click', () => { state.theme = state.theme === 'light' ? 'dark' : 'light'; saveToStorage('theme', state.theme); applyTheme(state.theme); });
-            document.getElementById('admin-profile-section').addEventListener('click', openAdminModal);
-            document.getElementById('notification-btn').addEventListener('click', () => showToast('This is a test notification.'));
+    // --- AUTH & ONBOARDING ---
+    async function handleLogin(e) {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        showNotification('Authenticating...', 'info');
 
-            // Swipe listeners
-            document.addEventListener('touchstart', e => { touchstartX = e.changedTouches[0].screenX; }, { passive: true });
-            document.addEventListener('touchend', e => { touchendX = e.changedTouches[0].screenX; handleGesture(); });
-        };
+        try {
+            // MOCK LOGIC
+            let result;
+            const mockUser = localStorage.getItem(email);
+            if (!mockUser) {
+                result = { status: 'new_user_pending', message: 'Your access request has been submitted.' };
+                localStorage.setItem(email, JSON.stringify({ password, status: 'Waiting for Approval' }));
+            } else {
+                const userData = JSON.parse(mockUser);
+                if (userData.password !== password) {
+                    result = { status: 'invalid_credentials', message: 'Invalid email or password.' };
+                } else {
+                    switch(userData.status) {
+                        case 'Waiting for Approval': result = { status: 'pending_approval', message: 'Your account is still pending approval.' }; break;
+                        case 'Published': result = { status: 'setup_required', message: 'Login successful! Please complete your profile.', userData }; break;
+                        case 'Active': result = { status: 'login_success', message: 'Welcome back!', userData }; break;
+                        case 'Blocked': result = { status: 'blocked', message: `Your account is blocked. <a href="${LIFETIME_DEAL_URL}" target="_blank">Purchase a license</a> to continue.` }; break;
+                    }
+                }
+            }
+            // END MOCK
+            
+            if(loginMessage) loginMessage.innerHTML = result.message;
+            if (result.status === 'login_success') grantAdminAccess(result.userData);
+            else if (result.status === 'setup_required') {
+                closeModal(loginModal);
+                document.getElementById('setupEmail').value = email;
+                openModal(setupModal);
+                if(window.triggerConfetti) window.triggerConfetti();
+            }
+        } catch (error) {
+            if(loginMessage) loginMessage.textContent = '⚠️ Connection error.';
+        } finally {
+            hideNotification();
+        }
+    }
 
-        init();
-    });
-    </script>
+    function grantAdminAccess(userData) {
+        isLoggedIn = true;
+        document.body.classList.add('admin-logged-in');
+        closeModal(loginModal);
+        showNotification('Login Successful!', 'success');
+        if(window.triggerConfetti) window.triggerConfetti();
+        applyCustomization(userData);
+        if (userData.status === 'White Label') {
+            document.getElementById('whiteLabelSettings').style.display = 'block';
+        }
+        filterAndRenderListings(); // Re-render to show admin controls
+    }
+    
+    // --- MODALS & EVENT LISTENERS ---
+    function openModal(modal) { if(modal) modal.classList.add('active'); }
+    function closeModal(modal) { if(modal) modal.classList.remove('active'); }
+
+    function setupEventListeners() {
+        document.getElementById('settingsBtn').addEventListener('click', () => isLoggedIn ? openModal(settingsModal) : openModal(loginModal));
+        document.getElementById('addNewEntryBtn').addEventListener('click', () => isLoggedIn ? openModal(document.getElementById('editCardModal')) : openModal(loginModal));
+        document.getElementById('darkModeToggle').addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+            applyTheme();
+        });
+        document.querySelectorAll('.modal-close').forEach(btn => btn.addEventListener('click', () => closeModal(btn.closest('.modal'))));
+        document.getElementById('loginForm').addEventListener('submit', handleLogin);
+
+        tagFiltersContainer.addEventListener('click', (e) => {
+            if (e.target.classList.contains('tag-filter-btn')) {
+                tagFiltersContainer.querySelector('.active').classList.remove('active');
+                e.target.classList.add('active');
+                filterAndRenderListings();
+            }
+        });
+
+        searchInput.addEventListener('input', filterAndRenderListings);
+
+        let lastScrollTop = 0;
+        window.addEventListener('scroll', function() {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            topMenuBar.classList.toggle('hidden', scrollTop > lastScrollTop && scrollTop > 100);
+            backToTopBtn.style.display = scrollTop > 300 ? 'block' : 'none';
+            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+        }, false);
+        backToTopBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    }
+
+    // --- NOTIFICATIONS ---
+    let notificationTimeout;
+    function showNotification(message, type = 'info') {
+        if (!notificationBanner) return;
+        notificationBanner.textContent = message;
+        notificationBanner.style.backgroundColor = type === 'error' ? '#e53e3e' : 'var(--accent)';
+        notificationBanner.classList.add('show');
+        clearTimeout(notificationTimeout);
+        notificationTimeout = setTimeout(() => notificationBanner.classList.remove('show'), 3000);
+    }
+    function hideNotification() { 
+        if(notificationBanner) notificationBanner.classList.remove('show'); 
+    }
+
+    initializeApp();
+});
+</script>
 </body>
 </html>
+
+
+
