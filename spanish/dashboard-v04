@@ -419,7 +419,7 @@
 
         // --- GLOBAL STATE & CONSTANTS ---
         const UserStatus = {
-            WAITING: 'Esperando Aprobación',
+            WAITING: 'En Espera',
             PUBLISHED: 'Publicado',
             WHITE_LABEL: 'Marca Blanca',
             AGENCY: 'Agencia',
