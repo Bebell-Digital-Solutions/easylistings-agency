@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Firmas de Correo Moderno</title>
+    
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        /* Custom styles to complement Tailwind CSS */
+        :root {
+            --primary-color: #DF1783;
+            --primary-color-hover: #c91576;
+            --background-color: #f7fafc;
+            --card-bg: #ffffff;
+            --text-color: #4a5568;
+            --input-bg: #fff;
+            --input-border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        html.dark {
+            --primary-color: #f03a99;
+            --primary-color-hover: #d13185;
+            --background-color: #1a202c;
+            --card-bg: #2d3748;
+            --text-color: #e2e8f0;
+            --input-bg: #4a5568;
+            --input-border: #718096;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            padding-top: 120px; /* Add padding to prevent content from being hidden behind the fixed nav bar */
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--input-border);
+            border-radius: 0.5rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary-color) 20%, transparent);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-align: center;
+            transition: background-color 0.3s;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-color-hover);
+        }
+        
+        .copy-pill-btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.375rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .copy-pill-btn:hover {
+            background-color: var(--primary-color-hover);
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Custom styles for the color picker */
+        input[type="color"] {
+            -webkit-appearance: none;
+            width: 48px;
+            height: 48px;
+            border: none;
+            padding: 0;
+            border-radius: 0.5rem;
+            cursor: pointer;
+        }
+
+        input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+
+        input[type="color"]::-webkit-color-swatch {
+            border: 1px solid var(--input-border);
+            border-radius: 0.5rem;
+        }
+        
+        /* Custom toast for notifications */
+        #toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #2d3748;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s, bottom 0.3s;
+            z-index: 1200;
+        }
+
+        #toast.show {
+            opacity: 1;
+            visibility: visible;
+            bottom: 30px;
+        }
+
+        /* Top Menu Bar Styles */
+        .top-menu-bar {
+            position: fixed;
+            top: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 2rem);
+            max-width: 1200px;
+            z-index: 1100;
+            background-color: color-mix(in srgb, var(--card-bg) 85%, transparent);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--input-border);
+            border-radius: 12px;
+            padding: 0 1rem;
+            transition: top 0.3s ease-in-out;
+        }
+
+        .top-menu-content {
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        #appLogo {
+            height: 40px;
+            width: 40px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        #appBrandNameDisplay {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-color);
+        }
+
+        .top-menu-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fab {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            border: 1px solid var(--input-border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .fab:hover {
+            background-color: var(--input-border);
+            transform: scale(1.1);
+        }
+
+        /* Right Sliding Panel for Saved Signatures */
+        #savedSignaturesPanel {
+            position: fixed;
+            top: 0;
+            right: -400px; /* Hidden by default */
+            width: 380px;
+            height: 100%;
+            background-color: var(--card-bg);
+            box-shadow: -10px 0 20px -10px rgba(0,0,0,0.2);
+            z-index: 1300;
+            transition: right 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            display: flex;
+            flex-direction: column;
+        }
+
+        #savedSignaturesPanel.show {
+            right: 0;
+        }
+        
+        .panel-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--input-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #signatureList {
+            padding: 1rem;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        .signature-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            background-color: var(--background-color);
+            border: 1px solid var(--input-border);
+        }
+        .signature-item-name {
+            cursor: pointer;
+            flex-grow: 1;
+            margin-right: 1rem;
+            font-weight: 500;
+        }
+        .signature-item-actions button {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+        }
+        .signature-item-actions button:hover {
+            background-color: var(--input-border);
+        }
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1250;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+        #overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Top Menu Bar -->
+    <div class="top-menu-bar">
+        <div class="top-menu-content">
+            <div class="logo-container">
+                <img id="appLogo" src="https://bucket.mlcdn.com/a/3336/3336910/images/41f0803ae2f9a8999c60c059f7a7db0ac2f697ac.png" alt="Signature Logo">
+                <span id="appBrandNameDisplay" class="hidden sm:inline">Easy Signature</span>
+            </div>
+            
+            <div class="top-menu-actions">
+                <div class="fab" id="viewSavedSignaturesBtn" title="Ver Firmas Guardadas"><i class="fas fa-bookmark"></i></div>
+                <div class="fab" title="Centro de Ayuda" onclick="showToast('¡El centro de ayuda estará disponible pronto!')"><i class="fa fa-info-circle"></i></div>
+                <div class="fab" id="darkModeToggle" title="Cambiar Tema"><i class="fas fa-moon"></i></div>
+                <button id="saveSignatureBtn" class="btn-primary ml-2 hidden sm:block">Guardar Firma</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mx-auto p-4 md:p-8" style="max-width: 1200px;">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold" style="color: var(--primary-color);">Generador de Firmas de Correo</h1>
+            <p class="text-gray-600 dark:text-gray-400 mt-2">Crea tu firma de correo profesional en minutos.</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Left Column: Form Inputs -->
+            <div id="form-container">
+                <form id="signatureForm" class="space-y-6">
+                    
+                    <!-- Personal Info -->
+                    <div class="card">
+                        <h2 class="text-xl font-semibold mb-4 border-b pb-2 border-gray-200 dark:border-gray-600">Información Personal</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="fullName" class="form-label">Nombre Completo</label>
+                                <input type="text" id="fullName" class="form-input" placeholder="Ej: Juan Pérez" required>
+                            </div>
+                            <div>
+                                <label for="jobTitle" class="form-label">Cargo</label>
+                                <input type="text" id="jobTitle" class="form-input" placeholder="Ej: Gerente de Marketing">
+                            </div>
+                             <div>
+                                <label for="department" class="form-label">Departamento</label>
+                                <input type="text" id="department" class="form-input" placeholder="Ej: Ventas">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Company Details -->
+                    <div class="card">
+                        <h2 class="text-xl font-semibold mb-4 border-b pb-2 border-gray-200 dark:border-gray-600">Detalles de la Empresa</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="companyName" class="form-label">Nombre de la Empresa</label>
+                                <input type="text" id="companyName" class="form-input" placeholder="Ej: Innovate Corp">
+                            </div>
+                            <div>
+                                <label for="website" class="form-label">URL del Sitio Web</label>
+                                <input type="url" id="website" class="form-input" placeholder="https://ejemplo.com">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label for="address" class="form-label">Dirección</label>
+                                <textarea id="address" class="form-input h-24" placeholder="123 Calle Innovación, Ciudad Tecnológica"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact Info -->
+                    <div class="card">
+                         <h2 class="text-xl font-semibold mb-4 border-b pb-2 border-gray-200 dark:border-gray-600">Información de Contacto</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="email" class="form-label">Correo Electrónico</label>
+                                <input type="email" id="email" class="form-input" placeholder="juan.perez@ejemplo.com" required>
+                            </div>
+                            <div>
+                                <label for="mainPhone" class="form-label">Teléfono Principal</label>
+                                <input type="tel" id="mainPhone" class="form-input" placeholder="+1 (555) 123-4567">
+                            </div>
+                            <div>
+                                <label for="mobilePhone" class="form-label">Teléfono Móvil</label>
+                                <input type="tel" id="mobilePhone" class="form-input" placeholder="+1 (555) 987-6543">
+                            </div>
+                            <div>
+                                <label for="directPhone" class="form-label">Teléfono Directo</label>
+                                <input type="tel" id="directPhone" class="form-input" placeholder="+1 (555) 555-5555">
+                            </div>
+                             <div>
+                                <label for="faxNumber" class="form-label">Número de Fax</label>
+                                <input type="tel" id="faxNumber" class="form-input" placeholder="+1 (555) 111-2222">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Social Media -->
+                    <div class="card">
+                        <h2 class="text-xl font-semibold mb-4 border-b pb-2 border-gray-200 dark:border-gray-600">Redes Sociales y Otros Enlaces (opcional)</h2>
+                        <div class="grid grid-cols-1 gap-4">
+                             <input type="url" id="linkedin" class="form-input" placeholder="URL de LinkedIn">
+                             <input type="url" id="twitter" class="form-input" placeholder="URL de Twitter">
+                             <input type="url" id="instagram" class="form-input" placeholder="URL de Instagram">
+                             <input type="url" id="facebook" class="form-input" placeholder="URL de Facebook">
+                             <input type="url" id="youtube" class="form-input" placeholder="URL de YouTube">
+                             <input type="url" id="pinterest" class="form-input" placeholder="URL de Pinterest">
+                             <input type="url" id="tiktok" class="form-input" placeholder="URL de TikTok">
+                             <input type="url" id="snapchat" class="form-input" placeholder="URL de Snapchat">
+                             <input type="url" id="reddit" class="form-input" placeholder="URL de Reddit">
+                             <input type="url" id="tumblr" class="form-input" placeholder="URL de Tumblr">
+                             <input type="url" id="vimeo" class="form-input" placeholder="URL de Vimeo">
+                             <input type="url" id="threads" class="form-input" placeholder="URL de Threads">
+                             <input type="text" id="skype" class="form-input" placeholder="Usuario de Skype">
+                             <input type="url" id="whatsapp" class="form-input" placeholder="URL de WhatsApp (ej: wa.me/1..)">
+                             <input type="url" id="telegram" class="form-input" placeholder="URL de Telegram (ej: t.me/...)">
+                             <input type="url" id="googlemaps" class="form-input" placeholder="URL de Google Maps">
+                        </div>
+                    </div>
+
+                    <!-- Customization -->
+                    <div class="card">
+                        <h2 class="text-xl font-semibold mb-4 border-b pb-2 border-gray-200 dark:border-gray-600">Personalización</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Left side for buttons -->
+                            <div class="space-y-6">
+                                <div>
+                                    <label for="logoUpload" class="form-label mb-2 block">Logo / Foto de Perfil</label>
+                                    <input type="file" id="logoUpload" accept="image/*" class="hidden">
+                                    <label for="logoUpload" class="btn-primary w-full md:w-auto">Subir Imagen</label>
+                                    <div id="logoPreview" class="mt-3"></div>
+                                </div>
+                                 <div>
+                                    <label for="bannerUpload" class="form-label mb-2 block">Añadir Banner</label>
+                                    <input type="file" id="bannerUpload" accept="image/*" class="hidden">
+                                    <label for="bannerUpload" class="btn-primary w-full md:w-auto">Subir Banner</label>
+                                    <div id="bannerPreview" class="mt-3"></div>
+                                </div>
+                            </div>
+                             <!-- Right side for selectors -->
+                            <div class="space-y-6">
+                                <div>
+                                    <label for="brandColor" class="form-label mb-2 block">Color de Marca</label>
+                                    <input type="color" id="brandColor" value="#DF1783">
+                                </div>
+                                <div>
+                                    <label for="socialIconShape" class="form-label mb-2 block">Forma de la Imagen</label>
+                                     <select id="socialIconShape" class="form-select">
+                                         <option value="round">Redonda</option>
+                                         <option value="rounded">Cuadrado Redondeado</option>
+                                         <option value="square">Cuadrada</option>
+                                     </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+
+            <!-- Right Column: Preview & Code -->
+            <div>
+                <div class="sticky top-8">
+                    <!-- Live Preview -->
+                    <div class="card">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-semibold">Vista Previa</h2>
+                        </div>
+                        <div id="signaturePreview" class="min-h-[200px]" style="background-color: transparent;">
+                            <!-- La firma se mostrará aquí -->
+                        </div>
+                        <div class="pt-4 mt-4 border-t border-gray-200 dark:border-gray-600">
+                             <h3 class="text-sm font-semibold mb-3 text-gray-500 dark:text-gray-400">Copia a tu cliente de correo preferido:</h3>
+                             <div id="copyPillContainer" class="flex flex-wrap gap-2">
+                                <button class="copy-pill-btn">Gmail</button>
+                                <button class="copy-pill-btn">Yahoo Mail</button>
+                                <button class="copy-pill-btn">AOL Mail</button>
+                                <button class="copy-pill-btn">Outlook</button>
+                                <button class="copy-pill-btn">Apple Mail</button>
+                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Generated HTML -->
+                    <div class="card">
+                        <h2 class="text-xl font-semibold mb-4">HTML Generado</h2>
+                        <div class="relative">
+                            <pre class="bg-gray-900 text-white p-4 rounded-lg text-xs overflow-x-auto whitespace-pre-wrap break-words"><code><span id="generatedHTML"><!-- Tu HTML aparecerá aquí --></span></code></pre>
+                            <button id="copyHtmlButton" class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs font-bold py-1 px-2 rounded">Copiar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Sliding Panel -->
+    <div id="overlay"></div>
+    <div id="savedSignaturesPanel">
+        <div class="panel-header">
+            <h2 class="text-xl font-semibold">Firmas Guardadas</h2>
+            <button id="closePanelBtn" class="fab"><i class="fas fa-times"></i></button>
+        </div>
+        <div id="signatureList">
+            <!-- Las firmas guardadas se listarán aquí -->
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- ELEMENTS ---
+            const form = document.getElementById('signatureForm');
+            const inputs = form.querySelectorAll('input, textarea, select');
+            const signaturePreview = document.getElementById('signaturePreview');
+            const generatedHTMLContainer = document.getElementById('generatedHTML');
+            const copyHtmlButton = document.getElementById('copyHtmlButton');
+            const copyPillContainer = document.getElementById('copyPillContainer');
+            const toast = document.getElementById('toast');
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            const saveSignatureBtn = document.getElementById('saveSignatureBtn');
+            const viewSavedSignaturesBtn = document.getElementById('viewSavedSignaturesBtn');
+            const savedSignaturesPanel = document.getElementById('savedSignaturesPanel');
+            const closePanelBtn = document.getElementById('closePanelBtn');
+            const signatureListContainer = document.getElementById('signatureList');
+            const overlay = document.getElementById('overlay');
+
+            // --- STATE ---
+            let profileImageUrl = 'https://placehold.co/150x150/E2E8F0/4A5568?text=Logo';
+            let bannerImageUrl = ''; // Initially no banner
+            let savedSignatures = [];
+            const IMGUR_CLIENT_ID = 'd2f1e84bc60f5c6'; // Replace with your own Imgur Client ID if you have one
+
+            // --- ICON DATA ---
+            const socialIcons = {
+                twitter: 'https://bucket.mlcdn.com/a/3336/3336910/images/a52bc36cbf04a058a2b8305eb50c609b9d2737eb.png',
+                linkedin: 'https://bucket.mlcdn.com/a/3336/3336910/images/ab63260a15fac62334be8a31bc5970e3925367cd.png',
+                facebook: 'https://bucket.mlcdn.com/a/3336/3336910/images/c079345e1d951d32b6c3cbc4d447644983c6a352.png',
+                instagram: 'https://bucket.mlcdn.com/a/3336/3336910/images/8afb144bc899694b5d9a913f97370557d579abfd.png',
+                youtube: 'https://bucket.mlcdn.com/a/3336/3336910/images/080473cd23ae742fc152a520552ab2f438cb1ecd.png',
+                snapchat: 'https://bucket.mlcdn.com/a/3336/3336910/images/04be9bb597e65d1270ed38202cf08e64a05677ae.png',
+                pinterest: 'https://bucket.mlcdn.com/a/3336/3336910/images/d656042ad543916a59ae97d4e66c15d540f7207a.png',
+                tumblr: 'https://bucket.mlcdn.com/a/3336/3336910/images/70306400addca1c9b99a0fccacc3dae02d4e65b1.png',
+                reddit: 'https://bucket.mlcdn.com/a/3336/3336910/images/84a18629af9eb908f7a30fb0c71aa23204488607.png',
+                vimeo: 'https://bucket.mlcdn.com/a/3336/3336910/images/4d90f71eb5c88b51286ae9cf0e28a24c9fa5849c.png',
+                tiktok: 'https://bucket.mlcdn.com/a/3336/3336910/images/3f49d77083d12ab42b0efb00f58f5a9d73300915.png',
+                telegram: 'https://bucket.mlcdn.com/a/3336/3336910/images/21126641161e7c833b155baad9073eb849cf2308.png',
+                whatsapp: 'https://bucket.mlcdn.com/a/3336/3336910/images/a2ad92be229b4c0aa9aba305e78f00ae8a47d3a0.png',
+                skype: 'https://bucket.mlcdn.com/a/3336/3336910/images/edf7d5b597552c06a596bbabdceaede4e02c3ec3.png',
+                googlemaps: 'https://bucket.mlcdn.com/a/3336/3336910/images/b167b183c395e78f98589cc80c7cf6cde49571bb.png',
+                threads: 'https://bucket.mlcdn.com/a/3336/3336910/images/21126641161e7c833b155baad9073eb849cf2308.png'
+            };
+            const contactIcons = {
+                email: 'https://bucket.mlcdn.com/a/3336/3336910/images/38c40db18c7dbac8db48106f4cb9762bf467539c.png',
+                phone: 'https://bucket.mlcdn.com/a/3336/3336910/images/7d15f11569b23ea90b47bd0a783af8b869fb0950.png',
+                mobile: 'https://bucket.mlcdn.com/a/3336/3336910/images/c44339bd40884a8785704e6b1ea8443a53d43444.png',
+                direct: 'https://bucket.mlcdn.com/a/3336/3336910/images/774bbf37a92ea5465d11cd597f16f4b179807fe6.png',
+                fax: 'https://bucket.mlcdn.com/a/3336/3336910/images/32295bd19ccab9b2a812d99b1e7a7020b5820f46.png',
+                address: 'https://bucket.mlcdn.com/a/3336/3336910/images/b63fd15eb07896ff3a972e75dd52a1e0ac61f17b.png',
+                website: 'https://bucket.mlcdn.com/a/3336/3336910/images/5692583aa62c83616c235cb85f3dcbd33a4e0697.png'
+            };
+
+            // --- FUNCTIONS ---
+
+            function showToast(message) {
+                toast.textContent = message;
+                toast.classList.add('show');
+                setTimeout(() => { toast.classList.remove('show'); }, 3000);
+            }
+
+            function generateSignature() {
+                const data = {
+                    fullName: document.getElementById('fullName').value,
+                    jobTitle: document.getElementById('jobTitle').value,
+                    department: document.getElementById('department').value,
+                    companyName: document.getElementById('companyName').value,
+                    website: document.getElementById('website').value,
+                    email: document.getElementById('email').value,
+                    mainPhone: document.getElementById('mainPhone').value,
+                    mobilePhone: document.getElementById('mobilePhone').value,
+                    directPhone: document.getElementById('directPhone').value,
+                    faxNumber: document.getElementById('faxNumber').value,
+                    address: document.getElementById('address').value.replace(/\n/g, '<br>'),
+                    brandColor: document.getElementById('brandColor').value,
+                    socialIconShape: document.getElementById('socialIconShape').value,
+                };
+                
+                Object.keys(socialIcons).forEach(platform => {
+                    const input = document.getElementById(platform);
+                    if (input) data[platform] = input.value;
+                });
+
+                let socialIconsHtml = '';
+                const shape = data.socialIconShape;
+                let socialBorderRadius = '0px';
+                if (shape === 'round') socialBorderRadius = '50%';
+                if (shape === 'rounded') socialBorderRadius = '8px';
+
+                Object.keys(socialIcons).forEach(platform => {
+                    if (data[platform]) {
+                        const url = platform === 'skype' ? `skype:${data[platform]}?chat` : data[platform];
+                        socialIconsHtml += `<a href="${url}" target="_blank" style="text-decoration: none; display: inline-block; margin-right: 5px;">
+                                <span style="display: inline-block; width: 24px; height: 24px; padding: 4px; box-sizing: border-box; text-align: center; background-color: ${data.brandColor}; border-radius: ${socialBorderRadius};">
+                                    <img src="${socialIcons[platform]}" alt="${platform}" width="16" height="16" style="vertical-align: middle; filter: brightness(0) invert(1);">
+                                </span>
+                            </a>`;
+                    }
+                });
+
+                const jobTitleAndDepartment = [data.jobTitle, data.department].filter(Boolean).join(' | ');
+
+                const contactInfo = [
+                    { type: 'phone', value: data.mainPhone },
+                    { type: 'mobile', value: data.mobilePhone },
+                    { type: 'direct', value: data.directPhone },
+                    { type: 'fax', value: data.faxNumber },
+                    { type: 'email', value: data.email, isLink: true },
+                    { type: 'website', value: data.website, isLink: true },
+                    { type: 'address', value: data.address }
+                ];
+                
+                let contactHtml = '';
+                contactInfo.forEach(item => {
+                    if (item.value) {
+                         const text = item.isLink ? `<a href="${item.type === 'email' ? 'mailto:' : ''}${item.value}" style="color: #333333; text-decoration: none;">${item.value}</a>` : `<span style="color: #333333;">${item.value}</span>`;
+                         contactHtml += `<tr><td style="padding-bottom: 5px; vertical-align: middle;"><img src="${contactIcons[item.type]}" alt="${item.type}" width="13" height="13" style="vertical-align: middle; margin-right: 10px; display: inline-block;"></td><td style="padding-bottom: 5px; vertical-align: middle;">${text}</td></tr>`;
+                    }
+                });
+
+
+                const signatureHTML = `
+                    <table cellpadding="0" cellspacing="0" border="0" style="font-family: Arial, sans-serif; color: #333333; font-size: 12px; line-height: 1.5;">
+                        <tbody>
+                            <tr>
+                                <td style="padding-right: 15px; vertical-align: top; width: 100px;">
+                                    <img src="${profileImageUrl}" alt="Perfil" style="width: 100px; height: auto; max-width: 100px; border-radius: 8px;">
+                                </td>
+                                <td style="padding-left: 15px; vertical-align: top; border-left: 2px solid ${data.brandColor};">
+                                    <strong style="color: ${data.brandColor}; font-size: 16px; font-weight: bold; display: block; margin-bottom: 2px;">${data.fullName || 'Tu Nombre'}</strong>
+                                    ${jobTitleAndDepartment ? `<span style="color: #333333; display: block; margin-bottom: 2px;">${jobTitleAndDepartment}</span>` : ''}
+                                    ${data.companyName ? `<span style="color: #333333; font-weight: bold; display: block; margin-bottom: 8px;">${data.companyName}</span>` : ''}
+                                    <table cellpadding="0" cellspacing="0" border="0" style="font-size: 12px; line-height: 1.6;"><tbody>${contactHtml}</tbody></table>
+                                    ${socialIconsHtml ? `<div style="padding-top: 8px;">${socialIconsHtml}</div>` : ''}
+                                </td>
+                            </tr>
+                            ${bannerImageUrl ? `
+                            <tr>
+                                <td colspan="2" style="padding-top: 15px;">
+                                    <a href="#" target="_blank">
+                                        <img src="${bannerImageUrl}" alt="Banner" style="max-width: 450px; width: 100%; height: auto; display: block; border-radius: 8px;">
+                                    </a>
+                                </td>
+                            </tr>` : ''}
+                        </tbody>
+                    </table>
+                `;
+
+                signaturePreview.innerHTML = signatureHTML;
+                generatedHTMLContainer.textContent = signatureHTML.trim();
+            }
+            
+            function setupImageUpload(inputId, previewId, onUploadSuccess) {
+                const inputElement = document.getElementById(inputId);
+                const previewElement = document.getElementById(previewId);
+
+                inputElement.addEventListener('change', function() {
+                    const file = this.files[0];
+                    if (!file) return;
+
+                    const reader = new FileReader();
+                    reader.onload = e => {
+                        const imgClass = inputId === 'logoUpload' ? 'w-24 h-auto' : 'w-full rounded-lg';
+                        previewElement.innerHTML = `<img src="${e.target.result}" alt="Subiendo..." class="${imgClass} object-cover border-2 border-dashed p-1 border-gray-300">`;
+                    };
+                    reader.readAsDataURL(file);
+
+                    const formData = new FormData();
+                    formData.append('image', file);
+
+                    fetch('https://api.imgur.com/3/image', {
+                        method: 'POST',
+                        headers: { 'Authorization': `Client-ID ${IMGUR_CLIENT_ID}` },
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            const imageUrl = data.data.link;
+                            onUploadSuccess(imageUrl);
+                            const imgClass = inputId === 'logoUpload' ? 'w-24 h-auto' : 'w-full rounded-lg';
+                            previewElement.innerHTML = `<img src="${imageUrl}" alt="Vista Previa" class="${imgClass} object-cover">`;
+                            showToast('¡Imagen subida con éxito!');
+                        } else {
+                            throw new Error(data.data.error || 'Falló la subida a Imgur');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error al subir imagen:', error);
+                        showToast('Falló la subida de imagen. Inténtalo de nuevo.');
+                        previewElement.innerHTML = `<p class="text-xs text-red-500">Subida fallida</p>`;
+                        onUploadSuccess(inputId === 'logoUpload' ? 'https://placehold.co/150x150/E2E8F0/4A5568?text=Logo' : '');
+                    })
+                    .finally(generateSignature);
+                });
+            }
+            
+            function copyRichText() {
+                const signatureHTML = signaturePreview.innerHTML;
+                if (!signatureHTML || signatureHTML.trim() === '' || signatureHTML.includes('<!--')) {
+                    showToast('¡No hay nada que copiar todavía!');
+                    return;
+                }
+                
+                try {
+                    const blob = new Blob([signatureHTML], { type: 'text/html' });
+                    const richTextInput = new ClipboardItem({ 'text/html': blob });
+                    navigator.clipboard.write([richTextInput]).then(() => {
+                        showToast('¡Copiado!');
+                    });
+                } catch (err) {
+                    console.error('Copia de texto enriquecido falló, intentando alternativa:', err);
+                    const listener = (ev) => {
+                        ev.preventDefault();
+                        ev.clipboardData.setData('text/html', signatureHTML);
+                        ev.clipboardData.setData('text/plain', signaturePreview.innerText);
+                    };
+                    document.addEventListener('copy', listener);
+                    document.execCommand('copy');
+                    document.removeEventListener('copy', listener);
+                    showToast('¡Copiado!');
+                }
+            }
+
+            function copyHtmlCode() {
+                const textToCopy = generatedHTMLContainer.textContent;
+                if (!textToCopy || textToCopy.includes('<!--')) {
+                    showToast('¡No hay nada que copiar todavía!');
+                    return;
+                }
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(textToCopy).then(() => {
+                        showToast('¡Código HTML copiado al portapapeles!');
+                    }).catch(err => {
+                        console.error('Copia asíncrona al portapapeles falló:', err);
+                        fallbackCopy(textToCopy);
+                    });
+                } else {
+                    fallbackCopy(textToCopy);
+                }
+            }
+            
+            function fallbackCopy(text) {
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                textArea.style.position = 'fixed';
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    showToast('¡Copiado al portapapeles!');
+                } catch (err) {
+                    console.error('Copia de respaldo falló:', err);
+                    showToast('La copia falló. Por favor, copia manualmente.');
+                }
+                document.body.removeChild(textArea);
+            }
+
+            function applyTheme(theme) {
+                if (theme === 'dark') {
+                    document.documentElement.classList.add('dark');
+                    darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                }
+            }
+            darkModeToggle.addEventListener('click', () => {
+                const currentTheme = localStorage.getItem('theme') || 'light';
+                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+                localStorage.setItem('theme', newTheme);
+                applyTheme(newTheme);
+            });
+
+            function getFormData() {
+                const data = {};
+                inputs.forEach(input => {
+                    data[input.id] = input.value;
+                });
+                data.profileImageUrl = profileImageUrl;
+                data.bannerImageUrl = bannerImageUrl;
+                return data;
+            }
+
+            function populateForm(signatureData) {
+                for (const key in signatureData) {
+                    const element = document.getElementById(key);
+                    if (element) {
+                        element.value = signatureData[key];
+                    }
+                }
+                profileImageUrl = signatureData.profileImageUrl || 'https://placehold.co/150x150/E2E8F0/4A5568?text=Logo';
+                bannerImageUrl = signatureData.bannerImageUrl || '';
+                document.getElementById('logoPreview').innerHTML = `<img src="${profileImageUrl}" alt="Vista Previa" class="w-24 h-auto object-cover">`;
+                document.getElementById('bannerPreview').innerHTML = bannerImageUrl ? `<img src="${bannerImageUrl}" alt="Vista Previa" class="w-full rounded-lg object-cover">` : '';
+                generateSignature();
+                showToast('¡Firma cargada!');
+            }
+
+            function loadSignaturesFromStorage() {
+                const storedSignatures = localStorage.getItem('emailSignatures');
+                savedSignatures = storedSignatures ? JSON.parse(storedSignatures) : [];
+            }
+
+            function saveSignaturesToStorage() {
+                localStorage.setItem('emailSignatures', JSON.stringify(savedSignatures));
+            }
+
+            function renderSavedSignatures() {
+                signatureListContainer.innerHTML = '';
+                if (savedSignatures.length === 0) {
+                    signatureListContainer.innerHTML = '<p class="text-center text-gray-500 p-4">Aún no hay firmas guardadas.</p>';
+                    return;
+                }
+                savedSignatures.forEach(sig => {
+                    const item = document.createElement('div');
+                    item.className = 'signature-item';
+                    item.dataset.id = sig.id;
+                    item.innerHTML = `
+                        <span class="signature-item-name">${sig.name}</span>
+                        <div class="signature-item-actions">
+                            <button class="rename-btn" title="Renombrar"><i class="fas fa-pencil-alt"></i></button>
+                            <button class="delete-btn" title="Eliminar"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    `;
+                    signatureListContainer.appendChild(item);
+                });
+            }
+            
+            saveSignatureBtn.addEventListener('click', () => {
+                const name = prompt('Ingresa un nombre para esta firma:', 'Mi Firma');
+                if (name) {
+                    const newSignature = {
+                        id: Date.now(),
+                        name: name,
+                        data: getFormData()
+                    };
+                    savedSignatures.push(newSignature);
+                    saveSignaturesToStorage();
+                    renderSavedSignatures();
+                    showToast(`¡Firma "${name}" guardada!`);
+                }
+            });
+
+            signatureListContainer.addEventListener('click', (e) => {
+                const target = e.target.closest('button, .signature-item-name');
+                if (!target) return;
+
+                const item = target.closest('.signature-item');
+                const signatureId = Number(item.dataset.id);
+                const signature = savedSignatures.find(s => s.id === signatureId);
+
+                if (target.matches('.signature-item-name')) {
+                    populateForm(signature.data);
+                    togglePanel(false);
+                } else if (target.matches('.rename-btn')) {
+                    const newName = prompt('Ingresa el nuevo nombre:', signature.name);
+                    if (newName && newName !== signature.name) {
+                        signature.name = newName;
+                        saveSignaturesToStorage();
+                        renderSavedSignatures();
+                        showToast('¡Firma renombrada!');
+                    }
+                } else if (target.matches('.delete-btn')) {
+                    if (confirm(`¿Estás seguro de que quieres eliminar "${signature.name}"?`)) {
+                        savedSignatures = savedSignatures.filter(s => s.id !== signatureId);
+                        saveSignaturesToStorage();
+                        renderSavedSignatures();
+                        showToast('Firma eliminada.');
+                    }
+                }
+            });
+
+            function togglePanel(show) {
+                if (show) {
+                    savedSignaturesPanel.classList.add('show');
+                    overlay.classList.add('show');
+                } else {
+                    savedSignaturesPanel.classList.remove('show');
+                    overlay.classList.remove('show');
+                }
+            }
+
+            viewSavedSignaturesBtn.addEventListener('click', () => togglePanel(true));
+            closePanelBtn.addEventListener('click', () => togglePanel(false));
+            overlay.addEventListener('click', () => togglePanel(false));
+
+            inputs.forEach(input => {
+                input.addEventListener('input', generateSignature);
+            });
+            
+            setupImageUpload('logoUpload', 'logoPreview', (url) => { profileImageUrl = url; });
+            setupImageUpload('bannerUpload', 'bannerPreview', (url) => { bannerImageUrl = url; });
+
+            copyHtmlButton.addEventListener('click', copyHtmlCode);
+            copyPillContainer.addEventListener('click', (e) => {
+                if (e.target.classList.contains('copy-pill-btn')) {
+                    copyRichText();
+                }
+            });
+
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            applyTheme(savedTheme);
+            loadSignaturesFromStorage();
+            renderSavedSignatures();
+            generateSignature();
+        });
+    </script>
+</body>
+</html>
