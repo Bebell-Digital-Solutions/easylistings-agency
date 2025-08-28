@@ -1,0 +1,1440 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración de EasyListings</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+
+          <!-- Favicon -->
+  <link rel="icon" href="https://bucket.mlcdn.com/a/3336/3336910/images/fa62e06dd2b6ed2d1d9e77e5dd944bef2904d5d1.png">
+
+    <!-- Meta Tags -->
+<meta name="description" content="Easy Listings helps real estate agents create stunning, mobile-friendly property catalogs to capture leads automatically. Turn your property photos into a professional online gallery.">
+<meta name="keywords" content="real estate, property listings, real estate marketing, property catalog, lead generation, real estate agent tools">
+<meta name="author" content="Bebell Digital Solutions">
+<meta name="copyright" content="Copyright © 2025 Easy Listings. All Rights Reserved.">
+<meta name="revised" content="Tuesday, August 26, 2025">
+    
+
+    <!-- Open Graph / Facebook -->
+<meta property="og:type" content="english website">
+<meta property="og:url" content="https://easylistings.website/">
+<meta property="og:title" content="Easy Listings - Display Your Properties. Define Your Brand.">
+<meta property="og:description" content="Turn your chaotic property photos into a stunning, mobile-friendly catalog that captures leads automatically.">
+<meta property="og:image" content="https://bucket.mlcdn.com/a/3336/3336910/images/15f552b8aceb08a4b2d0cd73903208cfadd517af.png">
+
+    
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:url" content="https://easylistings.website/">
+<meta property="twitter:title" content="Easy Listings - Display Your Properties. Define Your Brand.">
+<meta property="twitter:description" content="Turn your chaotic property photos into a stunning, mobile-friendly catalog that captures leads automatically.">
+<meta property="twitter:image" content="https://bucket.mlcdn.com/a/3336/3336910/images/15f552b8aceb08a4b2d0cd73903208cfadd517af.png">
+
+    
+
+
+
+
+
+    
+    <style>
+        :root {
+            --primary: #DF1783;
+            --primary-light: #fdeefa;
+            --secondary: #2d3748;
+            --accent: #4fd1c5;
+            --text-primary: #2d3748;
+            --text-secondary: #718096;
+            --bg-primary: #f7fafc;
+            --bg-secondary: #ffffff;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --border-color: #e2e8f0;
+        }
+
+        .dark {
+            --primary: #DF1783;
+            --primary-light: #3a2230;
+            --secondary: #1a202c;
+            --accent: #4fd1c5;
+            --text-primary: #f7fafc;
+            --text-secondary: #a0aec0;
+            --bg-primary: #1a202c;
+            --bg-secondary: #2d3748;
+            --shadow: 0 4px 6px -1px rgba(0,0,0,0.4), 0 2px 4px -1px rgba(0,0,0,0.2);
+            --border-color: #4a5568;
+        }
+
+
+
+    
+        /* ===== Translation Floating Button ===== */
+  .custom-image-widget {
+            position: fixed !important;
+            top: 30px !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            right: 30px;
+            z-index: 999;
+        }
+
+
+        
+        .custom-image {
+            width: 70px;
+            height: auto;
+            transition: transform 0.2s;
+        }
+        
+        .custom-image-widget:hover .custom-image {
+            transform: scale(1.05);
+        }
+        
+        .custom-image-widget:hover .tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+              
+    /* ===== Translation Floating Button ===== */
+
+
+
+
+
+
+
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #c71575;
+        }
+
+        /* Desktop layout */
+        @media (min-width: 781px) {
+            .sidebar {
+                width: 16rem; /* w-64 */
+            }
+            .main-content {
+                width: calc(100% - 16rem);
+            }
+        }
+
+        /* Mobile layout */
+        @media (max-width: 780px) {
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100%;
+                width: 100%;
+                z-index: 50;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease-in-out;
+            }
+            .sidebar-mobile-open {
+                transform: translateX(0);
+            }
+            .main-content {
+                width: 100%;
+            }
+        }
+        .nav-link .delete-link-btn {
+            display: none;
+        }
+        .nav-link:hover .delete-link-btn {
+            display: inline-flex;
+        }
+        .dark .nav-link {
+            color: #ffffff;
+        }
+        .nav-link:hover {
+            background-color: var(--primary-light);
+        }
+        .progress-emoji {
+            position: absolute;
+            font-size: 40px;
+            line-height: 1;
+            top: 50%;
+            transform: translateY(-50%);
+            transition: left 0.3s ease-in-out;
+        }
+
+
+
+
+        /* ===== FOOTER ===== */
+.footer {
+    padding-top: 30px;
+    background: var(--bg-primary);
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 12px;
+    width: 100%;
+    z-index: 10;
+    margin: 0 auto;
+    max-width: 820px;
+}
+
+
+.social-links {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin: 0;
+    flex-wrap: wrap;
+    padding: 0.25rem;
+}
+
+.social-link {
+    color: var(--text-primary);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 7px;
+    background: var(--bg-secondary);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: all 0.3s ease;
+    font-size: 0.85rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.social-link:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+
+    /* Dark mode styles */
+        .dark .social-link {
+            background: rgba(30, 41, 59, 0.7); /* slate-800 with transparency */
+            color: #e2e8f0; /* slate-200 */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .dark .social-link:hover {
+            background: rgba(30, 41, 59, 0.9);
+            color: #f8fafc; /* slate-100 */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+        }
+
+.bebell-footer p {
+    margin-top: 20px;
+    align-items: center;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 300;
+    line-height: 1.5;
+    margin: 0;
+    padding-bottom: 30px;
+    color: var(--text-secondary);
+}
+
+.bebell-link {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.bebell-link:hover {
+    color: #df1783;
+}
+    
+
+        
+        .heart {
+            display: inline-block;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+
+
+
+
+
+
+
+
+    </style>
+</head>
+<body class="antialiased">
+
+
+
+
+    
+
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="bg-[var(--bg-secondary)] border-r border-[var(--border-color)] flex-shrink-0 flex flex-col sidebar">
+            <!-- Logo & Mobile Close Button -->
+            <div class="p-4 border-b border-[var(--border-color)] flex justify-between items-center">
+                <a href="#" class="flex items-center gap-3">
+                    <img src="https://bucket.mlcdn.com/a/3336/3336910/images/fa62e06dd2b6ed2d1d9e77e5dd944bef2904d5d1.png" alt="Logo" class="w-10 h-10 rounded-lg flex-shrink-0">
+                    <div class="overflow-hidden">
+                        <h1 class="text-xl font-bold whitespace-nowrap">EasyListings</h1>
+                        <p class="text-xs text-[var(--text-secondary)] whitespace-nowrap">Panel de Administrador</p>
+                    </div>
+                </a>
+                <button id="sidebar-close-btn" class="p-2 rounded-md hover:bg-[var(--primary-light)] md:hidden">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            
+            <!-- Navigation -->
+            <nav id="nav-links" class="flex-1 px-2 py-4 space-y-2 overflow-y-auto">
+                <a href="#" data-page="dashboard" class="nav-link flex items-center p-3 rounded-lg"><i data-lucide="layout-dashboard" class="w-6 h-6 mr-4 flex-shrink-0"></i><span>Tablero</span></a>
+                <a href="#" data-page="users" class="nav-link flex items-center p-3 rounded-lg"><i data-lucide="users" class="w-6 h-6 mr-4 flex-shrink-0"></i><span>Cuentas de Usuario</span></a>
+                <a href="#" data-page="templates" class="nav-link flex items-center p-3 rounded-lg"><i data-lucide="message-square-text" class="w-6 h-6 mr-4 flex-shrink-0"></i><span>Plantillas de WhatsApp</span></a>
+                <a href="#" data-page="directorio" data-url="https://bebell-digital-solutions.github.io/easylistings-agency" data-title="Directorio Easy Listings" class="nav-link flex items-center p-3 rounded-lg"><i data-lucide="map-pin-pen" class="w-6 h-6 mr-4 flex-shrink-0"></i><span>Directorio Principal</span></a>
+                
+                <a href="#" data-page="settings" class="nav-link flex items-center p-3 rounded-lg"><i data-lucide="settings" class="w-6 h-6 mr-4 flex-shrink-0"></i><span>Configuración</span></a>
+                <hr class="my-2 border-[var(--border-color)]">
+                <a href="#" data-page="whatsapp-generator" data-url="https://bebell-digital-solutions.github.io/easylistings-agency/spanish/whatsapp-link-generator" data-title="Generador de Enlaces de WhatsApp" class="nav-link flex items-center p-3 rounded-lg"><i data-lucide="link-2" class="w-6 h-6 mr-4 flex-shrink-0"></i><span>Enlaces de WhatsApp</span></a>
+                <a href="#" data-page="spreadsheet-id" data-url="https://bebell-digital-solutions.github.io/easylistings-agency/spanish/spreadsheet-id" data-title="Buscador de ID de Hoja de Cálculo" class="nav-link flex items-center p-3 rounded-lg"><i data-lucide="file-spreadsheet" class="w-6 h-6 mr-4 flex-shrink-0"></i><span>Spreadsheet ID</span></a>
+                <a href="#" data-page="email-signature" data-url="https://bebell-digital-solutions.github.io/easylistings-agency/spanish/easy-signature" data-title="Generador de Firmas de Correo" class="nav-link flex items-center p-3 rounded-lg"><i data-lucide="signature" class="w-6 h-6 mr-4 flex-shrink-0"></i><span>Firma de Correo</span></a>
+                
+                <div id="custom-nav-links-container" class="space-y-2"></div>
+
+                <button id="add-new-link-btn" class="w-full flex items-center p-3 mt-2 text-sm text-[var(--text-secondary)] rounded-lg hover:bg-[var(--primary-light)]">
+                    <i data-lucide="square-plus" class="w-6 h-6 mr-4 flex-shrink-0"></i><span>Añadir Nuevo Recurso</span>
+                </button>
+            </nav>
+
+            
+<!-- Sidebar Footer -->
+            <div class="px-2 py-4 mt-auto border-t border-[var(--border-color)] space-y-2">
+                <div id="admin-profile-section" class="flex items-center p-3 rounded-lg gap-3 cursor-pointer hover:bg-[var(--primary-light)]">
+                    <img id="admin-avatar" src="https://bucket.mlcdn.com/a/3336/3336910/images/720acb42aae5c4c7657fe94291a91807c55c356a.png" alt="Admin" class="w-10 h-10 rounded-full flex-shrink-0" />
+                    <div class="overflow-hidden">
+                        <p id="admin-user-name" class="font-semibold whitespace-nowrap">Administrador</p>
+                    </div>
+
+
+                    <button id="notification-btn" class="p-2 rounded-md hover:bg-[var(--primary-light)] ml-auto" title="Mostrar Notificación">
+                        <i data-lucide="bell" class="w-5 h-5"></i>
+                    </button>
+                </div>
+
+                <button id="theme-toggle" class="w-full flex items-center p-3 rounded-lg hover:bg-[var(--primary-light)]">
+                    <i id="theme-icon" data-lucide="moon" class="w-6 h-6 mr-4 flex-shrink-0"></i><span>Cambiar Tema</span>
+                </button>
+
+                <a href="https://bebell-digital-solutions.github.io/easylistings-agency-dashboard/english/english-v02" data-page="translate" class="nav-link flex items-center p-3 rounded-lg">
+                    <i data-lucide="languages" class="w-6 h-6 mr-4 flex-shrink-0"></i><span>Traducir Panel</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main id="main-content" class="main-content flex-1 overflow-y-auto flex flex-col">
+            <!-- Mobile Header -->
+            <header class="md:hidden sticky top-0 z-30 flex items-center justify-between p-2 border-b border-[var(--border-color)] bg-[var(--bg-secondary)]">
+                <button id="sidebar-open-btn" class="p-2 rounded-md hover:bg-[var(--primary-light)]">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+                <div class="text-sm font-bold" id="mobile-page-title">Tablero</div>
+                <div class="w-10"></div> <!-- Spacer -->
+            </header>
+
+            <div id="page-container" class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-grow">
+                <!-- Page content will be injected here -->
+            </div>
+
+            <footer class="bebell-footer p-4 max-w-md mx-auto flex-shrink-0">
+                <p class="m-0">
+                    Desarrollado con <span class="heart">💖</span> por&nbsp;
+                    <a href="https://bebelldigitalsolutions.com" class="bebell-link font-medium text-primary" target="_blank" rel="noopener">
+                        Bebell Digital Solutions
+                    </a>.
+                    <br>
+                    Copyright © 2024 • All rights reserved.
+                </p>
+            </footer>
+        </main>
+    </div>
+
+
+
+
+
+    
+    <!-- Sidebar Overlay for Mobile -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden md:hidden"></div>
+    
+    <!-- Modals Container -->
+    <div id="modal-container" class="fixed inset-0 z-50 items-center justify-center hidden"></div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-all duration-300">
+        Mensaje de notificación
+    </div>
+
+
+
+
+
+
+
+
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        // --- GLOBAL STATE & CONSTANTS ---
+        const UserStatus = {
+            WAITING: 'En Espera',
+            PUBLISHED: 'Publicado',
+            WHITE_LABEL: 'Marca Blanca',
+            AGENCY: 'Agencia',
+            BLOCKED: 'Bloqueado',
+        };
+        const pageContainer = document.getElementById('page-container');
+        const modalContainer = document.getElementById('modal-container');
+        const sidebar = document.getElementById('sidebar');
+        let chartInstances = {};
+        
+        let state = {
+            currentPage: 'dashboard',
+            users: [],
+            templates: [],
+            settings: { scriptUrl: '', imagekitKey: '' },
+            theme: 'light',
+            view: 'list',
+            searchTerm: '',
+            admin: { name: 'Administrador', avatar: 'https://bucket.mlcdn.com/a/3336/3336910/images/720acb42aae5c4c7657fe94291a91807c55c356a.png' },
+            isDataLive: false,
+            customNavLinks: [],
+        };
+
+        // --- MOCK DATA (Fallback) ---
+        const mockUsers = [
+            { UserID: "USR001", BrandName: "Prestige Homes", Username: "CarlaM", Email: "carla.m@prestige.com", ProfilePicURL: "https://i.pravatar.cc/150?u=USR001", LogoURL: "https://bucket.mlcdn.com/a/3336/3336910/images/fa62e06dd2b6ed2d1d9e77e5dd944bef2904d5d1.png", PrimaryColor: "#004AAD", TopCTAText: "View Listings", TopCTALink: "https://example.com/listings", VideoScriptURL: "", Status: UserStatus.PUBLISHED, SheetID: "sheet_01", ShareableURL: "https://easylistings.website/carlam", WhatsAppURL: "18091234567", InstagramURL: "https://instagram.com/prestigehomes", FacebookURL: "https://facebook.com/prestigehomes", YouTubeURL: "", LinkedInURL: "https://linkedin.com/company/prestige", XURL: "https://x.com/prestige", TelegramURL: "", WebsiteURL: "https://prestige.com", DateRegistered: "2023-08-15", DateApproval: "2023-08-16" },
+            { UserID: "USR002", BrandName: "Urban Living", Username: "DavidP", Email: "david.p@urban.io", ProfilePicURL: "https://i.pravatar.cc/150?u=USR002", LogoURL: "", PrimaryColor: "#34D399", TopCTAText: "Book a Tour", TopCTALink: "https://urban.io/tour", VideoScriptURL: "", Status: UserStatus.WAITING, SheetID: "sheet_02", ShareableURL: "https://easylistings.website/davidp", WhatsAppURL: "18299876543", InstagramURL: "https://instagram.com/urbanliving", FacebookURL: "", YouTubeURL: "", LinkedInURL: "", XURL: "", TelegramURL: "", WebsiteURL: "https://urban.io", DateRegistered: "2023-08-20", DateApproval: "" },
+            { UserID: "USR003", BrandName: "Coastal Properties", Username: "MariaS", Email: "maria.s@coastal.net", ProfilePicURL: "https://i.pravatar.cc/150?u=USR003", LogoURL: "", PrimaryColor: "#F59E0B", TopCTAText: "See Our Portfolio", TopCTALink: "https://coastal.net/portfolio", VideoScriptURL: "", Status: UserStatus.BLOCKED, SheetID: "sheet_03", ShareableURL: "https://easylistings.website/marias", WhatsAppURL: "18493332222", InstagramURL: "", FacebookURL: "", YouTubeURL: "https://youtube.com/coastalprop", LinkedInURL: "", XURL: "", TelegramURL: "", WebsiteURL: "https://coastal.net", DateRegistered: "2023-07-01", DateApproval: "2023-07-02" },
+            { UserID: "USR004", BrandName: "Agency One", Username: "JohnA", Email: "john.a@agency.one", ProfilePicURL: "https://i.pravatar.cc/150?u=USR004", LogoURL: "", PrimaryColor: "#6366F1", TopCTAText: "Contact Us", TopCTALink: "https://agency.one/contact", VideoScriptURL: "", Status: UserStatus.AGENCY, SheetID: "sheet_04", ShareableURL: "https://easylistings.website/johna", WhatsAppURL: "18095551111", InstagramURL: "", FacebookURL: "", YouTubeURL: "", LinkedInURL: "", XURL: "", TelegramURL: "", WebsiteURL: "https://agency.one", DateRegistered: "2023-06-15", DateApproval: "2023-06-16" },
+            { UserID: "USR005", BrandName: "White Label Pro", Username: "SarahW", Email: "sarah.w@whitelabel.pro", ProfilePicURL: "https://i.pravatar.cc/150?u=USR005", LogoURL: "", PrimaryColor: "#3B82F6", TopCTAText: "Get Started", TopCTALink: "https://whitelabel.pro/start", VideoScriptURL: "", Status: UserStatus.WHITE_LABEL, SheetID: "sheet_05", ShareableURL: "https://easylistings.website/sarahw", WhatsAppURL: "18095552222", InstagramURL: "", FacebookURL: "", YouTubeURL: "", LinkedInURL: "", XURL: "", TelegramURL: "", WebsiteURL: "https://whitelabel.pro", DateRegistered: "2023-05-20", DateApproval: "2023-05-21" },
+        ];
+
+        // --- DATA FETCHING & UPDATING ---
+        const fetchUsers = async () => {
+            if (!state.settings.scriptUrl) {
+                console.warn("URL de Google Apps Script no configurada. Usando datos de demostración.");
+                state.users = mockUsers;
+                state.isDataLive = false;
+            } else {
+                showToast('Sincronizando datos desde Google Sheet...', 'loading');
+                try {
+                    const response = await fetch(state.settings.scriptUrl);
+                    if (!response.ok) throw new Error(`Error HTTP! estado: ${response.status}`);
+                    const data = await response.json();
+                    state.users = data;
+                    state.isDataLive = true;
+                    console.log("Datos de usuario obtenidos con éxito.");
+                    showToast('¡Datos sincronizados con éxito!', 'success');
+                } catch (error) {
+                    console.error("Error al obtener datos de usuario:", error);
+                    state.users = []; // Use empty array on error
+                    state.isDataLive = false;
+                    showToast('No se pudieron obtener los datos de la URL del Script.', 'error');
+                }
+            }
+            renderCurrentPage();
+        };
+
+        const updateUserStatus = async (userId, newStatus) => {
+            if (!state.isDataLive) {
+                const userIndex = state.users.findIndex(u => u.UserID === userId);
+                if (userIndex !== -1) {
+                    state.users[userIndex].Status = newStatus;
+                    renderCurrentPage();
+                    showToast(`Estado del usuario de demostración actualizado a ${newStatus}.`, 'success');
+                }
+                return;
+            }
+            
+            showToast('Actualizando estado...', 'loading');
+            try {
+                const response = await fetch(state.settings.scriptUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: 'updateStatus', userId, newStatus })
+                });
+                const result = await response.json();
+                if (result.status === 'success') {
+                    const userIndex = state.users.findIndex(u => u.UserID === userId);
+                    if (userIndex !== -1) state.users[userIndex].Status = newStatus;
+                    renderCurrentPage();
+                    showToast('¡Estado del usuario actualizado con éxito!', 'success');
+                } else {
+                    throw new Error(result.message || 'Error desconocido desde Apps Script.');
+                }
+            } catch (error) {
+                console.error('Error al actualizar el estado:', error);
+                showToast('Error al actualizar el estado.', 'error');
+            }
+        };
+
+        const createNewUser = async (userData) => {
+            if (!state.isDataLive) {
+                const newUser = {
+                    ...userData,
+                    UserID: `USR${Math.floor(1000 + Math.random() * 9000)}`,
+                    DateRegistered: new Date().toISOString().split('T')[0],
+                    ProfilePicURL: 'https://i.pravatar.cc/150?u=new'
+                };
+                state.users.push(newUser);
+                renderCurrentPage();
+                showToast('Usuario de demostración creado.', 'success');
+                closeModal();
+                return;
+            }
+
+            showToast('Creando nuevo usuario...', 'loading');
+            try {
+                const response = await fetch(state.settings.scriptUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: 'createUser', userData })
+                });
+                const result = await response.json();
+                if (result.status === 'success' && result.newUser) {
+                    state.users.push(result.newUser);
+                    renderCurrentPage();
+                    showToast('¡Usuario creado con éxito!', 'success');
+                    closeModal();
+                } else {
+                    throw new Error(result.message || 'Error al crear usuario en Apps Script.');
+                }
+            } catch (error) {
+                console.error('Error al crear usuario:', error);
+                showToast('Error al crear usuario.', 'error');
+            }
+        };
+
+
+        // --- LOCAL STORAGE & UTILITIES ---
+        const getFromStorage = (key, defaultValue) => {
+            try {
+                const item = localStorage.getItem(key);
+                return item ? JSON.parse(item) : defaultValue;
+            } catch (error) {
+                console.error(`Error al leer de localStorage la clave “${key}”:`, error);
+                return defaultValue;
+            }
+        };
+        const saveToStorage = (key, value) => {
+            try {
+                localStorage.setItem(key, JSON.stringify(value));
+            } catch (error) {
+                console.error(`Error al guardar en localStorage la clave “${key}”:`, error);
+            }
+        };
+
+        const calculateProfileProgress = (user) => {
+            const fields = ['ProfilePicURL', 'LogoURL', 'PrimaryColor', 'TopCTAText', 'TopCTALink', 'WhatsAppURL', 'InstagramURL', 'FacebookURL', 'YouTubeURL', 'LinkedInURL', 'XURL', 'TelegramURL', 'WebsiteURL'];
+            const filledFields = fields.filter(field => user[field] && String(user[field]).trim() !== '').length;
+            return Math.round((filledFields / fields.length) * 100);
+        };
+
+        const formatDate = (dateString) => {
+            if (!dateString) return 'N/A';
+            try { return new Date(dateString).toLocaleDateString('es-ES', { year: 'numeric', month: 'short', day: 'numeric' }); } 
+            catch (e) { return 'Fecha Inválida'; }
+        };
+        
+        const renderImage = (url, transformations = 'tr:w-200,h-200,fo-auto') => {
+            if (!url) return 'https://placehold.co/200x200/e2e8f0/718096?text=Sin+Imagen';
+            if (state.settings.imagekitKey && !url.includes('imagekit.io')) {
+                return `https://ik.imagekit.io/${state.settings.imagekitKey}/${transformations}/${encodeURIComponent(url)}`;
+            }
+            return url;
+        };
+
+        const getStatusBadge = (status) => {
+            const baseClasses = 'text-xs font-semibold px-2.5 py-0.5 rounded-full whitespace-nowrap';
+            switch (status) {
+                case UserStatus.PUBLISHED: return `<span class="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300 ${baseClasses}">Publicado</span>`;
+                case UserStatus.WAITING: return `<span class="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300 ${baseClasses}">Esperando...</span>`;
+                case UserStatus.WHITE_LABEL: return `<span class="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300 ${baseClasses}">Marca Blanca</span>`;
+                case UserStatus.AGENCY: return `<span class="bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300 ${baseClasses}">Agencia</span>`;
+                case UserStatus.BLOCKED: return `<span class="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300 ${baseClasses}">Bloqueado</span>`;
+                default: return `<span class="bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300 ${baseClasses}">Desconocido</span>`;
+            }
+        };
+
+        const copyToClipboard = (text, element) => {
+            navigator.clipboard.writeText(text).then(() => {
+                const originalIcon = element.innerHTML;
+                element.innerHTML = `<i data-lucide="check" class="w-4 h-4 text-green-500"></i>`;
+                lucide.createIcons();
+                setTimeout(() => { element.innerHTML = originalIcon; lucide.createIcons(); }, 2000);
+            }).catch(err => {
+                console.error('Copia fallida', err);
+                showToast('Error al copiar.', 'error');
+            });
+        };
+        
+        // --- PAGE RENDERING ---
+        const destroyCharts = () => {
+            Object.values(chartInstances).forEach(chart => chart.destroy());
+            chartInstances = {};
+        };
+        
+        const renderDashboardPage = () => {
+            pageContainer.innerHTML = `
+                <div class="py-6 md:py-8">
+                    <h1 class="text-3xl font-bold">¡Hola, ${state.admin.name}!</h1>
+                    <p class="text-[var(--text-secondary)] mb-6">Aquí tienes un resumen de tu aplicación.</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <div class="bg-[var(--bg-secondary)] p-6 rounded-lg shadow-[var(--shadow)] border border-[var(--border-color)]">
+                            <h3 class="text-lg font-semibold text-[var(--text-secondary)]">Usuarios Totales</h3>
+                            <p class="text-4xl font-bold">${state.users.length}</p>
+                        </div>
+                        <div class="bg-[var(--bg-secondary)] p-6 rounded-lg shadow-[var(--shadow)] border border-[var(--border-color)]">
+                            <h3 class="text-lg font-semibold text-[var(--text-secondary)]">Publicados</h3>
+                            <p class="text-4xl font-bold">${state.users.filter(u => u.Status === UserStatus.PUBLISHED).length}</p>
+                        </div>
+                        <div class="bg-[var(--bg-secondary)] p-6 rounded-lg shadow-[var(--shadow)] border border-[var(--border-color)]">
+                            <h3 class="text-lg font-semibold text-[var(--text-secondary)]">Esperando Aprobación</h3>
+                            <p class="text-4xl font-bold">${state.users.filter(u => u.Status === UserStatus.WAITING).length}</p>
+                        </div>
+                        <div class="bg-[var(--bg-secondary)] p-6 rounded-lg shadow-[var(--shadow)] border border-[var(--border-color)]">
+                            <h3 class="text-lg font-semibold text-[var(--text-secondary)]">Bloqueados</h3>
+                            <p class="text-4xl font-bold">${state.users.filter(u => u.Status === UserStatus.BLOCKED).length}</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-[var(--bg-secondary)] p-6 rounded-lg shadow-[var(--shadow)] border border-[var(--border-color)]">
+                            <h3 class="text-xl font-bold mb-4 text-center">Desglose de Estado de Usuario</h3>
+                            <canvas id="userStatusChart"></canvas>
+                        </div>
+                        <div class="bg-[var(--bg-secondary)] p-6 rounded-lg shadow-[var(--shadow)] border border-[var(--border-color)]">
+                            <h3 class="text-xl font-bold mb-4 text-center">Completitud del Perfil</h3>
+                            <canvas id="profileCompletionChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="mt-6 bg-[var(--bg-secondary)] p-6 rounded-lg shadow-[var(--shadow)] border border-[var(--border-color)]">
+                        <h3 class="text-xl font-bold mb-4 text-center">Registros de Usuarios por Mes</h3>
+                        <div class="relative h-64">
+                             <canvas id="userRegistrationChart"></canvas>
+                        </div>
+                    </div>
+                </div>`;
+            renderCharts();
+        };
+
+        const renderCharts = () => {
+            const statusCtxEl = document.getElementById('userStatusChart');
+            const completionCtxEl = document.getElementById('profileCompletionChart');
+            const registrationCtxEl = document.getElementById('userRegistrationChart');
+
+            if (!statusCtxEl || !completionCtxEl || !registrationCtxEl || state.users.length === 0) return;
+            
+            destroyCharts();
+            
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            const textColor = isDarkMode ? '#f7fafc' : '#2d3748';
+
+            // User Status Doughnut Chart
+            const statusCounts = state.users.reduce((acc, user) => { acc[user.Status] = (acc[user.Status] || 0) + 1; return acc; }, {});
+            chartInstances.userStatus = new Chart(statusCtxEl.getContext('2d'), {
+                type: 'doughnut',
+                data: { 
+                    labels: Object.keys(statusCounts), 
+                    datasets: [{ 
+                        data: Object.values(statusCounts), 
+                        backgroundColor: ['#10B981', '#F59E0B', '#3B82F6', '#6366F1', '#EF4444'],
+                        borderColor: isDarkMode ? '#2d3748' : '#ffffff', 
+                        borderWidth: 2 
+                    }] 
+                },
+                options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { color: textColor } } } }
+            });
+            
+            // Profile Completion Doughnut Chart
+            const completionBins = { '0-25%': 0, '26-50%': 0, '51-75%': 0, '76-100%': 0 };
+            state.users.forEach(user => {
+                const p = calculateProfileProgress(user);
+                if (p <= 25) completionBins['0-25%']++; else if (p <= 50) completionBins['26-50%']++; else if (p <= 75) completionBins['51-75%']++; else completionBins['76-100%']++;
+            });
+            chartInstances.profileCompletion = new Chart(completionCtxEl.getContext('2d'), {
+                type: 'doughnut',
+                data: { 
+                    labels: Object.keys(completionBins), 
+                    datasets: [{ 
+                        data: Object.values(completionBins), 
+                        backgroundColor: ['#EF4444', '#F59E0B', '#3B82F6', '#10B981'], 
+                        borderColor: isDarkMode ? '#2d3748' : '#ffffff', 
+                        borderWidth: 2 
+                    }] 
+                },
+                options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { color: textColor } } } }
+            });
+
+            // User Registration Bar Chart
+            const monthLabels = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+            const monthlyData = Array(12).fill(0);
+
+            state.users.forEach(user => {
+                if (user.DateRegistered) {
+                    try {
+                        const date = new Date(user.DateRegistered);
+                        if (!isNaN(date)) {
+                            const monthIndex = date.getMonth(); // 0-11
+                            monthlyData[monthIndex]++;
+                        }
+                    } catch (e) {
+                        console.warn('Invalid date format for user:', user.UserID, user.DateRegistered);
+                    }
+                }
+            });
+
+            chartInstances.userRegistration = new Chart(registrationCtxEl.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: monthLabels,
+                    datasets: [{
+                        label: 'Nuevos Usuarios',
+                        data: monthlyData,
+                        backgroundColor: 'rgba(223, 23, 131, 0.7)',
+                        borderColor: 'rgb(223, 23, 131)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { color: textColor, stepSize: 1 }
+                        },
+                        x: {
+                            ticks: { color: textColor }
+                        }
+                    }
+                }
+            });
+        };
+
+        const renderUsersPage = () => {
+            destroyCharts();
+            pageContainer.innerHTML = `
+                <div class="py-6 md:py-8">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+                        <h2 class="text-3xl font-bold">Cuentas de Usuario</h2>
+                        <div class="relative w-full md:w-auto md:max-w-xs">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i data-lucide="search" class="w-5 h-5 text-[var(--text-secondary)]"></i>
+                            </div>
+                            <input type="text" id="search-input" value="${state.searchTerm}" placeholder="Buscar usuarios..." class="w-full pl-10 pr-4 py-2 border rounded-md bg-[var(--bg-secondary)] border-[var(--border-color)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" />
+                        </div>
+                    </div>
+                    <div class="bg-[var(--bg-secondary)] p-4 rounded-lg shadow-[var(--shadow)] border border-[var(--border-color)]">
+                        <div class="flex items-center justify-between gap-2 mb-4">
+                            <button id="create-user-btn" class="flex items-center gap-2 px-4 py-2 text-white bg-[var(--primary)] rounded-md hover:opacity-90"><i data-lucide="user-plus" class="w-4 h-4"></i> Crear Nuevo Usuario</button>
+                            <div class="flex items-center gap-2">
+                                <button id="view-grid-btn" class="p-2 rounded-md ${state.view === 'grid' ? 'bg-[var(--primary-light)] text-[var(--primary)]' : ''}" title="Vista de Cuadrícula"><i data-lucide="layout-grid" class="w-5 h-5"></i></button>
+                                <button id="view-list-btn" class="p-2 rounded-md ${state.view === 'list' ? 'bg-[var(--primary-light)] text-[var(--primary)]' : ''}" title="Vista de Lista"><i data-lucide="list" class="w-5 h-5"></i></button>
+                                <button id="download-csv-btn" class="flex items-center gap-2 px-4 py-2 rounded-md border border-[var(--border-color)] hover:bg-[var(--primary-light)]"><i data-lucide="file-down" class="w-4 h-4"></i> CSV</button>
+                                <button id="download-pdf-btn" class="flex items-center gap-2 px-4 py-2 rounded-md border border-[var(--border-color)] hover:bg-[var(--primary-light)]"><i data-lucide="file-down" class="w-4 h-4"></i> PDF</button>
+                            </div>
+                        </div>
+                        <div id="user-list-container"></div>
+                    </div>
+                </div>`;
+            
+            lucide.createIcons();
+            renderUserList();
+            addUsersPageEventListeners();
+        };
+
+        const getFilteredUsers = () => {
+            if (!state.searchTerm) return state.users;
+            const term = state.searchTerm.toLowerCase();
+            return state.users.filter(user =>
+                ['Username', 'Email', 'BrandName', 'UserID'].some(prop =>
+                    user[prop] && user[prop].toString().toLowerCase().includes(term)
+                )
+            );
+        };
+        
+        const renderUserList = () => {
+            const container = document.getElementById('user-list-container');
+            const filteredUsers = getFilteredUsers();
+
+            if (filteredUsers.length === 0) {
+                const message = state.isDataLive ? 'No se encontraron usuarios que coincidan con tu búsqueda.' : 'No hay usuarios de demostración. Añade la URL de Google Apps Script en Configuración para sincronizar.';
+                container.innerHTML = `<div class="text-center py-12"><i data-lucide="user-x" class="w-16 h-16 mx-auto text-[var(--text-secondary)] mb-4"></i><p class="text-[var(--text-secondary)]">${message}</p></div>`;
+                lucide.createIcons(); return;
+            }
+            container.className = state.view === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4' : 'flex flex-col gap-3';
+            container.innerHTML = filteredUsers.map(user => createUserCardHTML(user, state.view)).join('');
+            container.querySelectorAll('.user-card').forEach(card => { card.addEventListener('click', () => openUserModal(card.dataset.userid)); });
+        };
+
+        const createUserCardHTML = (user, view) => {
+            const progress = calculateProfileProgress(user);
+            const cardClasses = "user-card bg-[var(--bg-secondary)] p-4 rounded-lg border border-[var(--border-color)] shadow-sm cursor-pointer hover:border-[var(--primary)] hover:shadow-lg transition-all";
+            
+            if (view === 'list') {
+                return `
+                    <div data-userid="${user.UserID}" class="${cardClasses} w-full flex items-center gap-4">
+                        <img src="${renderImage(user.ProfilePicURL, 'tr:w-80,h-80,fo-auto')}" alt="${user.Username}" class="w-10 h-10 rounded-full object-cover flex-shrink-0" onerror="this.src='https://placehold.co/80x80/e2e8f0/718096?text=Err'"/>
+                        <div class="flex-1 min-w-0"><p class="font-bold truncate">${user.Username}</p><p class="text-sm text-[var(--text-secondary)] truncate">${user.BrandName}</p></div>
+                        <div class="hidden lg:block w-48"><div class="flex justify-between items-center mb-1"><span class="text-xs text-[var(--text-secondary)]">Perfil</span><span class="text-xs font-semibold">${progress}%</span></div><div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5"><div class="bg-[var(--primary)] h-1.5 rounded-full" style="width: ${progress}%"></div></div></div>
+                        <div class="hidden sm:block text-sm text-[var(--text-secondary)] w-28 text-center">${formatDate(user.DateRegistered)}</div>
+                        <div class="w-28 text-center">${getStatusBadge(user.Status)}</div>
+                    </div>`;
+            }
+            return `
+                <div data-userid="${user.UserID}" class="${cardClasses} flex flex-col items-center text-center">
+                    <img src="${renderImage(user.ProfilePicURL, 'tr:w-160,h-160,fo-auto')}" alt="${user.Username}" class="w-20 h-20 rounded-full mb-4 object-cover" onerror="this.src='https://placehold.co/160x160/e2e8f0/718096?text=Err'"/>
+                    <h4 class="font-bold">${user.Username}</h4>
+                    <p class="text-sm text-[var(--text-secondary)] mb-2">${user.BrandName}</p>
+                    <div class="my-2">${getStatusBadge(user.Status)}</div>
+                    <div class="w-full my-2"><div class="flex justify-between items-center mb-1"><span class="text-xs text-[var(--text-secondary)]">Perfil</span><span class="text-xs font-semibold">${progress}%</span></div><div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5"><div class="bg-[var(--primary)] h-1.5 rounded-full" style="width: ${progress}%"></div></div></div>
+                    <p class="text-xs text-[var(--text-secondary)] mt-2">Se unió: ${formatDate(user.DateRegistered)}</p>
+                </div>`;
+        };
+
+        const renderTemplatesPage = () => {
+            destroyCharts();
+            pageContainer.innerHTML = `
+                <div class="py-6 md:py-8">
+                    <h2 class="text-3xl font-bold mb-6">Plantillas de Mensajes de WhatsApp</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="bg-[var(--bg-secondary)] p-6 rounded-lg shadow-[var(--shadow)] border border-[var(--border-color)]">
+                            <h3 class="text-xl font-bold mb-4">Crear Nueva Plantilla</h3>
+                            <form id="template-form" class="space-y-4">
+                                <div><label for="template-name" class="block mb-1 text-sm font-medium">Nombre de la Plantilla</label><input type="text" id="template-name" placeholder="ej., Bienvenida a Bordo" required class="w-full px-3 py-2 border rounded-md bg-[var(--bg-primary)] border-[var(--border-color)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" /></div>
+                                <div><label for="template-message" class="block mb-1 text-sm font-medium">Contenido del Mensaje</label><textarea id="template-message" rows="5" placeholder="¡Hola {{Username}}! Bienvenido/a a {{BrandName}}." required class="w-full px-3 py-2 border rounded-md bg-[var(--bg-primary)] border-[var(--border-color)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"></textarea>
+                                <p class="text-xs text-[var(--text-secondary)] mt-1">Marcadores de posición disponibles: {{Username}}, {{BrandName}}, {{UserID}}, {{Email}}, {{DateRegistered}}, {{Status}}</p></div>
+                                <button type="submit" class="w-full px-4 py-2 text-white bg-[var(--primary)] rounded-md hover:opacity-90">Guardar Plantilla</button>
+                            </form>
+                        </div>
+                        <div class="bg-[var(--bg-secondary)] p-6 rounded-lg shadow-[var(--shadow)] border border-[var(--border-color)]"><h3 class="text-xl font-bold mb-4">Tus Plantillas</h3><div id="template-list-container" class="space-y-3 max-h-96 overflow-y-auto"></div></div>
+                    </div>
+                </div>`;
+            renderTemplateList();
+            addTemplatesPageEventListeners();
+        };
+
+        const renderTemplateList = () => {
+            const container = document.getElementById('template-list-container');
+            if (state.templates.length === 0) {
+                container.innerHTML = `<p class="text-sm text-[var(--text-secondary)]">No tienes plantillas guardadas.</p>`; return;
+            }
+            container.innerHTML = state.templates.map(template => `
+                <div class="p-3 border rounded-md border-[var(--border-color)]"><div class="flex justify-between items-center"><p class="font-semibold">${template.name}</p><button class="delete-template-btn p-1 text-red-500 hover:text-red-700" data-id="${template.id}" title="Eliminar Plantilla"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div><p class="text-sm text-[var(--text-secondary)] mt-1 whitespace-pre-wrap">${template.message}</p></div>`).join('');
+            lucide.createIcons();
+            container.querySelectorAll('.delete-template-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    state.templates = state.templates.filter(t => t.id !== btn.dataset.id);
+                    saveToStorage('whatsappTemplates', state.templates);
+                    renderTemplateList();
+                });
+            });
+        };
+        
+        const renderSettingsPage = () => {
+            destroyCharts();
+            pageContainer.innerHTML = `
+                <div class="py-6 md:py-8">
+                    <h2 class="text-3xl font-bold mb-6">Configuración e Integraciones</h2>
+                    <div class="max-w-3xl mx-auto space-y-8">
+                        <div class="bg-[var(--bg-secondary)] p-6 rounded-lg shadow-[var(--shadow)] border border-[var(--border-color)]">
+                            <h3 class="text-xl font-bold mb-2">1. Base de Datos de Usuarios (Google Sheets)</h3>
+                            <p class="text-sm text-[var(--text-secondary)] mb-4">Conecta una Hoja de Google para sincronizar automáticamente los datos de los usuarios, incluidas las actualizaciones de estado y la creación de nuevos usuarios.</p>
+                            <details class="mb-4"><summary class="cursor-pointer text-sm font-semibold text-[var(--primary)]">Haz clic para ver las instrucciones de configuración y el código actualizado</summary>
+                                <ol class="list-decimal list-inside space-y-2 text-sm mt-2">
+                                    <li>Abre tu Hoja de Google, luego ve a <strong>Extensiones &gt; Apps Script</strong>.</li>
+                                    <li>Copia el código a continuación y pégalo en el archivo <code>Code.gs</code>, reemplazando cualquier contenido existente.</li>
+                                    <li>Haz clic en <strong>Implementar &gt; Nueva implementación</strong>. Selecciona el tipo <strong>Aplicación web</strong>.</li>
+                                    <li>En la configuración, establece <strong>Ejecutar como</strong> en "Yo" y <strong>Quién tiene acceso</strong> en "Cualquiera". Haz clic en <strong>Implementar</strong>.</li>
+                                    <li>Autoriza los permisos del script cuando se te solicite.</li>
+                                    <li>Copia la <strong>URL de la aplicación web</strong> proporcionada y pégala en el campo de abajo.</li>
+                                </ol>
+                                <pre class="mt-2 p-3 bg-gray-100 dark:bg-gray-800 rounded-md text-xs overflow-x-auto"><code>const SHEET_NAME = "Sheet1"; // Cambia esto si tu hoja tiene un nombre diferente
+
+function handleResponse(data) {
+  return ContentService.createTextOutput(JSON.stringify(data))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function doGet(e) {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
+  if (!sheet) return handleResponse({ status: 'error', message: 'Sheet not found.' });
+  const data = sheet.getDataRange().getValues();
+  const headers = data.shift();
+  
+  const result = data.map(row => {
+    let obj = {};
+    headers.forEach((header, index) => {
+      obj[header] = row[index];
+    });
+    return obj;
+  });
+
+  return handleResponse(result);
+}
+
+function doPost(e) {
+  try {
+    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
+    if (!sheet) return handleResponse({ status: 'error', message: 'Sheet not found.' });
+    const request = JSON.parse(e.postData.contents);
+    const data = sheet.getDataRange().getValues();
+    const headers = data.shift();
+
+    if (request.action === 'updateStatus') {
+      const { userId, newStatus } = request;
+      const userIdColIndex = headers.indexOf("UserID");
+      const statusColIndex = headers.indexOf("Status");
+
+      if (userIdColIndex === -1 || statusColIndex === -1) {
+        return handleResponse({ status: 'error', message: 'UserID or Status column not found.' });
+      }
+
+      for (let i = 0; i < data.length; i++) {
+        if (data[i][userIdColIndex] == userId) {
+          sheet.getRange(i + 2, statusColIndex + 1).setValue(newStatus);
+          return handleResponse({ status: 'success', message: 'Status updated for ' + userId });
+        }
+      }
+      return handleResponse({ status: 'error', message: 'User ID not found.' });
+    
+    } else if (request.action === 'createUser') {
+        const { userData } = request;
+        
+        const userIdColIndex = headers.indexOf("UserID");
+        let lastId = 0;
+        if (userIdColIndex !== -1 && data.length > 0) {
+            const lastRow = data[data.length - 1];
+            const lastIdStr = lastRow[userIdColIndex];
+            if (lastIdStr && typeof lastIdStr === 'string' && lastIdStr.startsWith('USR')) {
+                lastId = parseInt(lastIdStr.replace('USR', '')) || 0;
+            }
+        }
+        const newId = 'USR' + ('000' + (lastId + 1)).slice(-3);
+
+        const newRow = headers.map(header => {
+            if (header === "UserID") return newId;
+            if (header === "DateRegistered") return new Date().toISOString();
+            if (header === "Status") return userData.Status || "Waiting for Approval";
+            return userData[header] || "";
+        });
+
+        sheet.appendRow(newRow);
+        
+        const createdUser = {};
+        headers.forEach((header, index) => {
+            createdUser[header] = newRow[index];
+        });
+
+        return handleResponse({ status: 'success', message: 'User created', newUser: createdUser });
+    }
+
+    return handleResponse({ status: 'error', message: 'Invalid action.' });
+  } catch (err) {
+    return handleResponse({ status: 'error', message: err.message });
+  }
+}
+</code></pre>
+                            </details>
+                            <div><label for="scriptUrl" class="block mb-1 text-sm font-medium">URL de Google Apps Script</label><input type="url" id="scriptUrl" value="${state.settings.scriptUrl}" placeholder="https://script.google.com/macros/s/..." class="w-full px-3 py-2 border rounded-md bg-[var(--bg-primary)] border-[var(--border-color)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" /></div>
+                        </div>
+                        <div class="bg-[var(--bg-secondary)] p-6 rounded-lg shadow-[var(--shadow)] border border-[var(--border-color)]">
+                            <h3 class="text-xl font-bold mb-2">2. Renderizado de Archivos Multimedia (ImageKit.io)</h3>
+                            <p class="text-sm text-[var(--text-secondary)] mb-4">Para renderizar automáticamente imágenes de perfil y logos desde URLs, puedes usar ImageKit.io para optimización. Esto es opcional. Obtén tu clave de <a href="https://imagekit.io/" target="_blank" class="text-[var(--primary)] hover:underline">ImageKit.io</a>.</p>
+                            <div><label for="imagekitKey" class="block mb-1 text-sm font-medium">Clave Pública de API de ImageKit</label><input type="text" id="imagekitKey" value="${state.settings.imagekitKey}" placeholder="public_xxxxxxxxxxxxxxxxxxxx" class="w-full px-3 py-2 border rounded-md bg-[var(--bg-primary)] border-[var(--border-color)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" /></div>
+                        </div>
+                        <button id="save-settings-btn" class="w-full px-6 py-3 text-white bg-[var(--primary)] rounded-md hover:opacity-90 font-bold">Guardar y Sincronizar</button>
+                    </div>
+                </div>`;
+            addSettingsPageEventListeners();
+        };
+
+        // --- MODAL LOGIC ---
+        const openModal = (modalHTML) => {
+            modalContainer.innerHTML = modalHTML;
+            lucide.createIcons();
+            modalContainer.classList.remove('hidden');
+            modalContainer.classList.add('flex');
+            modalContainer.querySelector('.modal-overlay').addEventListener('click', (e) => { if(e.target === e.currentTarget) closeModal(); });
+            modalContainer.querySelector('.close-modal-btn').addEventListener('click', closeModal);
+        };
+        const closeModal = () => { modalContainer.classList.add('hidden'); modalContainer.innerHTML = ''; };
+
+        const openUserModal = (userId) => {
+            const user = state.users.find(u => u.UserID === userId);
+            if (!user) return;
+
+            const progress = calculateProfileProgress(user);
+            const progressEmoji = progress === 100 ? '🏆' : '🚀';
+            const infoRowHTML = (label, value, copyValue = null, isLink = false) => {
+                const displayValue = value || 'N/A';
+                const linkHTML = isLink && value ? `<a href="${value.startsWith('http') ? value : 'https://' + value}" target="_blank" rel="noopener noreferrer" class="text-[var(--primary)] hover:underline truncate">${value}</a>` : `<span class="truncate">${displayValue}</span>`;
+                const copyButton = copyValue && displayValue !== 'N/A' ? `<button class="copy-btn text-[var(--text-secondary)] hover:text-[var(--primary)] flex-shrink-0" data-copy="${copyValue}"><i data-lucide="copy" class="w-4 h-4"></i></button>` : '';
+                return `<div class="py-2.5 px-3 flex justify-between items-center bg-[var(--bg-primary)] rounded-md border border-[var(--border-color)]"><span class="font-medium text-[var(--text-secondary)] text-sm flex-shrink-0 mr-4">${label}</span><div class="flex items-center gap-2 text-sm text-right min-w-0">${linkHTML}${copyButton}</div></div>`;
+            };
+
+            const modalHTML = `
+                <div class="w-full h-full p-4 flex items-center justify-center bg-black bg-opacity-50 modal-overlay">
+                    <div class="bg-[var(--bg-secondary)] rounded-lg w-full max-w-4xl max-h-[90vh] flex flex-col shadow-[var(--shadow)] border border-[var(--border-color)]">
+                        <div class="flex items-center justify-between p-4 border-b border-[var(--border-color)] flex-shrink-0">
+                            <h3 class="text-xl font-bold">Detalles del Usuario</h3>
+                            <button class="close-modal-btn p-2 rounded-full hover:bg-[var(--primary-light)]"><i data-lucide="x" class="w-6 h-6"></i></button>
+                        </div>
+                        <div class="p-6 overflow-y-auto space-y-6">
+                            <!-- Top Section -->
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                <div class="border border-[var(--border-color)] rounded-lg p-4 flex items-center justify-center md:row-span-2">
+                                    <img src="${renderImage(user.ProfilePicURL, 'tr:w-400,h-400,fo-auto')}" class="w-32 h-32 rounded-full object-cover" alt="${user.Username}" onerror="this.src='https://placehold.co/400x400/e2e8f0/718096?text=Error'">
+                                </div>
+                                <div class="border border-[var(--border-color)] rounded-lg p-4 flex flex-col justify-center md:col-span-3">
+                                    <h4 class="text-2xl font-bold">${user.Username}</h4>
+                                    <p class="text-[var(--text-secondary)]">${user.BrandName}</p>
+                                </div>
+                                <div class="border border-[var(--border-color)] rounded-lg p-4 md:col-span-3">
+                                    <div class="flex justify-between items-center mb-1">
+                                        <h5 class="font-bold text-sm">Progreso del Perfil</h5>
+                                        <span class="font-bold text-[var(--primary)] text-sm">${progress}%</span>
+                                    </div>
+                                    <div class="relative w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+                                        <div class="bg-[var(--primary)] h-2.5 rounded-full" style="width: ${progress}%"></div>
+                                        <span class="progress-emoji" style="left: calc(${progress}% - 20px);">${progressEmoji}</span>
+                                    </div>
+                                </div>
+                                <div class="border border-[var(--border-color)] rounded-lg p-4 md:col-span-4">
+                                    <label for="status-update" class="text-sm font-medium mb-2 block">Actualizar Estado:</label>
+                                    <select id="status-update" data-userid="${user.UserID}" class="w-full p-2 border rounded-md bg-[var(--bg-primary)] border-[var(--border-color)] focus:ring-2 focus:ring-[var(--primary)] focus:outline-none">
+                                        ${Object.values(UserStatus).map(s => `<option value="${s}" ${user.Status === s ? 'selected' : ''}>${s}</option>`).join('')}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Details Section -->
+                            <div class="border border-[var(--border-color)] rounded-lg p-4 space-y-2">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                    ${infoRowHTML('ID de Usuario', user.UserID, user.UserID)}
+                                    ${infoRowHTML('Correo Electrónico', user.Email, user.Email)}
+                                    ${infoRowHTML('URL Compartible', user.ShareableURL, user.ShareableURL, true)}
+                                    ${infoRowHTML('Fecha de Registro', formatDate(user.DateRegistered))}
+                                    ${infoRowHTML('Fecha de Aprobación', formatDate(user.DateApproval))}
+                                    ${infoRowHTML('Color Primario', user.PrimaryColor, user.PrimaryColor)}
+                                    ${infoRowHTML('Texto de CTA Superior', user.TopCTAText, user.TopCTAText)}
+                                    ${infoRowHTML('Enlace de CTA Superior', user.TopCTALink, user.TopCTALink, true)}
+                                    ${infoRowHTML('WhatsApp', user.WhatsAppURL, user.WhatsAppURL)}
+                                    ${infoRowHTML('Instagram', user.InstagramURL, user.InstagramURL, true)}
+                                    ${infoRowHTML('Facebook', user.FacebookURL, user.FacebookURL, true)}
+                                    ${infoRowHTML('YouTube', user.YouTubeURL, user.YouTubeURL, true)}
+                                    ${infoRowHTML('LinkedIn', user.LinkedInURL, user.LinkedInURL, true)}
+                                    ${infoRowHTML('X (Twitter)', user.XURL, user.XURL, true)}
+                                    ${infoRowHTML('Telegram', user.TelegramURL, user.TelegramURL, true)}
+                                    ${infoRowHTML('Sitio Web', user.WebsiteURL, user.WebsiteURL, true)}
+                                </div>
+                                <div class="border-t border-[var(--border-color)] my-2 pt-4">
+                                    <form id="whatsapp-form">
+                                        <label for="whatsapp-template" class="block mb-1 text-sm font-medium">Enviar Mensaje de WhatsApp</label>
+                                        <div class="flex gap-2">
+                                            <select id="whatsapp-template" ${!user.WhatsAppURL ? 'disabled' : ''} class="flex-1 p-2 border rounded-md bg-[var(--bg-primary)] border-[var(--border-color)] disabled:opacity-50">
+                                                <option value="">Selecciona una plantilla...</option>
+                                                ${state.templates.map((t, i) => `<option value="${i}">${t.name}</option>`).join('')}
+                                            </select>
+                                            <button type="submit" ${!user.WhatsAppURL ? 'disabled' : ''} class="px-4 py-2 text-white bg-green-500 rounded-md hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+                                                <i data-lucide="send" class="w-4 h-4"></i> Enviar
+                                            </button>
+                                        </div>
+                                        ${!user.WhatsAppURL ? '<p class="text-xs text-red-500 mt-1">No hay número de WhatsApp disponible.</p>' : ''}
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            openModal(modalHTML);
+            
+            document.getElementById('status-update').addEventListener('change', (e) => updateUserStatus(e.target.dataset.userid, e.target.value));
+            document.getElementById('whatsapp-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const selectedIndex = document.getElementById('whatsapp-template').value;
+                if (selectedIndex === "" || !user.WhatsAppURL) return;
+                let message = state.templates[selectedIndex].message;
+                const replacements = { '{{Username}}': user.Username, '{{BrandName}}': user.BrandName, '{{UserID}}': user.UserID, '{{Email}}': user.Email, '{{DateRegistered}}': formatDate(user.DateRegistered), '{{Status}}': user.Status };
+                message = message.replace(/{{Username}}|{{BrandName}}|{{UserID}}|{{Email}}|{{DateRegistered}}|{{Status}}/g, matched => replacements[matched]);
+                window.open(`https://wa.me/${user.WhatsAppURL}?text=${encodeURIComponent(message)}`, '_blank');
+            });
+            modalContainer.querySelectorAll('.copy-btn').forEach(btn => { btn.addEventListener('click', () => copyToClipboard(btn.dataset.copy, btn)); });
+        };
+
+        const openAdminModal = () => {
+            const modalHTML = `
+                <div class="w-full h-full p-4 flex items-center justify-center bg-black bg-opacity-50 modal-overlay">
+                    <div class="bg-[var(--bg-secondary)] rounded-lg w-full max-w-md max-h-[90vh] flex flex-col shadow-[var(--shadow)] border border-[var(--border-color)]">
+                        <div class="flex items-center justify-between p-4 border-b border-[var(--border-color)]"><h3 class="text-xl font-bold">Editar Perfil de Administrador</h3><button class="close-modal-btn p-2 rounded-full hover:bg-[var(--primary-light)]"><i data-lucide="x" class="w-6 h-6"></i></button></div>
+                        <form id="admin-profile-form" class="p-6 space-y-4">
+                            <div><label for="admin-name-input" class="block mb-1 text-sm font-medium">Nombre de Usuario</label><input type="text" id="admin-name-input" value="${state.admin.name}" class="w-full px-3 py-2 border rounded-md bg-[var(--bg-primary)] border-[var(--border-color)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" /></div>
+                            <div><label for="admin-avatar-input" class="block mb-1 text-sm font-medium">URL del Avatar</label><input type="url" id="admin-avatar-input" value="${state.admin.avatar}" class="w-full px-3 py-2 border rounded-md bg-[var(--bg-primary)] border-[var(--border-color)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" /></div>
+                            <button type="submit" class="w-full px-4 py-2 text-white bg-[var(--primary)] rounded-md hover:opacity-90">Guardar Cambios</button>
+                        </form>
+                    </div>
+                </div>`;
+            openModal(modalHTML);
+            document.getElementById('admin-profile-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                state.admin.name = document.getElementById('admin-name-input').value;
+                state.admin.avatar = document.getElementById('admin-avatar-input').value;
+                saveToStorage('adminProfile', state.admin);
+                renderAdminProfile();
+                renderCurrentPage();
+                closeModal();
+            });
+        };
+
+        const openAddNewLinkModal = () => {
+            const modalHTML = `
+                <div class="w-full h-full p-4 flex items-center justify-center bg-black bg-opacity-50 modal-overlay">
+                    <div class="bg-[var(--bg-secondary)] rounded-lg w-full max-w-lg max-h-[90vh] flex flex-col shadow-[var(--shadow)] border border-[var(--border-color)]">
+                        <div class="flex items-center justify-between p-4 border-b border-[var(--border-color)]"><h3 class="text-xl font-bold">Añadir Nuevo Enlace de Navegación</h3><button class="close-modal-btn p-2 rounded-full hover:bg-[var(--primary-light)]"><i data-lucide="x" class="w-6 h-6"></i></button></div>
+                        <form id="add-new-link-form" class="p-6 space-y-4">
+                            <div><label for="link-name" class="block mb-1 text-sm font-medium">Nombre del Botón*</label><input type="text" id="link-name" required class="w-full px-3 py-2 border rounded-md bg-[var(--bg-primary)] border-[var(--border-color)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" /></div>
+                            <div><label for="link-url" class="block mb-1 text-sm font-medium">URL*</label><input type="url" id="link-url" required placeholder="https://example.com" class="w-full px-3 py-2 border rounded-md bg-[var(--bg-primary)] border-[var(--border-color)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" /></div>
+                            <button type="submit" class="w-full px-4 py-2 text-white bg-[var(--primary)] rounded-md hover:opacity-90">Añadir Enlace</button>
+                        </form>
+                    </div>
+                </div>`;
+            openModal(modalHTML);
+            document.getElementById('add-new-link-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const name = document.getElementById('link-name').value;
+                const url = document.getElementById('link-url').value;
+                if (!name.trim() || !url.trim()) return;
+
+                const newLink = {
+                    id: `custom-${new Date().getTime()}`,
+                    name,
+                    url,
+                };
+
+                state.customNavLinks.push(newLink);
+                saveToStorage('customNavLinks', state.customNavLinks);
+                renderCustomNavLinks();
+                closeModal();
+                showToast('¡Nuevo enlace añadido con éxito!', 'success');
+            });
+        };
+        
+        const openCreateUserModal = () => {
+            const modalHTML = `
+                <div class="w-full h-full p-4 flex items-center justify-center bg-black bg-opacity-50 modal-overlay">
+                    <div class="bg-[var(--bg-secondary)] rounded-lg w-full max-w-lg max-h-[90vh] flex flex-col shadow-[var(--shadow)] border border-[var(--border-color)]">
+                        <div class="flex items-center justify-between p-4 border-b border-[var(--border-color)]">
+                            <h3 class="text-xl font-bold">Crear Nuevo Usuario</h3>
+                            <button class="close-modal-btn p-2 rounded-full hover:bg-[var(--primary-light)]"><i data-lucide="x" class="w-6 h-6"></i></button>
+                        </div>
+                        <form id="create-user-form" class="p-6 space-y-4 overflow-y-auto">
+                            <div><label for="brand-name" class="block mb-1 text-sm font-medium">Nombre de la Marca*</label><input type="text" id="brand-name" required class="w-full px-3 py-2 border rounded-md bg-[var(--bg-primary)] border-[var(--border-color)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" /></div>
+                            <div><label for="username" class="block mb-1 text-sm font-medium">Nombre de Usuario*</label><input type="text" id="username" required class="w-full px-3 py-2 border rounded-md bg-[var(--bg-primary)] border-[var(--border-color)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" /></div>
+                            <div><label for="email" class="block mb-1 text-sm font-medium">Correo Electrónico*</label><input type="email" id="email" required class="w-full px-3 py-2 border rounded-md bg-[var(--bg-primary)] border-[var(--border-color)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" /></div>
+                            <div>
+                                <label for="new-user-status" class="block mb-1 text-sm font-medium">Estado Inicial</label>
+                                <select id="new-user-status" class="w-full p-2 border rounded-md bg-[var(--bg-primary)] border-[var(--border-color)]">
+                                    ${Object.values(UserStatus).map(s => `<option value="${s}" ${s === UserStatus.WAITING ? 'selected' : ''}>${s}</option>`).join('')}
+                                </select>
+                            </div>
+                            <button type="submit" class="w-full px-4 py-2 text-white bg-[var(--primary)] rounded-md hover:opacity-90">Crear Usuario</button>
+                        </form>
+                    </div>
+                </div>`;
+            openModal(modalHTML);
+            document.getElementById('create-user-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const newUser = {
+                    BrandName: document.getElementById('brand-name').value,
+                    Username: document.getElementById('username').value,
+                    Email: document.getElementById('email').value,
+                    Status: document.getElementById('new-user-status').value,
+                    ProfilePicURL: "", LogoURL: "", PrimaryColor: "#DF1783", TopCTAText: "", TopCTALink: "", VideoScriptURL: "", SheetID: "", ShareableURL: "", WhatsAppURL: "", InstagramURL: "", FacebookURL: "", YouTubeURL: "", LinkedInURL: "", XURL: "", TelegramURL: "", WebsiteURL: "", DateApproval: ""
+                };
+                createNewUser(newUser);
+            });
+        };
+
+        // --- NAVIGATION & UI RENDERING ---
+        const renderCustomNavLinks = () => {
+            const container = document.getElementById('custom-nav-links-container');
+            if (!container) return;
+            container.innerHTML = state.customNavLinks.map(link => `
+                <a href="#" data-page="${link.id}" data-url="${link.url}" data-title="${link.name}" class="nav-link flex items-center justify-between p-3 rounded-lg group">
+                    <div class="flex items-center overflow-hidden">
+                        <i data-lucide="external-link" class="w-6 h-6 mr-4 flex-shrink-0"></i>
+                        <span class="truncate">${link.name}</span>
+                    </div>
+                    <button class="delete-link-btn p-1 text-red-500 hover:bg-red-100 dark:hover:bg-red-900 rounded-full hidden group-hover:inline-flex" data-id="${link.id}" title="Eliminar Enlace">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </a>
+            `).join('');
+            lucide.createIcons();
+        };
+
+        const renderIframePage = (url, title) => {
+            pageContainer.className = 'w-full flex-grow'; 
+            pageContainer.innerHTML = `<iframe src="${url}" class="w-full h-full border-0" title="${title}"></iframe>`;
+            document.getElementById('mobile-page-title').textContent = title;
+        };
+
+        const handleNavigation = (page, url = null, title = null) => {
+            state.currentPage = page;
+            
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.toggle('bg-[var(--primary-light)]', link.dataset.page === page);
+                link.classList.toggle('text-[var(--primary)]', link.dataset.page === page);
+            });
+
+            if (url) {
+                renderIframePage(url, title);
+            } else {
+                renderCurrentPage();
+            }
+        };
+
+        const renderCurrentPage = () => {
+            pageContainer.className = 'w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-grow';
+            const pageName = state.currentPage.charAt(0).toUpperCase() + state.currentPage.slice(1);
+            document.getElementById('mobile-page-title').textContent = pageName;
+            
+            switch(state.currentPage) {
+                case 'dashboard': renderDashboardPage(); break;
+                case 'users': renderUsersPage(); break;
+                case 'templates': renderTemplatesPage(); break;
+                case 'settings': renderSettingsPage(); break;
+                default: renderDashboardPage();
+            }
+        };
+        
+        const renderAdminProfile = () => {
+            document.getElementById('admin-user-name').textContent = state.admin.name;
+            document.getElementById('admin-avatar').src = state.admin.avatar;
+            document.getElementById('admin-avatar').onerror = () => { document.getElementById('admin-avatar').src = 'https://i.pravatar.cc/150?u=admin-error'; };
+        };
+
+        const applyTheme = (theme) => {
+            const root = document.documentElement, themeIcon = document.getElementById('theme-icon');
+            if (theme === 'dark') { root.classList.add('dark'); themeIcon.setAttribute('data-lucide', 'sun'); } 
+            else { root.classList.remove('dark'); themeIcon.setAttribute('data-lucide', 'moon'); }
+            lucide.createIcons();
+            if (state.currentPage === 'dashboard') renderCharts();
+        };
+
+        // --- MOBILE NAVIGATION & SWIPE ---
+        const openMobileSidebar = () => {
+            sidebar.classList.add('sidebar-mobile-open');
+            document.getElementById('sidebar-overlay').classList.remove('hidden');
+        };
+        const closeMobileSidebar = () => {
+            sidebar.classList.remove('sidebar-mobile-open');
+            document.getElementById('sidebar-overlay').classList.add('hidden');
+        };
+
+        let touchstartX = 0;
+        let touchendX = 0;
+        const SWIPE_THRESHOLD = 50;
+        const SWIPE_EDGE_ZONE = 50;
+
+        const handleGesture = () => {
+            const swipeDist = touchendX - touchstartX;
+            const isSidebarOpen = sidebar.classList.contains('sidebar-mobile-open');
+            if (swipeDist < -SWIPE_THRESHOLD && isSidebarOpen) closeMobileSidebar();
+            if (swipeDist > SWIPE_THRESHOLD && !isSidebarOpen && touchstartX < SWIPE_EDGE_ZONE) openMobileSidebar();
+        }
+
+        // --- DATA EXPORT ---
+        const downloadCSV = () => {
+            const users = getFilteredUsers();
+            if(users.length === 0) { showToast('No hay usuarios para exportar.', 'error'); return; }
+            const headers = Object.keys(users[0]);
+            const csvRows = [headers.join(','), ...users.map(row => headers.map(fieldName => JSON.stringify(row[fieldName])).join(','))];
+            const blob = new Blob([csvRows.join('\n')], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.setAttribute('href', url);
+            a.setAttribute('download', 'usuarios.csv');
+            a.click();
+            URL.revokeObjectURL(url);
+        };
+        
+        const downloadPDF = () => {
+            const users = getFilteredUsers();
+            if(users.length === 0) { showToast('No hay usuarios para exportar.', 'error'); return; }
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const head = [['ID de Usuario', 'Usuario', 'Marca', 'Correo', 'Estado', 'Registrado']];
+            const body = users.map(u => [u.UserID, u.Username, u.BrandName, u.Email, u.Status, formatDate(u.DateRegistered)]);
+            
+            doc.autoTable({ head, body });
+            doc.save('usuarios.pdf');
+        };
+
+        // --- NOTIFICATIONS ---
+        let toastTimeout;
+        const showToast = (message, type = 'success') => {
+            const toast = document.getElementById('toast');
+            clearTimeout(toastTimeout);
+            toast.textContent = message;
+            toast.className = 'fixed bottom-5 right-5 text-white px-4 py-2 rounded-lg shadow-lg transform transition-all duration-300';
+            
+            if (type === 'error') toast.classList.add('bg-red-500');
+            else if (type === 'loading') toast.classList.add('bg-blue-500');
+            else toast.classList.add('bg-green-500');
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toastTimeout = setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        };
+
+
+        // --- EVENT LISTENERS ---
+        const addUsersPageEventListeners = () => {
+            document.getElementById('search-input').addEventListener('input', (e) => {
+                state.searchTerm = e.target.value;
+                renderUserList();
+            });
+            document.getElementById('create-user-btn').addEventListener('click', openCreateUserModal);
+            document.getElementById('view-grid-btn').addEventListener('click', () => {
+                state.view = 'grid';
+                renderUsersPage();
+            });
+            document.getElementById('view-list-btn').addEventListener('click', () => {
+                state.view = 'list';
+                renderUsersPage();
+            });
+            document.getElementById('download-csv-btn').addEventListener('click', downloadCSV);
+            document.getElementById('download-pdf-btn').addEventListener('click', downloadPDF);
+        };
+
+        const addTemplatesPageEventListeners = () => {
+            document.getElementById('template-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const name = document.getElementById('template-name').value;
+                const message = document.getElementById('template-message').value;
+                state.templates.push({ id: `template-${new Date().getTime()}`, name, message });
+                saveToStorage('whatsappTemplates', state.templates);
+                renderTemplateList();
+                e.target.reset();
+            });
+        };
+
+        const addSettingsPageEventListeners = () => {
+            document.getElementById('save-settings-btn').addEventListener('click', () => {
+                state.settings.scriptUrl = document.getElementById('scriptUrl').value;
+                state.settings.imagekitKey = document.getElementById('imagekitKey').value;
+                saveToStorage('appSettings', state.settings);
+                fetchUsers(); // Re-fetch data with new settings
+            });
+        };
+
+        // --- INITIALIZATION ---
+        const init = async () => {
+            // Load state from local storage or set defaults
+            state.theme = getFromStorage('theme', 'light');
+            state.templates = getFromStorage('whatsappTemplates', [{ id: '1', name: "Bienvenida a Bordo", message: "¡Hola {{Username}}! Bienvenido/a a EasyListings." }]);
+            state.settings = getFromStorage('appSettings', { scriptUrl: '', imagekitKey: '' });
+            state.admin = getFromStorage('adminProfile', { name: 'Administrador', avatar: 'https://bucket.mlcdn.com/a/3336/3336910/images/720acb42aae5c4c7657fe94291a91807c55c356a.png' });
+            state.customNavLinks = getFromStorage('customNavLinks', []);
+            
+            // Initial UI setup
+            renderAdminProfile();
+            applyTheme(state.theme);
+            renderCustomNavLinks();
+            lucide.createIcons();
+            handleNavigation('dashboard');
+            await fetchUsers();
+
+            // Mobile nav listeners
+            document.getElementById('sidebar-open-btn').addEventListener('click', openMobileSidebar);
+            document.getElementById('sidebar-close-btn').addEventListener('click', closeMobileSidebar);
+            document.getElementById('sidebar-overlay').addEventListener('click', closeMobileSidebar);
+
+            // General listeners
+            document.getElementById('nav-links').addEventListener('click', (e) => {
+                const link = e.target.closest('a.nav-link');
+                const deleteBtn = e.target.closest('.delete-link-btn');
+
+                if (deleteBtn) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const linkId = deleteBtn.dataset.id;
+                    state.customNavLinks = state.customNavLinks.filter(l => l.id !== linkId);
+                    saveToStorage('customNavLinks', state.customNavLinks);
+                    renderCustomNavLinks();
+                    showToast('Enlace eliminado.', 'success');
+                    return;
+                }
+
+                if (link) {
+                    if (link.dataset.page === 'translate') {
+                        return;
+                    }
+
+                    e.preventDefault();
+                    handleNavigation(link.dataset.page, link.dataset.url, link.dataset.title);
+                    if (window.innerWidth <= 780) closeMobileSidebar();
+                }
+            });
+
+            document.getElementById('add-new-link-btn').addEventListener('click', openAddNewLinkModal);
+            document.getElementById('theme-toggle').addEventListener('click', () => { state.theme = state.theme === 'light' ? 'dark' : 'light'; saveToStorage('theme', state.theme); applyTheme(state.theme); });
+            document.getElementById('admin-profile-section').addEventListener('click', openAdminModal);
+            document.getElementById('notification-btn').addEventListener('click', () => showToast('Esta es una notificación de prueba.'));
+
+            // Swipe listeners
+            document.addEventListener('touchstart', e => { touchstartX = e.changedTouches[0].screenX; }, { passive: true });
+            document.addEventListener('touchend', e => { touchendX = e.changedTouches[0].screenX; handleGesture(); });
+        };
+
+        init();
+    });
+    </script>
+</body>
+</html>
