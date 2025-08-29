@@ -1,0 +1,1724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Easy Listings</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&display=swap" rel="stylesheet">
+<!-- Favicon -->
+<link rel="icon" href="https://bucket.mlcdn.com/a/3336/3336910/images/fa62e06dd2b6ed2d1d9e77e5dd944bef2904d5d1.png">
+<style>
+:root {
+	--primary: #DF1783;
+	--primary-light: #f8a4d4;
+	--secondary: #2d3748;
+	--accent: #4fd1c5;
+	--text: #2d3748;
+	--text-light: #a0aec0;
+	--bg: #f7fafc;
+	--card-bg: #ffffff;
+	--shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+	--border-color: #e2e8f0;
+	--whatsapp-color: #25D366; /* Default Green for WhatsApp */
+}
+
+.dark-mode {
+	--text: #f7fafc; --text-light: #a0aec0; --bg: #1a202c;
+	--card-bg: #2d3748; --shadow: 0 4px 6px -1px rgba(0,0,0,0.4), 0 2px 4px -1px rgba(0,0,0,0.2);
+	--border-color: #4a5568;
+}
+
+html { box-sizing: border-box; overflow-x: hidden; scroll-behavior: smooth; }
+*, *:before, *:after { box-sizing: inherit; margin: 0; padding: 0; }
+
+body {
+	margin: 0;
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	background-color: var(--bg);
+	color: var(--text);
+	transition: background-color 0.3s, color 0.3s;
+	overflow-x: hidden;
+}
+
+.top-menu-bar {
+	position: fixed; top: 2rem; left: 50%; transform: translateX(-50%);
+	width: calc(100% - 4rem); max-width: 1400px; z-index: 1100;
+	background-color: var(--card-bg); box-shadow: var(--shadow);
+	border: 1px solid var(--border-color); border-radius: 12px;
+	padding: 0 1.5rem; transition: top 0.3s ease-in-out;
+}
+.top-menu-bar.hidden { top: -100px; }
+.top-menu-content { height: 70px; display: flex; align-items: center; justify-content: space-between; }
+.logo-container { display: flex; align-items: center; gap: 1rem; }
+#appLogo { height: 40px; width: 40px; object-fit: cover; border-radius: 8px; }
+#appBrandNameDisplay { font-size: 1.5rem; font-weight: 600; color: var(--text); }
+.top-menu-actions { display: flex; align-items: center; gap: 1rem; }
+.fab {
+	width: 40px; height: 40px; border-radius: 50%; background-color: var(--bg);
+	color: var(--text); border: 1px solid var(--border-color); display: flex;
+	justify-content: center; align-items: center; cursor: pointer; transition: all 0.2s ease;
+}
+.fab:hover { background-color: var(--border-color); }
+
+.header-banner {
+	width: 100%;
+	padding: 170px 2rem 4rem 2rem;
+	text-align: center;
+	position: relative;
+	background-size: cover;
+	background-position: center;
+	color: white;
+	overflow: hidden;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.header-banner::before {
+	content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+	background-color: rgba(0,0,0,0.5); z-index: 1;
+}
+.header-content { position: relative; z-index: 2; max-width: 1400px; margin: 0 auto; }
+.admin-greeting {
+	background-color: var(--primary); color: white; padding: 8px 20px;
+	border-radius: 25px; font-size: 1.5rem; font-weight: 500;
+	display: inline-block; margin-bottom: 1.5rem;
+	transition: transform 0.2s ease, filter 0.2s ease;
+}
+.admin-greeting:hover { transform: translateY(-2px); filter: brightness(1.1); }
+.header-banner h1 { font-size: 2.8rem; color: white; margin-bottom: 1rem; min-height: 50px; }
+#brand-anim-span::after { content: '|'; animation: blink 1s infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+.header-banner p { font-size: 1.2rem; color: rgba(255,255,255,0.9); margin-bottom: 2rem; }
+.header-banner .controls-container { background-color: var(--card-bg); box-shadow: var(--shadow); margin-bottom: 0; }
+
+.container { max-width: 1400px; margin: 0 auto; padding: 2rem 4rem; }
+.controls-container {
+	display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
+	gap: 1.5rem; padding: 2.3rem; border-radius: 12px;
+	max-width: 800px; width: 100%; margin-left: auto; margin-right: auto;
+}
+.search-bar { position: relative; flex-grow: 1; max-width: 700px; }
+.search-bar input { width: 100%; padding: 12px 20px 12px 45px; border-radius: 30px; border: 1px solid var(--border-color); background-color: var(--bg); color: var(--text); font-size: 1rem; }
+.search-bar i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-light); }
+.btn { background-color: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; text-align: center; }
+.btn.btn-danger { background-color: #e53e3e; }
+.btn.btn-secondary { background-color: var(--secondary); }
+.btn.btn-whatsapp { background-color: var(--whatsapp-color); }
+.btn:hover { opacity: 0.85; transform: translateY(-2px); }
+.btn-full-width { width: 100%; }
+
+.tag-filters { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; margin-bottom: 2.5rem; }
+.tag-filter-btn { background-color: var(--card-bg); color: var(--text); border: 1px solid var(--border-color); padding: 8px 16px; border-radius: 20px; cursor: pointer; font-weight: 500; transition: all 0.3s ease; }
+.tag-filter-btn:hover { background-color: var(--border-color); transform: translateY(-2px); }
+.tag-filter-btn.active { background-color: var(--primary); color: white; border-color: var(--primary); }
+
+.listing-section { margin-bottom: 3rem; }
+.section-header { text-align: center; margin-bottom: 2rem; }
+.section-header h2 { font-size: 2rem; color: var(--text); margin-bottom: 0.5rem; }
+.section-header p { font-size: 1.1rem; color: var(--text-light); max-width: 600px; margin: 0 auto; }
+
+.grid-container {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 2.5rem;
+}
+
+.card {
+	background-color: var(--card-bg); border-radius: 12px;
+	overflow: hidden; box-shadow: var(--shadow);
+	display: flex; flex-direction: column; position: relative;
+	transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.card:hover {
+	transform: translateY(-5px);
+	box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+.card-admin-controls {
+	position: absolute; top: 10px; left: 10px; z-index: 3;
+	display: none; gap: 8px;
+}
+body.admin-logged-in .card-admin-controls { display: flex; }
+.admin-btn {
+	background-color: rgba(0,0,0,0.6); color: white; border: none;
+	width: 35px; height: 35px; border-radius: 50%; cursor: pointer;
+	display: flex; align-items: center; justify-content: center;
+	font-size: 0.9rem; transition: background-color 0.2s;
+}
+.admin-btn:hover { background-color: rgba(0,0,0,0.8); }
+
+.card-carousel {
+	position: relative; aspect-ratio: 16 / 10;
+	background-color: var(--border-color); overflow: hidden;
+}
+.carousel-track { display: flex; height: 100%; transition: transform 0.5s ease-in-out; }
+.carousel-slide { min-width: 100%; height: 100%; }
+.carousel-slide img { width: 100%; height: 100%; object-fit: cover; }
+.carousel-badge {
+	position: absolute; top: 1rem; right: 1rem; z-index: 2;
+	background-color: var(--primary); color: white;
+	padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;
+}
+.card-body { padding: 1.5rem; flex-grow: 1; display: flex; flex-direction: column; }
+.card-title { font-size: 1.4rem; font-weight: 700; color: var(--text); margin-bottom: 0.25rem; }
+.card-subtitle { font-size: 1rem; color: var(--primary); margin-bottom: 0.5rem; font-weight: 500; }
+.card-requests { font-size: 0.8rem; color: var(--text-light); margin-bottom: 1rem; }
+.card-description { font-size: 0.9rem; color: var(--text-light); line-height: 1.6; margin-bottom: 1.5rem; }
+.card-price { font-size: 1.5rem; font-weight: 700; color: var(--accent); margin-bottom: 1.5rem; }
+.card-price .negotiable { font-size: 0.9rem; font-weight: 400; color: var(--text-light); }
+.card-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; }
+.card-tag { background-color: var(--primary-light); color: var(--primary); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 500; }
+.card-ctas {
+	margin-top: auto;
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+}
+.card-ctas .btn {
+	width: 100%;
+}
+
+
+#getInTouchBlock {
+	display: none;
+	text-align: center;
+	padding: 3rem 1rem;
+	margin: 4rem auto;
+	background-color: var(--card-bg);
+	border-radius: 12px;
+	box-shadow: var(--shadow);
+	max-width: 800px;
+}
+.get-in-touch-profile-pic {
+	width: 120px;
+	height: 120px;
+	border-radius: 50%;
+	background-size: cover;
+	background-position: center;
+	margin: 0 auto 1rem auto;
+	border: 4px solid var(--primary);
+	position: relative;
+}
+.waving-hand {
+	position: absolute;
+	top: -10px;
+	right: -10px;
+	font-size: 2.5rem;
+	animation: wave-animation 2.5s infinite;
+	transform-origin: 70% 70%;
+}
+@keyframes wave-animation {
+	0% { transform: rotate(0.0deg) }
+	10% { transform: rotate(14.0deg) }
+	20% { transform: rotate(-8.0deg) }
+	30% { transform: rotate(14.0deg) }
+	40% { transform: rotate(-4.0deg) }
+	50% { transform: rotate(10.0deg) }
+	60% { transform: rotate(0.0deg) }
+	100% { transform: rotate(0.0deg) }
+}
+#getInTouchBlock h3 {
+	font-size: 1.8rem;
+	color: var(--text);
+	margin-bottom: 1.5rem;
+}
+
+#mapContainer { width: 100%; max-width: 1400px; margin: 4rem auto 0 auto; height: 450px; background-color: var(--border-color); border-radius: 12px; }
+#mapContainer iframe { width: 100%; height: 100%; border:0; border-radius: 12px; }
+
+.footer { padding: 2rem 1rem; text-align: center; color: var(--text-light); border-top: 1px solid var(--border-color); margin-top: 4rem; }
+.social-links { display: flex; justify-content: center; gap: 1rem; margin-bottom: 1rem; }
+.social-links a {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	background-color: var(--primary);
+	transition: opacity 0.3s;
+}
+.social-links a:hover {
+	opacity: 0.8;
+}
+.social-links a img {
+	width: 24px;
+	height: 24px;
+}
+.bebell-footer { padding: 20px; font-size: 12px; }
+.bebell-footer p { margin: 0; line-height: 1.6; }
+.bebell-link { color: var(--text-light); text-decoration: none; }
+.bebell-link:hover { color: var(--primary); text-decoration: underline; }
+
+/* Modal Styles */
+.modal {
+	position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; 
+	background-color: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center;
+}
+.modal.active { display: flex; }
+.modal-content { 
+	background-color: var(--card-bg); padding: 2rem; border-radius: 12px; 
+	width: 90%; max-width: 600px; position: relative; 
+	box-shadow: 0 10px 25px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto; 
+}
+.modal-content h3 { margin-bottom: 1rem; }
+.modal-content h4 { margin-top: 2rem; margin-bottom: 1rem; }
+#settingsHeroPreview {
+	position: relative;
+	padding: 2rem 1rem;
+	margin-bottom: 1rem;
+	margin-top: 1rem;
+	border-radius: 8px;
+	background-size: cover;
+	background-position: center;
+	color: white;
+	text-align: center;
+	overflow: hidden;
+	min-height: 200px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+#settingsHeroPreview::before {
+	content: '';
+	position: absolute;
+	top: 0; left: 0; right: 0; bottom: 0;
+	background-color: rgba(0,0,0,0.5);
+	z-index: 1;
+}
+#settingsWelcomeBanner {
+	position: relative;
+	z-index: 2;
+	font-size: 1.5rem;
+	font-weight: 500;
+}
+.modal-close { position: absolute; top: 15px; right: 15px; font-size: 1.5rem; color: var(--text-light); cursor: pointer; z-index: 10; }
+.form-group { margin-bottom: 1rem; }
+.form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
+.form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; background-color: var(--bg); color: var(--text); }
+input[type="color"] { padding: 0; height: 40px; border-radius: 8px; cursor: pointer; }
+.profile-pic-uploader { display: flex; flex-direction: column; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+.profile-pic-preview {
+	width: 120px;
+	height: 120px;
+	border-radius: 50%;
+	border: 3px dashed var(--primary);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	background-size: cover;
+	background-position: center;
+	color: var(--text-light);
+	position: relative;
+}
+.profile-pic-preview i { font-size: 2rem; }
+.profile-pic-uploader input[type="file"] { display: none; }
+.waving-hand-settings {
+	position: absolute;
+	top: -5px;
+	right: -5px;
+	font-size: 2rem;
+	animation: wave-animation 2.5s infinite;
+	transform-origin: 70% 70%;
+}
+.recommendations { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
+.recommendation-btn { background: var(--bg); border: 1px solid var(--border-color); padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
+.share-url-container { display: flex; gap: 0.5rem; }
+.image-input-group { margin-top: 0.5rem; }
+.toggle-container { display: flex; align-items: center; gap: 10px; margin-top: 1rem; font-size: 0.9rem; }
+.toggle-switch { position: relative; display: inline-block; width: 50px; height: 28px; flex-shrink: 0; }
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 28px; }
+.slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+input:checked + .slider { background-color: var(--primary); }
+input:checked + .slider:before { transform: translateX(22px); }
+hr { border: 0; border-top: 1px solid var(--border-color); margin: 2rem 0; }
+.checkbox-group { display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; }
+.checkbox-group input[type="checkbox"] { width: auto; }
+.instructions-details { background-color: var(--bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem; font-size: 0.9em; margin-top: 0.5rem; }
+.instructions-details p, .instructions-details ol { margin-bottom: 0.5rem; }
+.instructions-details li { margin-left: 1.5rem; margin-bottom: 0.5rem; }
+.instructions-details code { background-color: var(--border-color); padding: 2px 5px; border-radius: 4px; font-family: monospace; }
+.instructions-details textarea { width: 100%; min-height: 150px; white-space: pre; overflow-wrap: normal; overflow-x: scroll; }
+
+.notification-banner { 
+	position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+	background-color: var(--accent); color: white; 
+	padding: 1.5rem 2.5rem; border-radius: 12px; 
+	box-shadow: var(--shadow); z-index: 3000; font-weight: 500; 
+	opacity: 0; visibility: hidden; transition: all 0.3s ease-in-out; 
+}
+.notification-banner.show { opacity: 1; visibility: visible; }
+
+#backToTopBtn {
+	display: none; position: fixed; bottom: 20px; right: 30px; z-index: 99;
+	border: none; outline: none; background-color: var(--primary); color: white;
+	cursor: pointer; padding: 0; width: 50px; height: 50px; border-radius: 50%;
+	font-size: 18px; box-shadow: var(--shadow);
+}
+#backToTopBtn:hover { opacity: 0.8; }
+
+/* Responsive Grid & CTA Layout */
+@media (max-width: 1024px) {
+	.grid-container {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+@media (max-width: 768px) {
+	.container { padding: 1rem; }
+	.header-banner .controls-container .btn { width: 100%; }
+	.logo-container { max-width: 150px; }
+	#appBrandNameDisplay { font-size: 16px; }
+	#supportBtn { display: none; }
+	.card-ctas {
+		opacity: 1;
+		visibility: visible;
+		margin-top: 1rem;
+	}
+	
+	.tag-filters {
+		flex-wrap: nowrap;
+		justify-content: flex-start;
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+		padding-bottom: 1rem;
+		-ms-overflow-style: none; scrollbar-width: none;
+	}
+	.tag-filters::-webkit-scrollbar { display: none; }
+	.tag-filter-btn { flex-shrink: 0; }
+
+	.grid-container {
+		display: flex;
+		overflow-x: auto;
+		scroll-snap-type: x mandatory;
+		gap: 1.5rem;
+		padding-bottom: 1rem;
+		-ms-overflow-style: none; scrollbar-width: none;
+	}
+	.grid-container::-webkit-scrollbar { display: none; }
+	.card { flex: 0 0 80%; width: 80%; scroll-snap-align: start; }
+}
+
+@media (min-width: 769px) {
+	.card .card-ctas {
+		opacity: 0;
+		visibility: hidden;
+		transition: opacity 0.3s ease, visibility 0.3s ease;
+		height: 0;
+		overflow: hidden;
+	}
+	.card:hover .card-ctas {
+		opacity: 1;
+		visibility: visible;
+		height: auto;
+		margin-top: 1.5rem;
+	}
+}
+
+</style>
+</head>
+<body>
+
+<div id="notification" class="notification-banner"></div>
+
+<div class="top-menu-bar">
+	<div class="top-menu-content">
+		<div class="logo-container">
+			<img id="appLogo" src="https://bucket.mlcdn.com/a/3336/3336910/images/fa62e06dd2b6ed2d1d9e77e5dd944bef2904d5d1.png" alt="App Logo">
+			<span id="appBrandNameDisplay">Easy Listings</span>
+		</div>
+		<div class="top-menu-actions">
+			<a href="#" class="btn" id="topCtaBtn" style="display:none;"></a>
+			<div class="fab" id="settingsBtn" title="Settings"><i class="fas fa-cog"></i></div>
+			<div class="fab" id="supportBtn" title="Support" onclick="window.open('https://helpcenter.easylistings.website', '_blank')"><i class="fa fa-info-circle"></i></div>
+			<div class="fab" id="darkModeToggle" title="Toggle Theme"><i class="fas fa-moon"></i></div>
+		</div>
+	</div>
+</div>
+
+<header class="header-banner" id="mainHeader">
+	<div class="header-content">
+		<div id="adminGreeting" class="admin-greeting">Hey there! 👋</div>
+		<h1 id="main-header-title">Welcome to <span id="brand-anim-span"></span></h1>
+		<p id="main-header-subtitle">Your professional hub for managing and showcasing property listings.</p>
+		<div class="controls-container">
+			<div class="search-bar">
+				<i class="fas fa-search"></i>
+				<input type="text" id="searchInput" placeholder="Search listings...">
+			</div>
+			<button class="btn" id="addNewEntryBtn"><i class="fas fa-plus"></i> Add New Listing</button>
+		</div>
+	</div>
+</header>
+
+<main class="container">
+	<div class="tag-filters" id="tagFilters"></div>
+	<div class="content-wrapper">
+		<div id="listingPlaceholder">
+			<div id="listingsContainer"></div>
+		</div>
+	</div>
+	<div id="getInTouchBlock">
+		<div class="get-in-touch-profile-pic" id="getInTouchPic">
+			<div class="waving-hand">👋</div>
+		</div>
+		<h3>Let's get in touch!</h3>
+		<a href="#" id="getInTouchBtn" class="btn btn-secondary">Contact via WhatsApp</a>
+	</div>
+	<div id="mapContainer"></div>
+</main>
+
+<footer class="footer" id="mainFooter">
+	<div class="social-links" id="socialLinksContainer"></div>
+	<div class="bebell-footer">
+		<p>Powered with 💖 by <a href="https://bebelldigitalsolutions.com" class="bebell-link" target="_blank">Bebell Digital Solutions.</a><br>Copyright © 2024 • All rights reserved.</p>
+	</div>
+</footer>
+<button id="backToTopBtn" title="Go to top"><i class="fas fa-arrow-up"></i></button>
+
+<!-- MODALS -->
+<div id="loginModal" class="modal">
+	<div class="modal-content">
+		<span class="modal-close">&times;</span>
+		<h3>Restricted Access</h3>
+		<p id="login-message"></p>
+		<form id="loginForm">
+			<div class="form-group"><label for="loginEmail">Email Address or Username</label><input type="text" id="loginEmail" required></div>
+			<div class="form-group"><label for="loginPassword">Password</label><input type="password" id="loginPassword" required></div>
+			<button type="submit" class="btn" style="width: 100%;">Confirm Admin Access</button>
+		</form>
+	</div>
+</div>
+
+<div id="settingsModal" class="modal">
+	<div class="modal-content">
+		<span class="modal-close">&times;</span>
+		<h3>Settings</h3>
+		<div id="settingsHeroPreview">
+			<div id="settingsWelcomeBanner">
+				Hello, <span id="settingsUsernameDisplay">Admin</span>!
+			</div>
+		</div>
+		
+		<div class="form-group">
+			<label for="shareableUrl">Your Shareable Listings URL</label>
+			<div class="share-url-container">
+				<input type="text" id="shareableUrl" readonly>
+				<button id="copyShareableUrlBtn" class="btn" title="Copy URL"><i class="fas fa-copy"></i></button>
+			</div>
+		</div>
+		<hr>
+
+		<h4>Profile & Branding</h4>
+		<div class="form-group">
+			<label for="settingsHeroImageUrl">Hero Section Background Image</label>
+			<div class="profile-pic-uploader" style="margin-bottom: 0.5rem;">
+				<label for="settingsHeroImageUpload" class="btn btn-full-width">Upload Hero Image</label>
+				<input type="file" id="settingsHeroImageUpload" accept="image/*" style="display:none;">
+			</div>
+			<input type="text" id="settingsHeroImageUrl" placeholder="Or paste image URL">
+		</div>
+		<div class="form-group">
+			<label>Profile Picture</label>
+			<div class="profile-pic-uploader">
+				<label for="settingsProfilePicUpload" class="profile-pic-preview" id="settingsProfilePicPreview">
+					<i class="fas fa-camera"></i>
+					<div class="waving-hand-settings">👋</div>
+				</label>
+				<input type="file" id="settingsProfilePicUpload" accept="image/*" style="display:none;">
+			</div>
+			<input type="text" id="settingsProfilePicUrl" placeholder="Or paste image URL">
+		</div>
+		<div class="form-group">
+			<label for="settingsUsername">Username</label>
+			<input type="text" id="settingsUsername">
+		</div>
+		<div class="form-group">
+			<label for="settingsBrandName">Brand Name</label>
+			<input type="text" id="settingsBrandName">
+		</div>
+		<div class="form-group">
+			<label for="settingsLogoUrl">Logo URL</label>
+			<div class="profile-pic-uploader" style="margin-bottom: 0.5rem;">
+				<label for="settingsLogoUpload" class="btn btn-full-width">Upload Logo</label>
+				<input type="file" id="settingsLogoUpload" accept="image/*" style="display:none;">
+			</div>
+			<input type="text" id="settingsLogoUrl" placeholder="Or paste logo image URL">
+		</div>
+
+		<hr>
+		<h4>Listings & API</h4>
+		<div class="form-group">
+			<label for="settingsListingsScriptUrl">Listings Script URL</label>
+			<input type="text" id="settingsListingsScriptUrl">
+		</div>
+		<details class="form-group">
+			<summary>How to get your Script URL & Template</summary>
+			<div class="instructions-details">
+				<p>Follow these steps to sync your Google Sheet:</p>
+				<ol>
+					<li>Open your Google Sheet with the listings data.</li>
+					<li>Go to <code>Extensions > Apps Script</code>.</li>
+					<li>Delete any existing code and paste the script below.</li>
+					<li>Click 'Save project', then 'Deploy' > 'New Deployment'.</li>
+					<li>For 'Select type', choose 'Web app'.</li>
+					<li>Under 'Who has access', select 'Anyone'.</li>
+					<li>Click 'Deploy', then 'Authorize access'.</li>
+					<li>Copy the generated 'Web app URL' and paste it in the field above.</li>
+				</ol>
+				<label for="scriptTemplate">Script Template:</label>
+				<textarea id="scriptTemplate" readonly rows="8"></textarea>
+			</div>
+		</details>
+
+		<div class="form-group">
+			<label for="settingsImageKitApiKey">ImageKit.io Public API Key</label>
+			<input type="text" id="settingsImageKitApiKey" placeholder="Your public_...">
+		</div>
+		<details class="form-group">
+			<summary>How to get your ImageKit.io API Key</summary>
+			<div class="instructions-details">
+				<p>ImageKit.io is used for uploading and optimizing images.</p>
+				<ol>
+					<li>Create a free account at <a href="https://imagekit.io/" target="_blank">ImageKit.io</a>.</li>
+					<li>In your dashboard, navigate to the "Developer" section.</li>
+					<li>Find the "API Keys" subsection.</li>
+					<li>Copy your <strong>Public API Key</strong> and paste it in the field above.</li>
+				</ol>
+			</div>
+		</details>
+
+		<hr>
+		<h4>Customization</h4>
+		<div class="form-group">
+			<label for="settingsPrimaryColor">Primary Color</label>
+			<input type="color" id="settingsPrimaryColor" value="#DF1783">
+		</div>
+		<div class="form-group">
+			<label for="settingsGreetingFont">Greeting Message Font</label>
+			<select id="settingsGreetingFont">
+				<option value="'Caveat', cursive">Caveat</option>
+				<option value="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">Default</option>
+				<option value="'Arial', sans-serif">Arial</option>
+				<option value="'Times New Roman', serif">Times New Roman</option>
+				<option value="'Courier New', monospace">Courier New</option>
+			</select>
+		</div>
+		 <div class="form-group">
+			<label for="settingsTopCtaText">Top Bar Button Text</label>
+			<input type="text" id="settingsTopCtaText" placeholder="e.g., Contact Us">
+		</div>
+		<div class="form-group">
+			<label for="settingsTopCtaLink">Top Bar Button Link</label>
+			<input type="url" id="settingsTopCtaLink" placeholder="https://example.com">
+		</div>
+		<hr>
+		<h4>Map Settings</h4>
+		<div class="form-group">
+			<label for="settingsAddress">Address (for display)</label>
+			<input type="text" id="settingsAddress" placeholder="123 Main St, City, Country">
+		</div>
+		<div class="form-group">
+			<label for="settingsGoogleMapsUrl">Google Maps Embed URL</label>
+			<input type="url" id="settingsGoogleMapsUrl" placeholder="https://www.google.com/maps/embed?pb=...">
+		</div>
+
+		<hr>
+		<h4>Contact & Social Links</h4>
+		 <div class="toggle-container" style="margin-bottom: 2rem;">
+			<label class="toggle-switch">
+				<input type="checkbox" id="enableWhatsappButtonGlobal" checked>
+				<span class="slider"></span>
+			</label>
+			<span>Enable WhatsApp Button on all listings</span>
+		</div>
+		<div class="form-group">
+			<label for="settingsWhatsappNumber">WhatsApp Phone Number</label>
+			<input type="tel" id="settingsWhatsappNumber" placeholder="e.g., 18091234567">
+		</div>
+		<div class="form-group">
+			<label for="settingsWhatsappMessage">Default WhatsApp Message</label>
+			<textarea id="settingsWhatsappMessage" rows="3" placeholder="I'm interested in {{PropertyID}}"></textarea>
+		</div>
+		<div class="form-group">
+			<label for="settingsWhatsappColor">WhatsApp Button Color</label>
+			<input type="color" id="settingsWhatsappColor" value="#25D366">
+		</div>
+		
+		<div class="form-group"><label for="settingsInstagramUrl">Instagram URL</label><input type="url" id="settingsInstagramUrl" placeholder="https://instagram.com/user"></div>
+		<div class="form-group"><label for="settingsFacebookUrl">Facebook URL</label><input type="url" id="settingsFacebookUrl" placeholder="https://facebook.com/user"></div>
+		<div class="form-group"><label for="settingsYoutubeUrl">YouTube URL</label><input type="url" id="settingsYoutubeUrl" placeholder="https://youtube.com/user"></div>
+		<div class="form-group"><label for="settingsLinkedinUrl">LinkedIn URL</label><input type="url" id="settingsLinkedinUrl" placeholder="https://linkedin.com/in/user"></div>
+		<div class="form-group"><label for="settingsXUrl">X (Twitter) URL</label><input type="url" id="settingsXUrl" placeholder="https://x.com/user"></div>
+		<div class="form-group"><label for="settingsThreadsUrl">Threads URL</label><input type="url" id="settingsThreadsUrl" placeholder="https://threads.net/@user"></div>
+		<div class="form-group"><label for="settingsTiktokUrl">TikTok URL</label><input type="url" id="settingsTiktokUrl" placeholder="https://tiktok.com/@user"></div>
+		<div class="form-group"><label for="settingsTelegramUrl">Telegram URL</label><input type="url" id="settingsTelegramUrl" placeholder="https://t.me/user"></div>
+		<div class="form-group"><label for="settingsWhatsappUrl">WhatsApp Profile URL</label><input type="url" id="settingsWhatsappUrl" placeholder="https://wa.me/123456789"></div>
+		<div class="form-group"><label for="settingsWebsiteUrl">Website URL</label><input type="url" id="settingsWebsiteUrl" placeholder="https://example.com"></div>
+
+		<button id="saveSettingsBtn" class="btn" style="width: 100%; margin-top: 1rem;">Save Settings</button>
+	</div>
+</div>
+
+<div id="setupModal" class="modal">
+	<div class="modal-content">
+		<span class="modal-close">&times;</span>
+		<h3>Let's Get You Started! 🎉</h3>
+		<p>Your account is approved. Complete your profile to launch your directory.</p>
+		<form id="setupForm">
+			<input type="hidden" id="setupEmail">
+			<div class="form-group">
+				<label for="setupUsername">Username</label>
+				<input type="text" id="setupUsername" required>
+			</div>
+			<div class="form-group">
+				<label for="setupBrandName">Brand Name</label>
+				<input type="text" id="setupBrandName" required>
+			</div>
+			<hr>
+			<h4>Profile & Logo</h4>
+			<div class="form-group">
+				<label>Profile Picture</label>
+				<div class="profile-pic-uploader">
+					<label for="setupProfilePicUpload" class="profile-pic-preview" id="setupProfilePicPreview"><i class="fas fa-camera"></i></label>
+					<input type="file" id="setupProfilePicUpload" accept="image/*" style="display:none;">
+				</div>
+				<input type="text" id="setupProfilePicUrl" placeholder="Or paste image URL">
+			</div>
+			<div class="form-group">
+				<label for="setupLogoUrl">Logo URL</label>
+				<label for="setupLogoUpload" class="btn btn-full-width">Upload Logo</label>
+				<input type="file" id="setupLogoUpload" accept="image/*" style="display:none;">
+				<input type="text" id="setupLogoUrl" placeholder="Or paste logo image URL" style="margin-top: 0.5rem;">
+			</div>
+			<hr>
+			<h4>Data Source</h4>
+			 <div class="form-group">
+				<label for="setupListingsScriptUrl">Listings Script URL</label>
+				<input type="text" id="setupListingsScriptUrl" required>
+			</div>
+			<details class="form-group">
+				<summary>How to get your Script URL</summary>
+				<div class="instructions-details">
+					 <p>Follow the instructions in the main Settings page after setup.</p>
+				</div>
+			</details>
+			<div class="form-group">
+				<label for="setupImageKitApiKey">ImageKit.io Public API Key (Required)</label>
+				<input type="text" id="setupImageKitApiKey" placeholder="Your public_..." required>
+			</div>
+			 <details class="form-group">
+				<summary>How to get your ImageKit API Key</summary>
+				<div class="instructions-details">
+					 <p>Follow the instructions in the main Settings page after setup.</p>
+				</div>
+			</details>
+			<button type="submit" class="btn" style="width: 100%; margin-top: 1rem;">Launch My Listings</button>
+		</form>
+	</div>
+</div>
+
+
+<div id="editCardModal" class="modal">
+	<div class="modal-content">
+		<form id="editListingForm">
+			<span class="modal-close">&times;</span>
+			<h3 id="editModalTitle">Add New Listing</h3>
+			<input type="hidden" id="listingPropertyId">
+			
+			<h4>Images</h4>
+			<div class="form-group">
+				 <label for="listingImageFiles">Upload Images (requires ImageKit API Key in settings)</label>
+				 <input type="file" id="listingImageFiles" accept="image/*" multiple>
+			</div>
+			<div class="form-group">
+				<label for="listingImageUrls">Or Paste Image URLs (comma-separated)</label>
+				<textarea id="listingImageUrls" rows="3"></textarea>
+			</div>
+			<p style="font-size: 0.8rem; color: var(--text-light); margin-top: -0.5rem; margin-bottom: 1rem;">
+				For best quality make sure image sizes are: 1920px x 1080px. 
+				<a href="https://www.canva.com/templates/s/real-estate-listing/" target="_blank" style="color: var(--primary);">Download Canva Template</a>
+			</p>
+			<hr>
+
+			<h4>Listing Details</h4>
+			<div class="form-group">
+				<label for="listingTitle">Title</label>
+				<input type="text" id="listingTitle" required>
+			</div>
+			<div class="form-group">
+				<label for="listingSubtitle">Subtitle</label>
+				<input type="text" id="listingSubtitle">
+			</div>
+			 <div class="form-group">
+				<label for="listingBadgeText">Badge Text (e.g., New, Sold)</label>
+				<input type="text" id="listingBadgeText">
+			</div>
+			<div class="form-group">
+				<label for="listingDescription">Description</label>
+				<textarea id="listingDescription" rows="4"></textarea>
+			</div>
+			<div class="form-group">
+				<label for="listingPrice">Price (optional)</label>
+				<input type="number" id="listingPrice">
+			</div>
+			<div class="checkbox-group">
+				<input type="checkbox" id="listingNegotiable">
+				<label for="listingNegotiable">Negotiable</label>
+			</div>
+			<div class="form-group">
+				<label for="listingCategory">Category</label>
+				<input type="text" id="listingCategory" placeholder="e.g., Downtown Apartments">
+			</div>
+			<div class="form-group">
+				<label for="listingCategoryDescription">Category Description</label>
+				<input type="text" id="listingCategoryDescription" placeholder="A brief description for this group of listings.">
+			</div>
+			<div class="form-group">
+				<label for="listingTags">Tags (comma-separated)</label>
+				<input type="text" id="listingTags">
+			</div>
+			<hr>
+			<h4>Attachments & Links</h4>
+			<div class="toggle-container" style="margin-bottom: 2rem;">
+				 <label class="toggle-switch">
+					 <input type="checkbox" id="listingEnableWhatsapp" checked>
+					 <span class="slider"></span>
+				 </label>
+				 <span>Show WhatsApp Button for this listing</span>
+			</div>
+			 <div class="form-group">
+				 <label for="listingPdfFile">Upload PDF</label>
+				 <input type="file" id="listingPdfFile" accept=".pdf">
+			</div>
+			<div class="form-group">
+				 <label for="listingPdfUrl">Or Paste PDF URL</label>
+				 <input type="text" id="listingPdfUrl" placeholder="https://example.com/brochure.pdf">
+			</div>
+			<hr>
+			<h4>Custom CTA Button (Optional)</h4>
+			<div class="form-group">
+				<label for="customCtaText">Button Text</label>
+				<input type="text" id="customCtaText" placeholder="e.g., View Virtual Tour">
+			</div>
+			<div class="form-group">
+				<label for="customCtaLink">Button Link</label>
+				<input type="url" id="customCtaLink" placeholder="https://example.com/tour">
+			</div>
+			
+			<button type="submit" id="saveListingBtn" class="btn" style="width:100%; margin-top:1rem;">Save Listing</button>
+		</form>
+	</div>
+</div>
+
+<div id="confirmationModal" class="modal">
+	<div class="modal-content" style="max-width: 400px;">
+		<h3 id="confirmationTitle">Are you sure?</h3>
+		<p id="confirmationMessage">This action cannot be undone.</p>
+		<div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem;">
+			<button id="confirmCancelBtn" class="btn" style="background-color: var(--secondary);">Cancel</button>
+			<button id="confirmDeleteBtn" class="btn btn-danger">Delete</button>
+		</div>
+	</div>
+</div>
+
+<canvas id="confetti-canvas" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999;"></canvas>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script type="module">
+	import confetti from 'https://cdn.skypack.dev/canvas-confetti';
+	window.triggerConfetti = function() {
+		const canvas = document.getElementById('confetti-canvas');
+		canvas.width = window.innerWidth;
+		canvas.height = window.innerHeight;
+		confetti({ particleCount: 400, spread: 400, origin: { x: 0.5, y: 0.5 }, colors: ['#DF1783', '#f8a4d4', '#4fd1c5', '#2d3748', '#ffffff'] });
+	};
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+	// --- CONFIGURATION ---
+	// IMPORTANT: To save new fields like 'ThreadsURL', you must update your Google Apps Script.
+	// 1. Add new columns in your Google Sheet for 'XURL', 'ThreadsURL', etc.
+	// 2. In your Apps Script doPost function, update the 'saveUserData' action to
+	//    find these new columns and write the corresponding data from the request.
+	//    For example: sheet.getRange(userRow, header.indexOf('ThreadsURL') + 1).setValue(requestData.data.ThreadsURL);
+	const ADMIN_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwFHCC9E0etIqCxmbBfWfXBAN6V5w_3oguWA-HaseHHGeaSiPQQ2KtDEIR-LmnuktF60A/exec';
+	const SCRIPT_TEMPLATE = `function doGet(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var data = sheet.getDataRange().getValues();
+  var headers = data.shift();
+  var listings = data.map(function(row) {
+	var listing = {};
+	headers.forEach(function(header, index) {
+	  listing[header] = row[index];
+	});
+	return listing;
+  });
+  return ContentService
+	.createTextOutput(JSON.stringify(listings))
+	.setMimeType(ContentService.MimeType.JSON);
+}`;
+
+	// --- STATE ---
+	let defaultConfig = {
+		primaryColor: '#DF1783',
+		whatsappColor: '#25D366',
+		enableWhatsappButtonGlobal: true,
+		BrandName: 'Easy Listings',
+		Username: 'BackendUser',
+		ProfilePicURL: 'https://bucket.mlcdn.com/a/3336/3336910/images/720acb42aae5c4c7657fe94291a91807c55c356a.png',
+		bannerimageurl: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=80',
+		backendImageKitApiKey: 'public_33Bq3mmN01/T4j0sFk2vC6s2YkQ=',
+		greetingFont: "'Caveat', cursive",
+		InstagramURL: 'https://instagram.com/user',
+		FacebookURL: 'https://facebook.com/user',
+		YouTubeURL: 'https://youtube.com/user',
+		LinkedInURL: 'https://linkedin.com/in/user',
+		XURL: 'https://x.com/user',
+		ThreadsURL: 'https://threads.net/@user',
+		TiktokURL: 'https://tiktok.com/@user',
+		TelegramURL: 'https://t.me/user',
+		WhatsappURL: 'https://wa.me/1234567890',
+		WebsiteURL: 'https://example.com'
+	};
+
+	let appConfig = { ...defaultConfig };
+	let loggedInUser = null;
+	let currentTypingTimeout;
+	let allListings = [];
+	let carouselIntervals = {};
+
+	// --- DOM ELEMENTS ---
+	const topMenuBar = document.querySelector('.top-menu-bar');
+	const mainHeader = document.getElementById('mainHeader');
+	const brandAnimSpan = document.getElementById('brand-anim-span');
+	const appBrandNameDisplay = document.getElementById('appBrandNameDisplay');
+	const mapContainer = document.getElementById('mapContainer');
+	const mainFooter = document.getElementById('mainFooter');
+	const loginModal = document.getElementById('loginModal');
+	const settingsModal = document.getElementById('settingsModal');
+	const setupModal = document.getElementById('setupModal');
+	const editCardModal = document.getElementById('editCardModal');
+	const listingsContainer = document.getElementById('listingsContainer');
+	const notificationBanner = document.getElementById('notification');
+	const tagFiltersContainer = document.getElementById('tagFilters');
+	const searchInput = document.getElementById('searchInput');
+	const backToTopBtn = document.getElementById('backToTopBtn');
+	const getInTouchBlock = document.getElementById('getInTouchBlock');
+
+	// --- INITIALIZATION ---
+	function initializeApp() {
+		lucide.createIcons();
+		document.getElementById('scriptTemplate').value = SCRIPT_TEMPLATE;
+		setupEventListeners();
+		applyTheme();
+		
+		const urlParams = new URLSearchParams(window.location.search);
+		const publicUser = urlParams.get('user');
+
+		if (publicUser) {
+			loadPublicView(publicUser);
+		} else {
+			loadHomePage();
+		}
+	}
+
+	function applyTheme() {
+		if (localStorage.getItem('theme') === 'dark') {
+			document.body.classList.add('dark-mode');
+			document.getElementById('darkModeToggle').querySelector('i').className = 'fas fa-sun';
+		} else {
+			document.body.classList.remove('dark-mode');
+			document.getElementById('darkModeToggle').querySelector('i').className = 'fas fa-moon';
+		}
+	}
+
+	function loadHomePage() {
+		appConfig = { ...defaultConfig };
+		applyCustomization(appConfig);
+		renderMap(appConfig);
+		allListings = [
+	
+    { PropertyID: 'P123', Title: 'Modern Downtown Loft', Subtitle: 'Financial District', Status: 'For Sale', BadgeText: 'Hot Deal', Description: 'A stunning loft with breathtaking city views, perfect for urban living.', Price: 450000, Negotiable: true, Category: 'Downtown Apartments', CategoryDescription: 'Live in the heart of the city.', Tags: '2 Bedrooms, 2 Baths, Furnished', ImageUrls: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=60,https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=60', requests: 12, enableWhatsapp: true, pdfUrl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf', CustomCtaText: '3D Tour', CustomCtaLink: '#' },
+    { PropertyID: 'P124', Title: 'Chic Studio with Balcony', Subtitle: 'Arts District', Status: 'For Sale', BadgeText: 'New', Description: 'A stylish and compact studio apartment with a private balcony, perfect for a young professional.', Price: 320000, Negotiable: false, Category: 'Downtown Apartments', CategoryDescription: 'Live in the heart of the city.', Tags: '1 Bedroom, 1 Bath, Furnished', ImageUrls: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=60', requests: 5, enableWhatsapp: true, pdfUrl: '', CustomCtaText: '', CustomCtaLink: '' },
+    { PropertyID: 'P125', Title: 'Penthouse with Rooftop Terrace', Subtitle: 'City Center', Status: 'For Sale', BadgeText: 'Premium', Description: 'Top-floor penthouse offering panoramic cityscapes from a private rooftop terrace. Includes premium amenities and modern finishes.', Price: 890000, Negotiable: true, Category: 'Downtown Apartments', CategoryDescription: 'Live in the heart of the city.', Tags: '3 Bedrooms, 3 Baths, Furnished, Garage', ImageUrls: 'https://images.unsplash.com/photo-1605146769289-440113cc3d00?auto=format&fit=crop&w=800&q=60', requests: 22, enableWhatsapp: true, pdfUrl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf', CustomCtaText: 'View Floorplan', CustomCtaLink: '#' },
+    { PropertyID: 'P456', Title: 'Cozy Suburban Home', Subtitle: 'Maple Creek Estates', Status: 'Sold', BadgeText: 'Sold', Description: 'Charming 3-bedroom home with a spacious backyard, ideal for families.', Price: 280000, Negotiable: false, Category: 'Family Homes', CategoryDescription: 'Perfect homes for growing families.', Tags: '3 Bedrooms, 2 Baths, Garage', ImageUrls: 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=800&q=60', requests: 18, enableWhatsapp: false, pdfUrl: '', CustomCtaText: '', CustomCtaLink: '' },
+    { PropertyID: 'P457', Title: 'Spacious Colonial with Pool', Subtitle: 'Oakwood Neighborhood', Status: 'For Sale', BadgeText: 'Pool', Description: 'Beautiful 4-bedroom colonial style home featuring a large in-ground pool and a beautifully landscaped yard.', Price: 550000, Negotiable: true, Category: 'Family Homes', CategoryDescription: 'Perfect homes for growing families.', Tags: '4 Bedrooms, 3 Baths, Garage', ImageUrls: 'https://images.unsplash.com/photo-1572120360610-d971b9d7767c?auto=format&fit=crop&w=800&q=60', requests: 7, enableWhatsapp: true, pdfUrl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf', CustomCtaText: 'Schedule Tour', CustomCtaLink: '#' },
+    { PropertyID: 'P458', Title: 'Modern Farmhouse on 5 Acres', Subtitle: 'Green Valley', Status: 'For Sale', BadgeText: 'New Listing', Description: 'A newly built modern farmhouse with ample space for a family, surrounded by nature and tranquility.', Price: 720000, Negotiable: false, Category: 'Family Homes', CategoryDescription: 'Perfect homes for growing families.', Tags: '4 Bedrooms, 3 Baths, Garage', ImageUrls: 'https://images.unsplash.com/photo-1588880331179-bc9b93a8cb5e?auto=format&fit=crop&w=800&q=60', requests: 3, enableWhatsapp: true, pdfUrl: '', CustomCtaText: '', CustomCtaLink: '' },
+    { PropertyID: 'P789', Title: 'Luxury Beachfront Villa', Subtitle: 'Sunset Shores', Status: 'For Rent', BadgeText: 'Luxury', Description: 'An exquisite villa with direct beach access and panoramic ocean views.', Price: 1250000, Negotiable: true, Category: 'Luxury Villas', CategoryDescription: 'Experience the pinnacle of coastal living.', Tags: '5 Bedrooms, 4 Baths, Furnished', ImageUrls: 'https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=800&q=60', requests: 45, enableWhatsapp: true, pdfUrl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf', CustomCtaText: 'Virtual Tour', CustomCtaLink: '#' },
+    { PropertyID: 'P790', Title: 'Secluded Mountain Retreat', Subtitle: 'Aspen Highlands', Status: 'For Rent', BadgeText: 'Mountain', Description: 'Escape to this breathtaking mountain retreat with stunning views, a private hot tub, and ski-in/ski-out access.', Price: 2100000, Negotiable: false, Category: 'Luxury Villas', CategoryDescription: 'Experience the pinnacle of coastal living.', Tags: '5 Bedrooms, 5 Baths, Furnished, Garage', ImageUrls: 'https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?auto=format&fit=crop&w=800&q=60', requests: 29, enableWhatsapp: true, pdfUrl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf', CustomCtaText: 'View Amenities', CustomCtaLink: '#' },
+    { PropertyID: 'P791', Title: 'Contemporary Architectural Gem', Subtitle: 'Hillside Estates', Status: 'For Rent', BadgeText: 'Architectural', Description: 'A masterpiece of modern architecture with an infinity pool, home theater, and unparalleled privacy.', Price: 3500000, Negotiable: true, Category: 'Luxury Villas', CategoryDescription: 'Experience the pinnacle of coastal living.', Tags: '5 Bedrooms, 6 Baths, Furnished, Garage', ImageUrls: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=60', requests: 15, enableWhatsapp: true, pdfUrl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf', CustomCtaText: 'Contact Architect', CustomCtaLink: '#' },
+];
+		filterAndRenderListings();
+		renderTagFilters(allListings);
+		searchInput.disabled = false;
+	}
+
+	async function loadPublicView(username) {
+		showNotification(`Loading profile for ${username}...`, 'info');
+		try {
+			const response = await fetch(`${ADMIN_SCRIPT_URL}?action=getUserConfig&username=${username}`);
+			if (!response.ok) throw new Error('User not found.');
+			
+			const userConfig = await response.json();
+			if(!userConfig || userConfig.error) throw new Error(userConfig.error || 'User data is invalid.');
+			
+			appConfig = { ...defaultConfig, ...userConfig };
+			applyCustomization(appConfig);
+			renderGetInTouchBlock(appConfig);
+			renderMap(appConfig);
+			await fetchListingsFromSheet(appConfig.listingsScriptUrl);
+
+		} catch (error) {
+			console.error('Error loading public view:', error);
+			showNotification(`Could not load profile: ${error.message}`, 'error');
+			loadHomePage();
+		} finally {
+			hideNotification();
+		}
+	}
+	
+	// --- DATA FETCHING ---
+	async function fetchListingsFromSheet(scriptUrl) {
+		if (!scriptUrl) {
+			console.error("Listings Script URL is not configured for this user.");
+			listingsContainer.innerHTML = '<p style="text-align:center; padding: 2rem;">This user has not configured their listings source.</p>';
+			allListings = [];
+			filterAndRenderListings();
+			return;
+		}
+		showNotification('Loading listings...', 'info');
+		try {
+			const response = await fetch(scriptUrl);
+			const data = await response.json();
+			allListings = data.map(item => ({...item, requests: item.requests || 0 }));
+			filterAndRenderListings();
+			renderTagFilters(allListings);
+		} catch (error) {
+			console.error('Error fetching listings:', error);
+			showNotification('Could not load listings from the source.', 'error');
+		} finally {
+			hideNotification();
+		}
+	}
+
+	// --- UI & CUSTOMIZATION ---
+	function applyCustomization(config) {
+		const brandName = config.BrandName || 'Easy Listings';
+		appBrandNameDisplay.textContent = brandName;
+		
+		const animationTexts = [`${brandName}`, "Our Listings Page"];
+		typeWriterAnimation(animationTexts);
+		
+		const heroImageUrl = config.bannerimageurl || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=80';
+		mainHeader.style.backgroundImage = `url(${heroImageUrl})`;
+		document.getElementById('adminGreeting').style.fontFamily = config.greetingFont || "'Caveat', cursive";
+		
+		document.documentElement.style.setProperty('--primary', config.primaryColor);
+		document.documentElement.style.setProperty('--whatsapp-color', config.whatsappColor);
+
+		populateSettingsModal(config);
+
+		const topCtaBtn = document.getElementById('topCtaBtn');
+		if(config.TopCTAText && config.TopCTALink) {
+			topCtaBtn.textContent = config.TopCTAText;
+			topCtaBtn.href = config.TopCTALink;
+			topCtaBtn.style.display = 'flex';
+		} else {
+			topCtaBtn.style.display = 'none';
+		}
+
+		renderFooter(config);
+	}
+
+	function populateSettingsModal(config) {
+		document.getElementById('settingsHeroPreview').style.backgroundImage = `url(${config.bannerimageurl || ''})`;
+		document.getElementById('settingsUsernameDisplay').textContent = config.Username || 'Admin';
+		
+		const shareableUrlInput = document.getElementById('shareableUrl');
+		if (config.Username && config.Username !== 'BackendUser') {
+			 const cleanUsername = config.Username.toLowerCase().replace(/\s+/g, '-');
+			 shareableUrlInput.value = `${window.location.origin}${window.location.pathname.replace('index.html', '')}?user=${cleanUsername}`;
+		} else {
+			 shareableUrlInput.value = 'Login as a user to generate your shareable URL.';
+		}
+
+		document.getElementById('settingsPrimaryColor').value = config.primaryColor;
+		document.getElementById('settingsWhatsappColor').value = config.whatsappColor;
+		document.getElementById('settingsProfilePicUrl').value = config.ProfilePicURL || '';
+		document.getElementById('settingsProfilePicPreview').style.backgroundImage = `url(${config.ProfilePicURL || ''})`;
+		document.getElementById('settingsUsername').value = config.Username || '';
+		document.getElementById('settingsBrandName').value = config.BrandName || '';
+		document.getElementById('settingsLogoUrl').value = config.LogoURL || '';
+		document.getElementById('appLogo').src = config.LogoURL || 'https://bucket.mlcdn.com/a/3336/3336910/images/fa62e06dd2b6ed2d1d9e77e5dd944bef2904d5d1.png';
+		
+		document.getElementById('settingsListingsScriptUrl').value = config.listingsScriptUrl || '';
+		document.getElementById('settingsImageKitApiKey').value = config.imageKitApiKey || '';
+
+		document.getElementById('enableWhatsappButtonGlobal').checked = config.enableWhatsappButtonGlobal !== false;
+		document.getElementById('settingsWhatsappNumber').value = config.whatsappNumber || '';
+		document.getElementById('settingsWhatsappMessage').value = config.whatsappMessage || "I'm interested in {{PropertyID}}";
+		if (document.getElementById('settingsGreetingFont')) {
+			document.getElementById('settingsGreetingFont').value = config.greetingFont || "'Caveat', cursive";
+		}
+		
+		const socialPlatforms = {
+			InstagramURL: 'settingsInstagramUrl',
+			FacebookURL: 'settingsFacebookUrl',
+			YouTubeURL: 'settingsYoutubeUrl',
+			LinkedInURL: 'settingsLinkedinUrl',
+			XURL: 'settingsXUrl',
+			ThreadsURL: 'settingsThreadsUrl',
+			TiktokURL: 'settingsTiktokUrl',
+			TelegramURL: 'settingsTelegramUrl',
+			WhatsappURL: 'settingsWhatsappUrl',
+			WebsiteURL: 'settingsWebsiteUrl',
+		};
+		Object.keys(socialPlatforms).forEach(key => {
+			const element = document.getElementById(socialPlatforms[key]);
+			if (element) {
+				element.value = config[key] || '';
+			}
+		});
+	}
+	
+	function typeWriterAnimation(words) {
+		clearTimeout(currentTypingTimeout);
+		brandAnimSpan.textContent = '';
+		let wordIndex = 0, charIndex = 0, isDeleting = false;
+		function type() {
+			const currentWord = words[wordIndex];
+			brandAnimSpan.textContent = isDeleting ? currentWord.substring(0, charIndex--) : currentWord.substring(0, charIndex++);
+			let typeSpeed = isDeleting ? 100 : 150;
+			if (!isDeleting && charIndex === currentWord.length + 1) { typeSpeed = 2000; isDeleting = true; } 
+			else if (isDeleting && charIndex === 0) { isDeleting = false; wordIndex = (wordIndex + 1) % words.length; typeSpeed = 500; }
+			currentTypingTimeout = setTimeout(type, typeSpeed);
+		}
+		type();
+	}
+
+	function renderFooter(config) {
+		const socialLinksContainer = document.getElementById('socialLinksContainer');
+		const socialIcons = {
+      YouTubeURL: 'https://bucket.mlcdn.com/a/3336/3336910/images/4a8fee1b34597ccad597b90e5630c0b6bb3f5c12.png',
+			XURL: 'https://bucket.mlcdn.com/a/3336/3336910/images/38a76813c7377d5ecc5e4227b25f40b115407e45.png',
+			ThreadsURL: 'https://bucket.mlcdn.com/a/3336/3336910/images/aa6508929bede8d84ef3970abd08bc89ad6f5102.png',      
+			LinkedInURL: 'https://bucket.mlcdn.com/a/3336/3336910/images/0e55254b6f45f1ceb24ffcfeca93d5ef7485c5b3.png',
+			FacebookURL: 'https://bucket.mlcdn.com/a/3336/3336910/images/415db30e74f93b8961596ace2f1c810658f10e13.png',
+			InstagramURL: 'https://bucket.mlcdn.com/a/3336/3336910/images/741e4928fd670d5399810d5d0d12cca806e2e017.png',
+			TiktokURL: 'https://bucket.mlcdn.com/a/3336/3336910/images/e43a546ef2cc89a7e132484a0bdd0d3ce5d1ab4d.png',
+			TelegramURL: 'https://bucket.mlcdn.com/a/3336/3336910/images/816eebb1fcb9df63ced07033be90396d14866ad4.png',
+			WhatsappURL: 'https://bucket.mlcdn.com/a/3336/3336910/images/7073e44b89ad661c27d3a455832915b0186c1e54.png',
+			WebsiteURL: 'https://bucket.mlcdn.com/a/3336/3336910/images/0056a41c3f25b4c1b5323dd5b31f4da31ceffb37.png'
+		};
+
+		let linksHTML = '';
+		for (const key in socialIcons) {
+			if (config[key]) {
+				linksHTML += `<a href="${config[key]}" target="_blank"><img src="${socialIcons[key]}" alt="${key.replace('URL', '')}"></a>`;
+			}
+		}
+		socialLinksContainer.innerHTML = linksHTML;
+
+		let footerHTML = (config.status === 'White Label' && config.BrandName)
+			? `<p>Copyright © 2024 • ${config.BrandName}<br>All rights reserved.</p>`
+			: `<div class="bebell-footer"><p>Powered with 💖 by <a href="https://bebelldigitalsolutions.com" class="bebell-link" target="_blank">Bebell Digital Solutions.</a><br>Copyright © 2024 • All rights reserved.</p></div>`;
+		mainFooter.querySelector('.bebell-footer').innerHTML = footerHTML;
+	}
+
+
+	async function renderMap(config) {
+		if (config.googleMapsUrl) {
+			mapContainer.innerHTML = `<iframe src="${config.googleMapsUrl}" allowfullscreen="" loading="lazy"></iframe>`;
+			return;
+		}
+		try {
+			const response = await fetch('https://ipapi.co/json/');
+			const data = await response.json();
+			const { latitude, longitude } = data;
+			const mapUrl = `https://maps.google.com/maps?q=${latitude},${longitude}&z=12&output=embed`;
+			mapContainer.innerHTML = `<iframe src="${mapUrl}" allowfullscreen="" loading="lazy"></iframe>`;
+		} catch (error) {
+			mapContainer.innerHTML = '<p style="text-align:center; padding: 2rem;">Could not determine location to display map.</p>';
+		}
+	}
+	
+	function renderGetInTouchBlock(config) {
+		getInTouchBlock.style.display = 'block';
+		document.getElementById('getInTouchPic').style.backgroundImage = `url(${config.ProfilePicURL || 'https://bucket.mlcdn.com/a/3336/3336910/images/720acb42aae5c4c7657fe94291a91807c55c356a.png'})`;
+		const whatsappUrl = `https://wa.me/${config.whatsappNumber || ''}?text=${encodeURIComponent('Hello! I would like to get in touch.')}`;
+		document.getElementById('getInTouchBtn').href = whatsappUrl;
+	}
+
+	function filterAndRenderListings() {
+		const searchTerm = searchInput.value.toLowerCase();
+		const activeTagBtn = tagFiltersContainer.querySelector('.active');
+		const selectedTag = activeTagBtn ? activeTagBtn.dataset.tag : 'all';
+
+		const filtered = allListings.filter(listing => {
+			const tagsArray = (listing.Tags || '').split(',').map(t => t.trim());
+			const tagMatch = selectedTag === 'all' || tagsArray.includes(selectedTag);
+			const searchMatch = !searchTerm || 
+				(listing.Title || '').toLowerCase().includes(searchTerm) ||
+				(listing.Subtitle || '').toLowerCase().includes(searchTerm) ||
+				(listing.Description || '').toLowerCase().includes(searchTerm) ||
+				tagsArray.some(t => t.toLowerCase().includes(searchTerm));
+			return tagMatch && searchMatch;
+		});
+		renderListings(filtered);
+	}
+	
+	function renderListings(listings) {
+		listingsContainer.innerHTML = '';
+		Object.values(carouselIntervals).forEach(interval => clearInterval(interval));
+		carouselIntervals = {};
+		
+		if (listings.length === 0) {
+			listingsContainer.innerHTML = '<p style="text-align:center; padding: 2rem;">No listings found. Try adjusting your search or filters.</p>';
+			return;
+		}
+
+		const groupedByCategory = listings.reduce((acc, listing) => {
+			const category = (listing.Category || '').trim() || 'Other Listings';
+			if (!acc[category]) {
+				acc[category] = { description: listing.CategoryDescription || '', items: [] };
+			}
+			acc[category].items.push(listing);
+			return acc;
+		}, {});
+
+		for (const categoryName in groupedByCategory) {
+			const section = document.createElement('section');
+			section.className = 'listing-section';
+			const header = document.createElement('header');
+			header.className = 'section-header';
+			header.innerHTML = `<h2>${categoryName}</h2><p>${groupedByCategory[categoryName].description}</p>`;
+			section.appendChild(header);
+
+			const grid = document.createElement('div');
+			grid.className = 'grid-container';
+			groupedByCategory[categoryName].items.forEach(listing => {
+				grid.appendChild(createListingCard(listing));
+			});
+			section.appendChild(grid);
+			listingsContainer.appendChild(section);
+		}
+		initializeCarousels();
+	}
+
+	function renderTagFilters(listings) {
+		const allTags = listings.flatMap(l => (l.Tags || '').split(',').map(t => t.trim()).filter(Boolean));
+		const uniqueTags = [...new Set(allTags)];
+		tagFiltersContainer.innerHTML = `<button class="tag-filter-btn active" data-tag="all">All</button>` +
+			uniqueTags.map(tag => `<button class="tag-filter-btn" data-tag="${tag}">${tag}</button>`).join('');
+	}
+
+	function createListingCard(listing) {
+		const card = document.createElement('div');
+		card.className = 'card';
+		card.dataset.propertyId = listing.PropertyID;
+
+		const priceHTML = listing.Price ? `<div class="card-price">$${new Intl.NumberFormat().format(listing.Price)} ${listing.Negotiable ? '<span class="negotiable">(Negotiable)</span>' : ''}</div>` : '';
+		const tagsHTML = (listing.Tags || '').split(',').map(tag => tag.trim() ? `<span class="card-tag">${tag.trim()}</span>` : '').join('');
+		const requestsHTML = `<div class="card-requests"><i class="fas fa-eye"></i> ${listing.requests || 0} inquiries</div>`;
+		let ctasHTML = '';
+		
+		const badgeText = listing.BadgeText || listing.Status;
+		const badgeHTML = badgeText ? `<div class="carousel-badge">${badgeText}</div>` : '';
+
+
+		if (listing.pdfUrl) {
+			ctasHTML += `<a href="${listing.pdfUrl}" target="_blank" class="btn btn-secondary cta-btn"><i class="fas fa-file-pdf"></i> View PDF</a>`;
+		}
+		if (listing.CustomCtaText && listing.CustomCtaLink) {
+			 ctasHTML += `<a href="${listing.CustomCtaLink}" target="_blank" class="btn cta-btn">${listing.CustomCtaText}</a>`;
+		}
+		if (appConfig.enableWhatsappButtonGlobal && (listing.enableWhatsapp !== false)) {
+			const message = (appConfig.whatsappMessage || "I'm interested in {{PropertyID}}").replace('{{PropertyID}}', listing.PropertyID);
+			const whatsappUrl = `https://wa.me/${appConfig.whatsappNumber}?text=${encodeURIComponent(message)}`;
+			ctasHTML += `<a href="${whatsappUrl}" target="_blank" class="btn btn-whatsapp cta-btn">WhatsApp</a>`;
+		}
+
+		const images = (listing.ImageUrls || '').split(',').map(url => url.trim()).filter(Boolean);
+
+		card.innerHTML = `
+			<div class="card-admin-controls">
+				<button class="admin-btn edit-btn" title="Edit"><i class="fas fa-pencil-alt"></i></button>
+				<button class="admin-btn delete-btn" title="Delete"><i class="fas fa-trash"></i></button>
+			</div>
+			<div class="card-carousel">
+				<div class="carousel-track">
+					${(images.length > 0 ? images : ['https://placehold.co/800x600/e2e8f0/2d3748?text=No+Image']).map(img => `<div class="carousel-slide"><img src="${img}" alt="${listing.Title}" onerror="this.src='https://placehold.co/800x600/e2e8f0/2d3748?text=Image+Error'"></div>`).join('')}
+				</div>
+				${badgeHTML}
+			</div>
+			<div class="card-body">
+				<h3 class="card-title">${listing.Title}</h3>
+				<p class="card-subtitle">${listing.Subtitle}</p>
+				${requestsHTML}
+				<p class="card-description">${listing.Description}</p>
+				${priceHTML}
+				<div class="card-tags">${tagsHTML}</div>
+				<div class="card-ctas">${ctasHTML}</div>
+			</div>`;
+
+		card.querySelectorAll('.cta-btn').forEach(btn => {
+			btn.addEventListener('click', (e) => {
+				if(!loggedInUser){
+					listing.requests = (listing.requests || 0) + 1;
+					card.querySelector('.card-requests').innerHTML = `<i class="fas fa-eye"></i> ${listing.requests} inquiries`;
+				}
+			}, { once: true });
+		});
+
+		return card;
+	}
+	
+	function initializeCarousels() {
+		document.querySelectorAll('.card-carousel').forEach((carousel, index) => {
+			const track = carousel.querySelector('.carousel-track');
+			const slides = Array.from(track.children);
+			if (slides.length <= 1) return;
+			let currentIndex = 0;
+			if (carouselIntervals[index]) clearInterval(carouselIntervals[index]);
+			
+			const startInterval = () => setInterval(() => {
+				currentIndex = (currentIndex + 1) % slides.length;
+				track.style.transform = `translateX(-${currentIndex * 100}%)`;
+			}, 3000);
+
+			carouselIntervals[index] = startInterval();
+			carousel.addEventListener('mouseenter', () => clearInterval(carouselIntervals[index]));
+			carousel.addEventListener('mouseleave', () => carouselIntervals[index] = startInterval());
+		});
+	}
+
+	// --- AUTH & DATA MANAGEMENT ---
+	async function handleLogin(e) {
+		e.preventDefault();
+		const emailOrUser = document.getElementById('loginEmail').value;
+		const password = document.getElementById('loginPassword').value;
+		
+		if (emailOrUser === 'BackendUser' && password === 'Passcode') {
+			grantAdminAccess(defaultConfig);
+			return;
+		}
+
+		// --- Demo Onboarding Flow ---
+		if (emailOrUser === 'newuser' && password === 'setup') {
+			showNotification('Welcome! Please complete your setup.', 'info');
+			closeModal(loginModal);
+			document.getElementById('setupUsername').value = 'newuser';
+			openModal(setupModal);
+			return;
+		}
+		
+		showNotification('Authenticating...', 'info');
+		try {
+			const response = await fetch(ADMIN_SCRIPT_URL, {
+				method: 'POST',
+				headers: { 'Content-Type': 'text/plain' },
+				body: JSON.stringify({ action: 'login', username: emailOrUser, password: password })
+			});
+			const result = await response.json();
+			if (result.success) {
+				if (result.status === 'new') {
+					 closeModal(loginModal);
+					 document.getElementById('setupEmail').value = result.userData.Email;
+					 document.getElementById('setupUsername').value = result.userData.Username;
+					 openModal(setupModal);
+				} else {
+					grantAdminAccess(result.userData);
+				}
+			} else {
+				throw new Error(result.message || 'Invalid credentials.');
+			}
+		} catch(error) {
+			showNotification(error.message, 'error');
+		}
+	}
+
+	function grantAdminAccess(userData) {
+		loggedInUser = userData;
+		appConfig = { ...defaultConfig, ...userData };
+		document.body.classList.add('admin-logged-in');
+		closeModal(loginModal);
+		closeModal(setupModal);
+		showNotification('Login Successful!', 'success');
+		if(window.triggerConfetti) window.triggerConfetti();
+		
+		applyCustomization(appConfig);
+		
+		if (loggedInUser.Username !== 'BackendUser') {
+			fetchListingsFromSheet(appConfig.listingsScriptUrl);
+		} else {
+			loadHomePage();
+		}
+	}
+
+	async function handleSetup(e) {
+		e.preventDefault();
+		const setupData = {
+			Email: document.getElementById('setupEmail').value,
+			Username: document.getElementById('setupUsername').value,
+			BrandName: document.getElementById('setupBrandName').value,
+			ProfilePicURL: document.getElementById('setupProfilePicUrl').value,
+			LogoURL: document.getElementById('setupLogoUrl').value,
+			listingsScriptUrl: document.getElementById('setupListingsScriptUrl').value,
+			imageKitApiKey: document.getElementById('setupImageKitApiKey').value,
+		};
+
+		showNotification('Creating your profile...', 'info');
+		try {
+			 const response = await fetch(ADMIN_SCRIPT_URL, {
+				method: 'POST',
+				headers: { 'Content-Type': 'text/plain' },
+				body: JSON.stringify({ action: 'completeSetup', data: setupData })
+			});
+			const result = await response.json();
+			if (result.success) {
+				grantAdminAccess(result.userData);
+			} else {
+				throw new Error(result.message || 'Setup failed.');
+			}
+		} catch (error) {
+			 showNotification(`Error: ${error.message}`, 'error');
+		}
+	}
+	
+	// --- MODALS & EVENT LISTENERS ---
+	function openModal(modal) { if(modal) modal.classList.add('active'); }
+	function closeModal(modal) { if(modal) modal.classList.remove('active'); }
+
+	function setupEventListeners() {
+		document.getElementById('settingsBtn').addEventListener('click', () => loggedInUser ? openModal(settingsModal) : openModal(loginModal));
+		
+		document.getElementById('addNewEntryBtn').addEventListener('click', () => {
+			if (loggedInUser) {
+				document.getElementById('editListingForm').reset();
+				document.getElementById('editModalTitle').textContent = 'Add New Listing';
+				document.getElementById('listingPropertyId').value = `P${Date.now()}`;
+				openModal(editCardModal);
+			} else {
+				openModal(loginModal);
+			}
+		});
+		
+		document.getElementById('darkModeToggle').addEventListener('click', () => {
+			document.body.classList.toggle('dark-mode');
+			localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+			applyTheme();
+		});
+		
+		document.querySelectorAll('.modal-close').forEach(btn => btn.addEventListener('click', () => closeModal(btn.closest('.modal'))));
+		document.getElementById('loginForm').addEventListener('submit', handleLogin);
+		document.getElementById('setupForm').addEventListener('submit', handleSetup);
+
+		document.getElementById('saveSettingsBtn').addEventListener('click', saveSettings);
+		document.getElementById('copyShareableUrlBtn').addEventListener('click', copyShareableUrl);
+		
+		document.getElementById('settingsHeroImageUpload').addEventListener('change', (e) => handleFileUpload(e.target.files[0], '#settingsHeroImageUrl'));
+		document.getElementById('settingsProfilePicUpload').addEventListener('change', (e) => handleFileUpload(e.target.files[0], '#settingsProfilePicUrl'));
+		document.getElementById('settingsLogoUpload').addEventListener('change', (e) => handleFileUpload(e.target.files[0], '#settingsLogoUrl'));
+		document.getElementById('setupProfilePicUpload').addEventListener('change', (e) => handleFileUpload(e.target.files[0], '#setupProfilePicUrl', '#setupProfilePicPreview'));
+		document.getElementById('setupLogoUpload').addEventListener('change', (e) => handleFileUpload(e.target.files[0], '#setupLogoUrl'));
+		document.getElementById('listingPdfFile').addEventListener('change', (e) => handleFileUpload(e.target.files[0], '#listingPdfUrl'));
+
+
+		document.getElementById('editListingForm').addEventListener('submit', saveListing);
+
+		listingsContainer.addEventListener('click', handleCardAdminActions);
+
+		tagFiltersContainer.addEventListener('click', (e) => {
+			if (e.target.classList.contains('tag-filter-btn')) {
+				tagFiltersContainer.querySelector('.active')?.classList.remove('active');
+				e.target.classList.add('active');
+				filterAndRenderListings();
+			}
+		});
+
+		searchInput.addEventListener('input', filterAndRenderListings);
+
+		let lastScrollTop = 0;
+		window.addEventListener('scroll', function() {
+			let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+			topMenuBar.classList.toggle('hidden', scrollTop > lastScrollTop && scrollTop > 100);
+			backToTopBtn.style.display = scrollTop > 300 ? 'block' : 'none';
+			lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+		}, false);
+		backToTopBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+	}
+
+	async function saveSettings() {
+		const settingsData = {
+			primaryColor: document.getElementById('settingsPrimaryColor').value,
+			whatsappColor: document.getElementById('settingsWhatsappColor').value,
+			ProfilePicURL: document.getElementById('settingsProfilePicUrl').value,
+			Username: document.getElementById('settingsUsername').value,
+			BrandName: document.getElementById('settingsBrandName').value,
+			LogoURL: document.getElementById('settingsLogoUrl').value,
+			TopCTAText: document.getElementById('settingsTopCtaText').value,
+			TopCTALink: document.getElementById('settingsTopCtaLink').value,
+			bannerimageurl: document.getElementById('settingsHeroImageUrl').value,
+			googleMapsUrl: document.getElementById('settingsGoogleMapsUrl').value,
+			Address: document.getElementById('settingsAddress').value,
+			enableWhatsappButtonGlobal: document.getElementById('enableWhatsappButtonGlobal').checked,
+			whatsappNumber: document.getElementById('settingsWhatsappNumber').value,
+			whatsappMessage: document.getElementById('settingsWhatsappMessage').value,
+			listingsScriptUrl: document.getElementById('settingsListingsScriptUrl').value,
+			imageKitApiKey: document.getElementById('settingsImageKitApiKey').value,
+			greetingFont: document.getElementById('settingsGreetingFont').value,
+		};
+		
+		const socialPlatforms = {
+      YouTubeURL: 'settingsYoutubeUrl',
+			LinkedInURL: 'settingsLinkedinUrl',
+			XURL: 'settingsXUrl',
+			ThreadsURL: 'settingsThreadsUrl',
+			FacebookURL: 'settingsFacebookUrl',
+      InstagramURL: 'settingsInstagramUrl',
+			TiktokURL: 'settingsTiktokUrl',
+			TelegramURL: 'settingsTelegramUrl',
+			WhatsappURL: 'settingsWhatsappUrl',
+			WebsiteURL: 'settingsWebsiteUrl',
+		};
+		Object.keys(socialPlatforms).forEach(key => {
+			const element = document.getElementById(socialPlatforms[key]);
+			if (element) {
+				settingsData[key] = element.value;
+			}
+		});
+		
+		showNotification('Saving settings...', 'info');
+
+		const isBackendUser = loggedInUser.Username === 'BackendUser';
+		
+		if (isBackendUser) {
+			defaultConfig = { ...defaultConfig, ...settingsData };
+			loggedInUser = { ...loggedInUser, ...settingsData };
+			appConfig = { ...appConfig, ...settingsData };
+
+			applyCustomization(appConfig);
+			filterAndRenderListings();
+			renderMap(appConfig);
+			showNotification('Settings saved!', 'success');
+			closeModal(settingsModal);
+		} else {
+			try {
+				const response = await fetch(ADMIN_SCRIPT_URL, {
+					method: 'POST',
+					headers: { 'Content-Type': 'text/plain' },
+					body: JSON.stringify({
+						action: 'saveUserData',
+						username: loggedInUser.Username,
+						data: settingsData
+					})
+				});
+				const result = await response.json();
+				if (result.success) {
+					loggedInUser = { ...loggedInUser, ...settingsData };
+					appConfig = { ...appConfig, ...settingsData };
+
+					applyCustomization(appConfig);
+					filterAndRenderListings();
+					renderMap(appConfig);
+					showNotification('Settings saved!', 'success');
+					closeModal(settingsModal);
+				} else {
+					throw new Error(result.message || 'Failed to save settings.');
+				}
+			} catch (error) {
+				showNotification(`Error: ${error.message}`, 'error');
+			}
+		}
+	}
+
+	async function saveListing(e) {
+		e.preventDefault();
+		const propertyId = document.getElementById('listingPropertyId').value;
+		
+		const imageFiles = document.getElementById('listingImageFiles').files;
+		let uploadedImageUrls = [];
+		if (imageFiles.length > 0) {
+			showNotification('Uploading images...', 'info');
+			for(const file of imageFiles) {
+				const url = await handleFileUpload(file); 
+				if(url) uploadedImageUrls.push(url);
+			}
+			hideNotification();
+		}
+		
+		const pastedImageUrls = document.getElementById('listingImageUrls').value.split(',').map(url => url.trim()).filter(Boolean);
+		const allImageUrls = [...pastedImageUrls, ...uploadedImageUrls];
+
+		const listingData = {
+			PropertyID: propertyId,
+			Title: document.getElementById('listingTitle').value,
+			Subtitle: document.getElementById('listingSubtitle').value,
+			BadgeText: document.getElementById('listingBadgeText').value,
+			Description: document.getElementById('listingDescription').value,
+			Price: parseFloat(document.getElementById('listingPrice').value) || null,
+			Negotiable: document.getElementById('listingNegotiable').checked,
+			Category: document.getElementById('listingCategory').value,
+			CategoryDescription: document.getElementById('listingCategoryDescription').value,
+			Tags: document.getElementById('listingTags').value,
+			enableWhatsapp: document.getElementById('listingEnableWhatsapp').checked,
+			pdfUrl: document.getElementById('listingPdfUrl').value,
+			CustomCtaText: document.getElementById('customCtaText').value,
+			CustomCtaLink: document.getElementById('customCtaLink').value,
+			ImageUrls: allImageUrls.join(','),
+		};
+
+		if (loggedInUser && loggedInUser.Username === 'BackendUser') {
+			const index = allListings.findIndex(l => l.PropertyID === listingData.PropertyID);
+			if (index > -1) {
+				allListings[index] = { ...allListings[index], ...listingData };
+			} else {
+				allListings.push(listingData);
+			}
+			filterAndRenderListings();
+			closeModal(editCardModal);
+			showNotification('Demo listing saved!', 'success');
+			return; 
+		}
+
+		showNotification('Saving listing...', 'info');
+		try {
+			const response = await fetch(ADMIN_SCRIPT_URL, {
+				method: 'POST',
+				headers: { 'Content-Type': 'text/plain' },
+				body: JSON.stringify({
+					action: 'saveListing',
+					username: loggedInUser.Username,
+					listingData: listingData
+				})
+			});
+			const result = await response.json();
+			if (result.success) {
+				await fetchListingsFromSheet(appConfig.listingsScriptUrl);
+				closeModal(editCardModal);
+				showNotification('Listing saved successfully!', 'success');
+			} else {
+				throw new Error(result.message || 'Failed to save listing.');
+			}
+		} catch(error) {
+			showNotification(`Error: ${error.message}`, 'error');
+		}
+	}
+
+	function handleCardAdminActions(e) {
+		const editBtn = e.target.closest('.edit-btn');
+		if (editBtn) {
+			const card = editBtn.closest('.card');
+			const propertyId = card.dataset.propertyId;
+			const listing = allListings.find(l => l.PropertyID === propertyId);
+			if (listing) {
+				 document.getElementById('editModalTitle').textContent = 'Edit Listing';
+				 document.getElementById('listingPropertyId').value = listing.PropertyID;
+				 document.getElementById('listingImageUrls').value = listing.ImageUrls || '';
+				 document.getElementById('listingTitle').value = listing.Title || '';
+				 document.getElementById('listingSubtitle').value = listing.Subtitle || '';
+				 document.getElementById('listingBadgeText').value = listing.BadgeText || '';
+				 document.getElementById('listingDescription').value = listing.Description || '';
+				 document.getElementById('listingPrice').value = listing.Price || '';
+				 document.getElementById('listingNegotiable').checked = listing.Negotiable || false;
+				 document.getElementById('listingCategory').value = listing.Category || '';
+				 document.getElementById('listingCategoryDescription').value = listing.CategoryDescription || '';
+				 document.getElementById('listingTags').value = listing.Tags || '';
+				 document.getElementById('listingEnableWhatsapp').checked = listing.enableWhatsapp !== false;
+				 document.getElementById('listingPdfUrl').value = listing.pdfUrl || '';
+				 document.getElementById('customCtaText').value = listing.CustomCtaText || '';
+				 document.getElementById('customCtaLink').value = listing.CustomCtaLink || '';
+				 openModal(editCardModal);
+			}
+		}
+	}
+
+	function copyShareableUrl() {
+		const urlInput = document.getElementById('shareableUrl');
+		urlInput.select();
+		urlInput.setSelectionRange(0, 99999);
+		try {
+			document.execCommand('copy');
+			showNotification('URL copied to clipboard!', 'success');
+		} catch (err) {
+			showNotification('Failed to copy URL.', 'error');
+		}
+	}
+
+	async function handleFileUpload(file, targetUrlInputSelector, previewElementSelector) {
+		if (file) {
+			showNotification('Uploading file...', 'info');
+			const url = await uploadToImageKit(file);
+			if (url) {
+				if (targetUrlInputSelector) {
+					document.querySelector(targetUrlInputSelector).value = url;
+				}
+				if (previewElementSelector) {
+					document.querySelector(previewElementSelector).style.backgroundImage = `url(${url})`;
+				}
+				showNotification('File uploaded successfully!', 'success');
+				return url;
+			} else {
+				hideNotification();
+				return null;
+			}
+		}
+		return null;
+	}
+
+	async function uploadToImageKit(file) {
+		const isBackendUser = loggedInUser && loggedInUser.Username === 'BackendUser';
+		// Use the user's specific key, or the backend key for the super admin.
+		const apiKey = isBackendUser ? appConfig.backendImageKitApiKey : (loggedInUser ? loggedInUser.imageKitApiKey : null);
+
+		if(!apiKey) {
+			showNotification('ImageKit API Key is not configured for this user.', 'error');
+			return null;
+		}
+		const formData = new FormData();
+		formData.append('file', file);
+		formData.append('fileName', file.name);
+		formData.append('publicKey', apiKey);
+		
+		try {
+			const response = await fetch('https://upload.imagekit.io/api/v1/files/upload', {
+				method: 'POST',
+				body: formData
+			});
+			const result = await response.json();
+			if(result.url) {
+				return result.url;
+			} else {
+				throw new Error(result.message || 'Upload failed');
+			}
+		} catch (error) {
+			showNotification(`Upload failed: ${error.message}`, 'error');
+			return null;
+		}
+	}
+
+	// --- NOTIFICATIONS ---
+	let notificationTimeout;
+	function showNotification(message, type = 'info') {
+		if (!notificationBanner) return;
+		notificationBanner.textContent = message;
+		notificationBanner.style.backgroundColor = type === 'error' ? '#e53e3e' : 'var(--accent)';
+		notificationBanner.classList.add('show');
+		clearTimeout(notificationTimeout);
+		notificationTimeout = setTimeout(() => notificationBanner.classList.remove('show'), 4000);
+	}
+	function hideNotification() { 
+		if(notificationBanner) notificationBanner.classList.remove('show'); 
+	}
+
+	initializeApp();
+});
+</script>
+</body>
+</html>
+
