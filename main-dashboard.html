@@ -204,13 +204,13 @@
                 <a href="#" data-page="dashboard" class="nav-link flex items-center p-3 rounded-lg"><i data-lucide="layout-dashboard" class="w-6 h-6 mr-4 flex-shrink-0"></i><span data-lang-key="dashboard">Tablero</span></a>
                 <a href="#" data-page="users" class="nav-link flex items-center p-3 rounded-lg"><i data-lucide="users" class="w-6 h-6 mr-4 flex-shrink-0"></i><span data-lang-key="userAccounts">Cuentas de Usuario</span></a>
                 <a href="#" data-page="templates" class="nav-link flex items-center p-3 rounded-lg"><i data-lucide="message-square-text" class="w-6 h-6 mr-4 flex-shrink-0"></i><span data-lang-key="whatsappTemplates">Plantillas de WhatsApp</span></a>
-                <a href="#" data-page="directorio" data-url="https://bebell-digital-solutions.github.io/easylistings-agency" data-title="Directorio Easy Listings" class="nav-link flex items-center p-3 rounded-lg"><i data-lucide="map-pin-pen" class="w-6 h-6 mr-4 flex-shrink-0"></i><span data-lang-key="mainDirectory">Directorio Principal</span></a>
+                <a href="#" data-page="directorio" class="nav-link flex items-center p-3 rounded-lg"><i data-lucide="map-pin-pen" class="w-6 h-6 mr-4 flex-shrink-0"></i><span data-lang-key="mainDirectory">Directorio Principal</span></a>
                 
                 <a href="#" data-page="settings" class="nav-link flex items-center p-3 rounded-lg"><i data-lucide="settings" class="w-6 h-6 mr-4 flex-shrink-0"></i><span data-lang-key="settings">Configuración</span></a>
                 <hr class="my-2 border-[var(--border-color)]">
-                <a href="#" data-page="whatsapp-generator" data-url="https://bebell-digital-solutions.github.io/easylistings-agency/spanish/whatsapp-link-generator" data-title="Generador de Enlaces de WhatsApp" class="nav-link flex items-center p-3 rounded-lg"><i data-lucide="link-2" class="w-6 h-6 mr-4 flex-shrink-0"></i><span data-lang-key="whatsappLinks">Enlaces de WhatsApp</span></a>
-                <a href="#" data-page="spreadsheet-id" data-url="https://bebell-digital-solutions.github.io/easylistings-agency/spanish/spreadsheet-id" data-title="Buscador de ID de Hoja de Cálculo" class="nav-link flex items-center p-3 rounded-lg"><i data-lucide="file-spreadsheet" class="w-6 h-6 mr-4 flex-shrink-0"></i><span data-lang-key="spreadsheetId">Spreadsheet ID</span></a>
-                <a href="#" data-page="email-signature" data-url="https://bebell-digital-solutions.github.io/easylistings-agency/spanish/easy-signature" data-title="Generador de Firmas de Correo" class="nav-link flex items-center p-3 rounded-lg"><i data-lucide="signature" class="w-6 h-6 mr-4 flex-shrink-0"></i><span data-lang-key="emailSignature">Firma de Correo</span></a>
+                <a href="#" data-page="whatsapp-generator" class="nav-link flex items-center p-3 rounded-lg"><i data-lucide="link-2" class="w-6 h-6 mr-4 flex-shrink-0"></i><span data-lang-key="whatsappLinks">Enlaces de WhatsApp</span></a>
+                <a href="#" data-page="spreadsheet-id" class="nav-link flex items-center p-3 rounded-lg"><i data-lucide="file-spreadsheet" class="w-6 h-6 mr-4 flex-shrink-0"></i><span data-lang-key="spreadsheetId">Spreadsheet ID</span></a>
+                <a href="#" data-page="email-signature" class="nav-link flex items-center p-3 rounded-lg"><i data-lucide="signature" class="w-6 h-6 mr-4 flex-shrink-0"></i><span data-lang-key="emailSignature">Firma de Correo</span></a>
                 
                 <div id="custom-nav-links-container" class="space-y-2"></div>
 
@@ -319,7 +319,45 @@
                 userRegistrationsByMonth: "Registros de Usuarios por Mes",
                 searchUsers: "Buscar usuarios...",
                 createNewUser: "Crear Nuevo Usuario",
-                // Add all other strings here...
+                whatsappMessageTemplates: "Plantillas de Mensajes de WhatsApp",
+                createNewTemplate: "Crear Nueva Plantilla",
+                templateName: "Nombre de la Plantilla",
+                templateNamePlaceholder: "ej., Bienvenida a Bordo",
+                messageContent: "Contenido del Mensaje",
+                messageContentPlaceholder: "¡Hola {{Username}}! Bienvenido/a a {{BrandName}}.",
+                availablePlaceholders: "Marcadores de posición disponibles: {{Username}}, {{BrandName}}, {{UserID}}, {{Email}}, {{DateRegistered}}, {{Status}}",
+                saveTemplate: "Guardar Plantilla",
+                yourTemplates: "Tus Plantillas",
+                noTemplatesSaved: "No tienes plantillas guardadas.",
+                settingsAndIntegrations: "Configuración e Integraciones",
+                userDatabase: "Base de Datos de Usuarios (Google Sheets)",
+                userDatabaseDesc: "Conecta una Hoja de Google para sincronizar automáticamente los datos de los usuarios, incluidas las actualizaciones de estado y la creación de nuevos usuarios.",
+                setupInstructions: "Haz clic para ver las instrucciones de configuración y el código actualizado",
+                step1: "Abre tu Hoja de Google, luego ve a <strong>Extensiones &gt; Apps Script</strong>.",
+                step2: "Copia el código a continuación y pégalo en el archivo <code>Code.gs</code>, reemplazando cualquier contenido existente.",
+                step3: "Haz clic en <strong>Implementar &gt; Nueva implementación</strong>. Selecciona el tipo <strong>Aplicación web</strong>.",
+                step4: "En la configuración, establece <strong>Ejecutar como</strong> en \"Yo\" y <strong>Quién tiene acceso</strong> en \"Cualquiera\". Haz clic en <strong>Implementar</strong>.",
+                step5: "Autoriza los permisos del script cuando se te solicite.",
+                step6: "Copia la <strong>URL de la aplicación web</strong> proporcionada y pégala en el campo de abajo.",
+                appsScriptURL: "URL de Google Apps Script",
+                appsScriptURLPlaceholder: "https://script.google.com/macros/s/...",
+                mediaRendering: "Renderizado de Archivos Multimedia (ImageKit.io)",
+                mediaRenderingDesc: "Para renderizar automáticamente imágenes de perfil y logos desde URLs, puedes usar ImageKit.io para optimización. Esto es opcional. Obtén tu clave de <a href='https://imagekit.io/' target='_blank' class='text-[var(--primary)] hover:underline'>ImageKit.io</a>.",
+                imagekitKey: "Clave Pública de API de ImageKit",
+                imagekitKeyPlaceholder: "public_xxxxxxxxxxxxxxxxxxxx",
+                saveAndSync: "Guardar y Sincronizar",
+                urls: {
+                    whatsappGenerator: "https://bebell-digital-solutions.github.io/easylistings-agency/spanish/whatsapp-link-generator",
+                    spreadsheetId: "https://bebell-digital-solutions.github.io/easylistings-agency/spanish/spreadsheet-id",
+                    emailSignature: "https://bebell-digital-solutions.github.io/easylistings-agency/spanish/easy-signature",
+                    mainDirectory: "https://bebell-digital-solutions.github.io/easylistings-agency"
+                },
+                titles: {
+                    whatsappGenerator: "Generador de Enlaces de WhatsApp",
+                    spreadsheetId: "Buscador de ID de Hoja de Cálculo",
+                    emailSignature: "Generador de Firmas de Correo",
+                    mainDirectory: "Directorio Easy Listings"
+                }
             },
             en: {
                 adminPanel: "Admin Panel",
@@ -347,7 +385,45 @@
                 userRegistrationsByMonth: "User Registrations by Month",
                 searchUsers: "Search users...",
                 createNewUser: "Create New User",
-                // Add all other strings here...
+                whatsappMessageTemplates: "WhatsApp Message Templates",
+                createNewTemplate: "Create New Template",
+                templateName: "Template Name",
+                templateNamePlaceholder: "e.g., Onboarding Welcome",
+                messageContent: "Message Content",
+                messageContentPlaceholder: "Hello {{Username}}! Welcome to {{BrandName}}.",
+                availablePlaceholders: "Available placeholders: {{Username}}, {{BrandName}}, {{UserID}}, {{Email}}, {{DateRegistered}}, {{Status}}",
+                saveTemplate: "Save Template",
+                yourTemplates: "Your Templates",
+                noTemplatesSaved: "You have no saved templates.",
+                settingsAndIntegrations: "Settings & Integrations",
+                userDatabase: "User Database (Google Sheets)",
+                userDatabaseDesc: "Connect a Google Sheet to automatically sync user data, including status updates and new user creation.",
+                setupInstructions: "Click for setup instructions and updated code",
+                step1: "Open your Google Sheet, then go to <strong>Extensions &gt; Apps Script</strong>.",
+                step2: "Copy the code below and paste it into the <code>Code.gs</code> file, replacing any existing content.",
+                step3: "Click <strong>Deploy &gt; New deployment</strong>. Select the type <strong>Web app</strong>.",
+                step4: "In the configuration, set <strong>Execute as</strong> to \"Me\" and <strong>Who has access</strong> to \"Anyone\". Click <strong>Deploy</strong>.",
+                step5: "Authorize the script permissions when prompted.",
+                step6: "Copy the provided <strong>Web app URL</strong> and paste it into the field below.",
+                appsScriptURL: "Google Apps Script URL",
+                appsScriptURLPlaceholder: "https://script.google.com/macros/s/...",
+                mediaRendering: "Media Rendering (ImageKit.io)",
+                mediaRenderingDesc: "To automatically render profile pictures and logos from URLs, you can use ImageKit.io for optimization. This is optional. Get your key from <a href='https://imagekit.io/' target='_blank' class='text-[var(--primary)] hover:underline'>ImageKit.io</a>.",
+                imagekitKey: "ImageKit Public API Key",
+                imagekitKeyPlaceholder: "public_xxxxxxxxxxxxxxxxxxxx",
+                saveAndSync: "Save & Sync",
+                urls: {
+                    whatsappGenerator: "https://bebell-digital-solutions.github.io/easylistings-agency/english/whatsapp-link-generator",
+                    spreadsheetId: "https://bebell-digital-solutions.github.io/easylistings-agency/english/spreadsheet-id",
+                    emailSignature: "https://bebell-digital-solutions.github.io/easylistings-agency/english/easy-signature",
+                    mainDirectory: "https://bebell-digital-solutions.github.io/easylistings-agency"
+                },
+                titles: {
+                    whatsappGenerator: "WhatsApp Link Generator",
+                    spreadsheetId: "Spreadsheet ID Finder",
+                    emailSignature: "Email Signature Generator",
+                    mainDirectory: "Easy Listings Directory"
+                }
             }
         };
 
@@ -784,20 +860,21 @@
 
         const renderTemplatesPage = () => {
             destroyCharts();
+            const t = translations[state.language];
             pageContainer.innerHTML = `
                 <div class="py-6 md:py-8">
-                    <h2 class="text-3xl font-bold mb-6">Plantillas de Mensajes de WhatsApp</h2>
+                    <h2 class="text-3xl font-bold mb-6">${t.whatsappMessageTemplates}</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div class="bg-[var(--bg-secondary)] p-6 rounded-lg shadow-[var(--shadow)] border border-[var(--border-color)]">
-                            <h3 class="text-xl font-bold mb-4">Crear Nueva Plantilla</h3>
+                            <h3 class="text-xl font-bold mb-4">${t.createNewTemplate}</h3>
                             <form id="template-form" class="space-y-4">
-                                <div><label for="template-name" class="block mb-1 text-sm font-medium">Nombre de la Plantilla</label><input type="text" id="template-name" placeholder="ej., Bienvenida a Bordo" required class="w-full px-3 py-2 border rounded-md bg-[var(--bg-primary)] border-[var(--border-color)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" /></div>
-                                <div><label for="template-message" class="block mb-1 text-sm font-medium">Contenido del Mensaje</label><textarea id="template-message" rows="5" placeholder="¡Hola {{Username}}! Bienvenido/a a {{BrandName}}." required class="w-full px-3 py-2 border rounded-md bg-[var(--bg-primary)] border-[var(--border-color)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"></textarea>
-                                <p class="text-xs text-[var(--text-secondary)] mt-1">Marcadores de posición disponibles: {{Username}}, {{BrandName}}, {{UserID}}, {{Email}}, {{DateRegistered}}, {{Status}}</p></div>
-                                <button type="submit" class="w-full px-4 py-2 text-white bg-[var(--primary)] rounded-md hover:opacity-90">Guardar Plantilla</button>
+                                <div><label for="template-name" class="block mb-1 text-sm font-medium">${t.templateName}</label><input type="text" id="template-name" placeholder="${t.templateNamePlaceholder}" required class="w-full px-3 py-2 border rounded-md bg-[var(--bg-primary)] border-[var(--border-color)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" /></div>
+                                <div><label for="template-message" class="block mb-1 text-sm font-medium">${t.messageContent}</label><textarea id="template-message" rows="5" placeholder="${t.messageContentPlaceholder}" required class="w-full px-3 py-2 border rounded-md bg-[var(--bg-primary)] border-[var(--border-color)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"></textarea>
+                                <p class="text-xs text-[var(--text-secondary)] mt-1">${t.availablePlaceholders}</p></div>
+                                <button type="submit" class="w-full px-4 py-2 text-white bg-[var(--primary)] rounded-md hover:opacity-90">${t.saveTemplate}</button>
                             </form>
                         </div>
-                        <div class="bg-[var(--bg-secondary)] p-6 rounded-lg shadow-[var(--shadow)] border border-[var(--border-color)]"><h3 class="text-xl font-bold mb-4">Tus Plantillas</h3><div id="template-list-container" class="space-y-3 max-h-96 overflow-y-auto"></div></div>
+                        <div class="bg-[var(--bg-secondary)] p-6 rounded-lg shadow-[var(--shadow)] border border-[var(--border-color)]"><h3 class="text-xl font-bold mb-4">${t.yourTemplates}</h3><div id="template-list-container" class="space-y-3 max-h-96 overflow-y-auto"></div></div>
                     </div>
                 </div>`;
             renderTemplateList();
@@ -807,7 +884,7 @@
         const renderTemplateList = () => {
             const container = document.getElementById('template-list-container');
             if (state.templates.length === 0) {
-                container.innerHTML = `<p class="text-sm text-[var(--text-secondary)]">No tienes plantillas guardadas.</p>`; return;
+                container.innerHTML = `<p class="text-sm text-[var(--text-secondary)]">${translations[state.language].noTemplatesSaved}</p>`; return;
             }
             container.innerHTML = state.templates.map(template => `
                 <div class="p-3 border rounded-md border-[var(--border-color)]"><div class="flex justify-between items-center"><p class="font-semibold">${template.name}</p><button class="delete-template-btn p-1 text-red-500 hover:text-red-700" data-id="${template.id}" title="Eliminar Plantilla"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div><p class="text-sm text-[var(--text-secondary)] mt-1 whitespace-pre-wrap">${template.message}</p></div>`).join('');
@@ -823,23 +900,24 @@
         
         const renderSettingsPage = () => {
             destroyCharts();
+            const t = translations[state.language];
             pageContainer.innerHTML = `
                 <div class="py-6 md:py-8">
-                    <h2 class="text-3xl font-bold mb-6">Configuración e Integraciones</h2>
+                    <h2 class="text-3xl font-bold mb-6">${t.settingsAndIntegrations}</h2>
                     <div class="max-w-3xl mx-auto space-y-8">
                         <div class="bg-[var(--bg-secondary)] p-6 rounded-lg shadow-[var(--shadow)] border border-[var(--border-color)]">
-                            <h3 class="text-xl font-bold mb-2">1. Base de Datos de Usuarios (Google Sheets)</h3>
-                            <p class="text-sm text-[var(--text-secondary)] mb-4">Conecta una Hoja de Google para sincronizar automáticamente los datos de los usuarios, incluidas las actualizaciones de estado y la creación de nuevos usuarios.</p>
-                            <details class="mb-4"><summary class="cursor-pointer text-sm font-semibold text-[var(--primary)]">Haz clic para ver las instrucciones de configuración y el código actualizado</summary>
+                            <h3 class="text-xl font-bold mb-2">${t.userDatabase}</h3>
+                            <p class="text-sm text-[var(--text-secondary)] mb-4">${t.userDatabaseDesc}</p>
+                            <details class="mb-4"><summary class="cursor-pointer text-sm font-semibold text-[var(--primary)]">${t.setupInstructions}</summary>
                                 <ol class="list-decimal list-inside space-y-2 text-sm mt-2">
-                                    <li>Abre tu Hoja de Google, luego ve a <strong>Extensiones &gt; Apps Script</strong>.</li>
-                                    <li>Copia el código a continuación y pégalo en el archivo <code>Code.gs</code>, reemplazando cualquier contenido existente.</li>
-                                    <li>Haz clic en <strong>Implementar &gt; Nueva implementación</strong>. Selecciona el tipo <strong>Aplicación web</strong>.</li>
-                                    <li>En la configuración, establece <strong>Ejecutar como</strong> en "Yo" y <strong>Quién tiene acceso</strong> en "Cualquiera". Haz clic en <strong>Implementar</strong>.</li>
-                                    <li>Autoriza los permisos del script cuando se te solicite.</li>
-                                    <li>Copia la <strong>URL de la aplicación web</strong> proporcionada y pégala en el campo de abajo.</li>
+                                    <li>${t.step1}</li>
+                                    <li>${t.step2}</li>
+                                    <li>${t.step3}</li>
+                                    <li>${t.step4}</li>
+                                    <li>${t.step5}</li>
+                                    <li>${t.step6}</li>
                                 </ol>
-                                <pre class="mt-2 p-3 bg-gray-100 dark:bg-gray-800 rounded-md text-xs overflow-x-auto"><code>const SHEET_NAME = "Sheet1"; // Cambia esto si tu hoja tiene un nombre diferente
+                                <pre class="mt-2 p-3 bg-gray-100 dark:bg-gray-800 rounded-md text-xs overflow-x-auto"><code>const SHEET_NAME = "Sheet1"; // Change this if your sheet has a different name
 
 function handleResponse(data) {
   return ContentService.createTextOutput(JSON.stringify(data))
@@ -926,14 +1004,14 @@ function doPost(e) {
 }
 </code></pre>
                             </details>
-                            <div><label for="scriptUrl" class="block mb-1 text-sm font-medium">URL de Google Apps Script</label><input type="url" id="scriptUrl" value="${state.settings.scriptUrl}" placeholder="https://script.google.com/macros/s/..." class="w-full px-3 py-2 border rounded-md bg-[var(--bg-primary)] border-[var(--border-color)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" /></div>
+                            <div><label for="scriptUrl" class="block mb-1 text-sm font-medium">${t.appsScriptURL}</label><input type="url" id="scriptUrl" value="${state.settings.scriptUrl}" placeholder="${t.appsScriptURLPlaceholder}" class="w-full px-3 py-2 border rounded-md bg-[var(--bg-primary)] border-[var(--border-color)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" /></div>
                         </div>
                         <div class="bg-[var(--bg-secondary)] p-6 rounded-lg shadow-[var(--shadow)] border border-[var(--border-color)]">
-                            <h3 class="text-xl font-bold mb-2">2. Renderizado de Archivos Multimedia (ImageKit.io)</h3>
-                            <p class="text-sm text-[var(--text-secondary)] mb-4">Para renderizar automáticamente imágenes de perfil y logos desde URLs, puedes usar ImageKit.io para optimización. Esto es opcional. Obtén tu clave de <a href="https://imagekit.io/" target="_blank" class="text-[var(--primary)] hover:underline">ImageKit.io</a>.</p>
-                            <div><label for="imagekitKey" class="block mb-1 text-sm font-medium">Clave Pública de API de ImageKit</label><input type="text" id="imagekitKey" value="${state.settings.imagekitKey}" placeholder="public_xxxxxxxxxxxxxxxxxxxx" class="w-full px-3 py-2 border rounded-md bg-[var(--bg-primary)] border-[var(--border-color)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" /></div>
+                            <h3 class="text-xl font-bold mb-2">${t.mediaRendering}</h3>
+                            <p class="text-sm text-[var(--text-secondary)] mb-4">${t.mediaRenderingDesc}</p>
+                            <div><label for="imagekitKey" class="block mb-1 text-sm font-medium">${t.imagekitKey}</label><input type="text" id="imagekitKey" value="${state.settings.imagekitKey}" placeholder="${t.imagekitKeyPlaceholder}" class="w-full px-3 py-2 border rounded-md bg-[var(--bg-primary)] border-[var(--border-color)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" /></div>
                         </div>
-                        <button id="save-settings-btn" class="w-full px-6 py-3 text-white bg-[var(--primary)] rounded-md hover:opacity-90 font-bold">Guardar y Sincronizar</button>
+                        <button id="save-settings-btn" class="w-full px-6 py-3 text-white bg-[var(--primary)] rounded-md hover:opacity-90 font-bold">${t.saveAndSync}</button>
                     </div>
                 </div>`;
             addSettingsPageEventListeners();
@@ -1149,13 +1227,28 @@ function doPost(e) {
         const translateUI = () => {
             document.documentElement.lang = state.language;
             const t = translations[state.language];
+            
             document.querySelectorAll('[data-lang-key]').forEach(el => {
                 const key = el.dataset.langKey;
                 if (t[key]) {
                     el.textContent = t[key];
                 }
             });
-            renderCurrentPage();
+
+            const tUrls = t.urls;
+            const tTitles = t.titles;
+
+            document.querySelector('a[data-page="whatsapp-generator"]').dataset.url = tUrls.whatsappGenerator;
+            document.querySelector('a[data-page="whatsapp-generator"]').dataset.title = tTitles.whatsappGenerator;
+
+            document.querySelector('a[data-page="spreadsheet-id"]').dataset.url = tUrls.spreadsheetId;
+            document.querySelector('a[data-page="spreadsheet-id"]').dataset.title = tTitles.spreadsheetId;
+
+            document.querySelector('a[data-page="email-signature"]').dataset.url = tUrls.emailSignature;
+            document.querySelector('a[data-page="email-signature"]').dataset.title = tTitles.emailSignature;
+            
+            document.querySelector('a[data-page="directorio"]').dataset.url = tUrls.mainDirectory;
+            document.querySelector('a[data-page="directorio"]').dataset.title = tTitles.mainDirectory;
         };
 
         // --- NAVIGATION & UI RENDERING ---
@@ -1346,8 +1439,9 @@ function doPost(e) {
             applyTheme(state.theme);
             renderCustomNavLinks();
             lucide.createIcons();
-            handleNavigation('dashboard');
+            
             await fetchUsers(); 
+            translateUI();
 
             // Mobile nav listeners
             document.getElementById('sidebar-open-btn').addEventListener('click', openMobileSidebar);
@@ -1383,6 +1477,7 @@ function doPost(e) {
             document.getElementById('translate-btn').addEventListener('click', () => { 
                 state.language = state.language === 'es' ? 'en' : 'es';
                 saveToStorage('language', state.language);
+                handleNavigation('dashboard');
                 translateUI();
             });
             document.getElementById('admin-profile-section').addEventListener('click', openAdminModal);
