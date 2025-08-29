@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dominican Republic Mortgage Calculator</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #DF1783;
+            --primary-light: #f8a4d4;
+            --secondary: #2d3748;
+            --accent: #4fd1c5;
+            --text: #2d3748;
+            --text-light: #a0aec0;
+            --bg: #f7fafc;
+            --card-bg: #ffffff;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --border-color: #e2e8f0;
+        }
+        .dark-mode {
+            --text: #f7fafc;
+            --text-light: #a0aec0;
+            --bg: #1a202c;
+            --card-bg: #2d3748;
+            --shadow: 0 4px 6px -1px rgba(0,0,0,0.4), 0 2px 4px -1px rgba(0,0,0,0.2);
+            --border-color: #4a5568;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background-color: var(--bg);
+            color: var(--text);
+            padding-top: 100px; /* Space for the fixed top menu */
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Top Menu Bar Styles */
+        .top-menu-bar {
+            position: fixed; top: 1rem; left: 50%; transform: translateX(-50%);
+            width: calc(100% - 2rem); max-width: 1200px; z-index: 1100;
+            background-color: var(--card-bg); box-shadow: var(--shadow);
+            border: 1px solid var(--border-color); border-radius: 12px;
+            padding: 0 1.5rem; transition: top 0.3s ease-in-out;
+        }
+        .top-menu-content { height: 70px; display: flex; align-items: center; justify-content: space-between; }
+        .logo-container { display: flex; align-items: center; gap: 1rem; }
+        #appLogo { height: 40px; width: 40px; object-fit: cover; border-radius: 8px; }
+        #appBrandNameDisplay {
+            font-size: 16px; /* Mobile First */
+            font-weight: 600;
+            color: var(--text);
+        }
+        .top-menu-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            overflow-x: auto; /* Allow horizontal scroll on mobile */
+            white-space: nowrap; /* Prevent buttons from wrapping */
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+        .top-menu-actions::-webkit-scrollbar {
+            display: none; /* Hide scrollbar for WebKit browsers */
+        }
+        #dateTimeDisplay {
+             display: none; /* Hidden on mobile by default */
+             font-size: 0.9rem;
+             color: var(--text-light);
+             text-align: right;
+             margin-right: 1rem;
+        }
+        .fab {
+            width: 40px; height: 40px; border-radius: 50%; background-color: var(--bg);
+            color: var(--text); border: 1px solid var(--border-color); display: flex;
+            justify-content: center; align-items: center; cursor: pointer; transition: all 0.2s ease;
+        }
+        .fab:hover { background-color: var(--border-color); }
+
+        @media (min-width: 768px) {
+            #appBrandNameDisplay {
+                font-size: 20px; /* Larger font on desktop */
+            }
+            .top-menu-actions {
+                overflow-x: visible; /* Disable scroll on desktop */
+            }
+            #dateTimeDisplay {
+                display: block; /* Show date/time on desktop */
+            }
+        }
+
+        .calculator-grid, .timer-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        @media (max-width: 900px) {
+            .calculator-grid, .timer-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .input-section, .results-section, .timer-section {
+            background-color: var(--card-bg);
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+
+        h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 500; }
+        input, select, textarea {
+            width: 100%; padding: 12px; border: 1px solid var(--border-color);
+            border-radius: 5px; font-size: 16px; background-color: var(--bg); color: var(--text);
+        }
+        
+        button {
+            padding: 10px 15px; border: none; border-radius: 5px;
+            cursor: pointer; font-weight: 600;
+        }
+
+        .btn-primary {
+            background-color: var(--primary); color: white; width: 100%;
+            padding: 15px; font-size: 16px;
+        }
+        .btn-primary:hover { opacity: 0.9; }
+        .btn-secondary { background-color: var(--accent); color: var(--secondary); }
+        .btn-secondary:hover { background-color: var(--primary-light); color: var(--secondary); }
+        .btn-danger { background-color: #e53e3e; color: white; }
+        .btn-danger:hover { background-color: #c53030; }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.6); display: flex;
+            justify-content: center; align-items: center; z-index: 2000;
+        }
+        .modal-content {
+            background-color: var(--card-bg); padding: 30px; border-radius: 10px;
+            width: 90%; max-width: 500px; box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            position: relative; /* Added to position child elements relative to this card */
+        }
+        .modal-content h2 { text-align: center; }
+        .form-switch { text-align: center; margin-top: 15px; }
+        .form-switch a { color: var(--primary); cursor: pointer; text-decoration: underline;}
+
+        /* Floating language toggle for modal */
+        .modal-lang-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 2010;
+        }
+
+        /* Multi-select dropdown */
+        .multiselect { display: none; }
+        .multiselect-label { display: block; width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 5px; background-color: var(--bg); cursor: pointer; }
+        .multiselect-options { display: none; border: 1px solid var(--border-color); border-radius: 5px; max-height: 150px; overflow-y: auto; }
+        .multiselect-options label { display: block; padding: 10px; cursor: pointer; }
+        .multiselect-options label:hover { background-color: var(--border-color); }
+        
+        .hidden { display: none; }
+
+        /* Calendar & Timer View Styles */
+        #calendarView, #timerView {
+            background-color: var(--card-bg); padding: 25px;
+            border-radius: 10px; box-shadow: var(--shadow); margin-top: 30px;
+        }
+        #timersList { list-style: none; padding: 0; }
+        #timersList li { background-color: var(--bg); padding: 15px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+
+    </style>
+</head>
+<body>
+
+    <!-- Login/Registration Modal -->
+    <div id="userModal" class="modal-overlay">
+        
+        <div class="modal-content">
+            <div class="fab modal-lang-toggle" id="modalLangToggle" title="Toggle Language"><i class="fas fa-globe"></i></div>
+            <!-- Login Form -->
+            <form id="loginForm">
+                <h2 data-lang-key="login">Login</h2>
+                <div class="form-group">
+                    <label for="loginEmail" data-lang-key="email">Email Address</label>
+                    <input type="email" id="loginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword" data-lang-key="password">Password</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <button type="submit" class="btn-primary" data-lang-key="login">Login</button>
+                <p class="form-switch" data-lang-key="noAccount">Don't have an account? <a id="showRegister">Register</a></p>
+            </form>
+
+            <!-- Registration Form -->
+            <form id="registerForm" class="hidden">
+                <h2 data-lang-key="register">Register</h2>
+                <div class="form-group">
+                    <label for="fullName" data-lang-key="fullName">Full Name (Optional)</label>
+                    <input type="text" id="fullName">
+                </div>
+                <div class="form-group">
+                    <label for="email" data-lang-key="email">Email Address</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password" data-lang-key="password">Password</label>
+                    <input type="password" id="password" required>
+                </div>
+                <div class="form-group">
+                    <label data-lang-key="interests">Real Estate Interests</label>
+                    <div class="multiselect-container">
+                        <div class="multiselect-label" data-lang-key="selectInterests">Select interests...</div>
+                        <div class="multiselect-options">
+                            <label><input type="checkbox" class="multiselect" value="First Home"> <span data-lang-key="firstHome">First Time Home Buyer</span></label>
+                            <label><input type="checkbox" class="multiselect" value="Investment"> <span data-lang-key="investment">Investment Properties</span></label>
+                            <label><input type="checkbox" class="multiselect" value="Vacation Home"> <span data-lang-key="vacationHome">Vacation Home</span></label>
+                            <label><input type="checkbox" class="multiselect" value="Commercial"> <span data-lang-key="commercial">Commercial Real Estate</span></label>
+                             <label><input type="checkbox" class="multiselect" value="Land"> <span data-lang-key="land">Land/Lot Purchase</span></label>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary" data-lang-key="register">Register</button>
+                <p class="form-switch" data-lang-key="hasAccount">Already have an account? <a id="showLogin">Login</a></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Top Menu Bar -->
+    <div class="top-menu-bar">
+        <div class="top-menu-content">
+            <div class="logo-container">
+                <img id="appLogo" src="https://bucket.mlcdn.com/a/3336/3336910/images/fa62e06dd2b6ed2d1d9e77e5dd944bef2904d5d1.png" alt="App Logo">
+                <span id="appBrandNameDisplay">Easy Listings</span>
+            </div>
+            <div class="top-menu-actions">
+                <div id="dateTimeDisplay"></div>
+                <div class="fab" id="langToggle" title="Toggle Language"><i class="fas fa-globe"></i></div>
+                <div class="fab" id="calendarBtn" title="Calendar View"><i class="fas fa-calendar-alt"></i></div>
+                <div class="fab" id="timerBtn" title="Timers"><i class="fas fa-clock"></i></div>
+                <div class="fab" id="supportBtn" title="Support" onclick="window.open('https://helpcenter.easylistings.website', '_blank')"><i class="fa fa-info-circle"></i></div>
+                <div class="fab" id="darkModeToggle" title="Toggle Theme"><i class="fas fa-moon"></i></div>
+                <div class="fab" id="logoutBtn" title="Logout"><i class="fas fa-sign-out-alt"></i></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Calculator View -->
+        <div id="calculatorView">
+            <!-- Content from previous step... -->
+        </div>
+
+        <!-- Calendar View -->
+        <div id="calendarView" class="hidden">
+            <h2 data-lang-key="paymentCalendar">Payment Calendar</h2>
+            <p data-lang-key="calendarComingSoon">Calendar view will be implemented here.</p>
+             <button id="printCalendarBtn" class="btn-secondary" data-lang-key="printCalendar">Print Calendar</button>
+        </div>
+
+        <!-- Timer View -->
+        <div id="timerView" class="hidden">
+            <div class="timer-grid">
+                <div class="timer-section">
+                    <h2 data-lang-key="manageTimers">Manage Timers</h2>
+                    <ul id="timersList">
+                        <!-- Timers will be listed here -->
+                    </ul>
+                </div>
+                <div class="timer-section">
+                    <h2 data-lang-key="addTimer">Add New Timer</h2>
+                    <form id="addTimerForm">
+                        <div class="form-group">
+                            <label for="timerName" data-lang-key="loanName">Loan/Purchase Name</label>
+                            <input type="text" id="timerName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="purchaseDate" data-lang-key="purchaseDate">Date of Purchase</label>
+                            <input type="date" id="purchaseDate" required>
+                        </div>
+                        <div class="form-group">
+                             <label for="paymentStartDate" data-lang-key="paymentStart">Recurring Payment Start Date</label>
+                            <input type="date" id="paymentStartDate" required>
+                        </div>
+                         <button type="submit" class="btn-primary" data-lang-key="addTimer">Add Timer</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- DOM Elements ---
+            const userModal = document.getElementById('userModal');
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const showRegister = document.getElementById('showRegister');
+            const showLogin = document.getElementById('showLogin');
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            const langToggle = document.getElementById('langToggle');
+            const calendarBtn = document.getElementById('calendarBtn');
+            const timerBtn = document.getElementById('timerBtn');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const calculatorView = document.getElementById('calculatorView');
+            const calendarView = document.getElementById('calendarView');
+            const timerView = document.getElementById('timerView');
+            const dateTimeDisplay = document.getElementById('dateTimeDisplay');
+            const multiselectLabel = document.querySelector('.multiselect-label');
+            const multiselectOptions = document.querySelector('.multiselect-options');
+            const modalLangToggle = document.getElementById('modalLangToggle');
+
+            // --- Language Translations ---
+            const translations = {
+                es: {
+                    login: "Iniciar Sesión",
+                    email: "Correo Electrónico",
+                    password: "Contraseña",
+                    noAccount: "¿No tienes cuenta? ",
+                    register: "Regístrate",
+                    fullName: "Nombre Completo (Opcional)",
+                    interests: "Intereses Inmobiliarios",
+                    selectInterests: "Seleccionar intereses...",
+                    firstHome: "Comprador de Primera Vivienda",
+                    investment: "Propiedades de Inversión",
+                    vacationHome: "Casa de Vacaciones",
+                    commercial: "Bienes Raíces Comerciales",
+                    land: "Compra de Terreno/Lote",
+                    hasAccount: "¿Ya tienes una cuenta? ",
+                    paymentCalendar: "Calendario de Pagos",
+                    calendarComingSoon: "La vista de calendario se implementará aquí.",
+                    printCalendar: "Imprimir Calendario",
+                    manageTimers: "Administrar Temporizadores",
+                    addTimer: "Añadir Nuevo Temporizador",
+                    loanName: "Nombre del Préstamo/Compra",
+                    purchaseDate: "Fecha de Compra",
+                    paymentStart: "Fecha de Inicio de Pagos Recurrentes"
+                }
+            };
+
+            let currentLang = 'en';
+
+            // --- State ---
+            let currentUser = null;
+
+            // --- Functions ---
+
+            function updateDateTime() {
+                const now = new Date();
+                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+                const locale = currentLang === 'es' ? 'es-DO' : 'en-US';
+                const formattedDateTime = now.toLocaleString(locale, { ...options, timeZone: 'America/Santo_Domingo' });
+                dateTimeDisplay.textContent = formattedDateTime;
+            }
+            
+            function toggleLanguage() {
+                currentLang = currentLang === 'en' ? 'es' : 'en';
+                const elements = document.querySelectorAll('[data-lang-key]');
+                elements.forEach(el => {
+                    const key = el.getAttribute('data-lang-key');
+                    if (currentLang === 'es' && translations.es[key]) {
+                        el.textContent = translations.es[key];
+                    } else {
+                        // This will revert to the original English text in the HTML
+                        el.textContent = el.dataset.originalText || el.textContent;
+                    }
+                });
+                updateDateTime();
+            }
+
+            function checkUser() {
+                // Always show login on load
+                userModal.classList.remove('hidden');
+                loginForm.classList.remove('hidden');
+                registerForm.classList.add('hidden');
+            }
+
+            function handleLogin(e) {
+                e.preventDefault();
+                const email = document.getElementById('loginEmail').value;
+                const password = document.getElementById('loginPassword').value;
+
+                if (email === 'BackendUser' && password === 'Passcode') {
+                     currentUser = { email: 'BackendUser', fullName: 'Admin' };
+                     initApp();
+                     return;
+                }
+                
+                const userData = JSON.parse(localStorage.getItem(`user_${email}`));
+
+                if (userData && userData.password === password) {
+                    currentUser = userData;
+                    initApp();
+                } else {
+                    alert('Invalid credentials!');
+                }
+            }
+
+            function handleRegistration(e) {
+                e.preventDefault();
+                const fullName = document.getElementById('fullName').value;
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                const selectedInterests = Array.from(document.querySelectorAll('.multiselect:checked')).map(el => el.value);
+
+                if (localStorage.getItem(`user_${email}`)) {
+                    alert('User already exists!');
+                    return;
+                }
+
+                const userData = { fullName, email, password, interests: selectedInterests };
+                localStorage.setItem(`user_${email}`, JSON.stringify(userData));
+                
+                // --- Google Sheets Integration ---
+                const scriptURL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE'; 
+                // ... (fetch logic remains the same)
+
+                currentUser = userData;
+                initApp();
+            }
+
+            function initApp() {
+                 userModal.classList.add('hidden');
+                 // Load calculator, timers, etc. for the currentUser
+                 updateDateTime();
+                 setInterval(updateDateTime, 60000);
+            }
+            
+            function logout() {
+                currentUser = null;
+                checkUser();
+            }
+
+            function switchView(viewName) {
+                [calculatorView, calendarView, timerView].forEach(view => view.classList.add('hidden'));
+                document.getElementById(viewName).classList.remove('hidden');
+
+                // Update icons
+                calendarBtn.innerHTML = viewName === 'calendarView' ? '<i class="fas fa-calculator"></i>' : '<i class="fas fa-calendar-alt">';
+                timerBtn.innerHTML = viewName === 'timerView' ? '<i class="fas fa-calculator"></i>' : '<i class="fas fa-clock">';
+            }
+            
+            // --- Event Listeners ---
+            showRegister.addEventListener('click', () => {
+                loginForm.classList.add('hidden');
+                registerForm.classList.remove('hidden');
+            });
+
+            showLogin.addEventListener('click', () => {
+                registerForm.classList.add('hidden');
+                loginForm.classList.remove('hidden');
+            });
+            
+            multiselectLabel.addEventListener('click', () => {
+                multiselectOptions.style.display = multiselectOptions.style.display === 'block' ? 'none' : 'block';
+            });
+            
+            document.addEventListener('click', function(event) {
+                if (!event.target.closest('.multiselect-container')) {
+                    multiselectOptions.style.display = 'none';
+                }
+            });
+
+
+            loginForm.addEventListener('submit', handleLogin);
+            registerForm.addEventListener('submit', handleRegistration);
+            darkModeToggle.addEventListener('click', () => document.body.classList.toggle('dark-mode'));
+            langToggle.addEventListener('click', toggleLanguage);
+            modalLangToggle.addEventListener('click', toggleLanguage); // Added listener for modal toggle
+            calendarBtn.addEventListener('click', () => switchView('calendarView'));
+            timerBtn.addEventListener('click', () => switchView('timerView'));
+            logoutBtn.addEventListener('click', logout);
+            
+            // --- Initial Load ---
+            checkUser();
+             // Store original english text for language toggle
+            document.querySelectorAll('[data-lang-key]').forEach(el => {
+                el.dataset.originalText = el.textContent;
+            });
+
+        });
+    </script>
+</body>
+</html>
+
+
+
+
