@@ -225,7 +225,7 @@
                 <div id="admin-profile-section" class="flex items-center p-3 rounded-lg gap-3 cursor-pointer hover:bg-[var(--primary-light)]">
                     <img id="admin-avatar" src="https://bucket.mlcdn.com/a/3336/3336910/images/720acb42aae5c4c7657fe94291a91807c55c356a.png" alt="Admin" class="w-10 h-10 rounded-full flex-shrink-0" />
                     <div class="overflow-hidden">
-                        <p id="admin-user-name" class="font-semibold whitespace-nowrap">Administrador</p>
+                        <p id="admin-user-name" class="font-semibold whitespace-nowrap">Admin</p>
                     </div>
 
 
@@ -436,7 +436,7 @@
             language: 'es',
             view: 'list',
             searchTerm: '',
-            admin: { name: 'Administrador', avatar: 'https://bucket.mlcdn.com/a/3336/3336910/images/720acb42aae5c4c7657fe94291a91807c55c356a.png' },
+            admin: { name: 'Admin', avatar: 'https://bucket.mlcdn.com/a/3336/3336910/images/720acb42aae5c4c7657fe94291a91807c55c356a.png' },
             isDataLive: false,
             customNavLinks: [],
         };
@@ -1431,7 +1431,7 @@ function doPost(e) {
             state.language = getFromStorage('language', 'es');
             state.templates = getFromStorage('whatsappTemplates', [{ id: '1', name: "Bienvenida a Bordo", message: "¡Hola {{Username}}! Bienvenido/a a EasyListings." }]);
             state.settings = getFromStorage('appSettings', { scriptUrl: '', imagekitKey: '' });
-            state.admin = getFromStorage('adminProfile', { name: 'Administrador', avatar: 'https://bucket.mlcdn.com/a/3336/3336910/images/720acb42aae5c4c7657fe94291a91807c55c356a.png' });
+            state.admin = getFromStorage('adminProfile', { name: 'Admin', avatar: 'https://bucket.mlcdn.com/a/3336/3336910/images/720acb42aae5c4c7657fe94291a91807c55c356a.png' });
             state.customNavLinks = getFromStorage('customNavLinks', []);
             
             // Initial UI setup
