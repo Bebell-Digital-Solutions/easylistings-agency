@@ -660,18 +660,20 @@
                         <div class="bg-[var(--bg-secondary)] p-4 rounded-lg border border-[var(--border-color)] shadow-sm"><h3 class="text-sm font-medium text-[var(--text-secondary)]" data-lang-key="blocked"></h3><p id="blocked-users-stat" class="text-3xl font-bold"></p></div>
                     </div>
                     <!-- Charts -->
-                    <div class="grid grid-cols-1 lg:grid-cols-5 gap-4">
-                        <div class="lg:col-span-3 bg-[var(--bg-secondary)] p-4 rounded-lg border border-[var(--border-color)] shadow-sm">
+                    <div class="space-y-4">
+                        <div class="bg-[var(--bg-secondary)] p-4 rounded-lg border border-[var(--border-color)] shadow-sm">
                             <h3 class="font-bold mb-4" data-lang-key="userRegistrationsByMonth"></h3>
                             <div class="h-80"><canvas id="userRegistrationChart"></canvas></div>
                         </div>
-                        <div class="lg:col-span-2 bg-[var(--bg-secondary)] p-4 rounded-lg border border-[var(--border-color)] shadow-sm">
-                            <h3 class="font-bold mb-4" data-lang-key="userStatusBreakdown"></h3>
-                            <div class="h-40"><canvas id="userStatusChart"></canvas></div>
-                        </div>
-                        <div class="lg:col-span-2 bg-[var(--bg-secondary)] p-4 rounded-lg border border-[var(--border-color)] shadow-sm">
-                            <h3 class="font-bold mb-4" data-lang-key="profileCompletion"></h3>
-                            <div class="h-40"><canvas id="profileCompletionChart"></canvas></div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-[var(--bg-secondary)] p-4 rounded-lg border border-[var(--border-color)] shadow-sm">
+                                <h3 class="font-bold mb-4" data-lang-key="userStatusBreakdown"></h3>
+                                <div class="h-64"><canvas id="userStatusChart"></canvas></div>
+                            </div>
+                            <div class="bg-[var(--bg-secondary)] p-4 rounded-lg border border-[var(--border-color)] shadow-sm">
+                                <h3 class="font-bold mb-4" data-lang-key="profileCompletion"></h3>
+                                <div class="h-64"><canvas id="profileCompletionChart"></canvas></div>
+                            </div>
                         </div>
                     </div>
                 </div>`,
