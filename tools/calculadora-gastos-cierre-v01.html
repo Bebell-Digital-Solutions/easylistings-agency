@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Gastos de Cierre - República Dominicana</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #DF1783;
+            --primary-light: #f8a4d4;
+            --secondary: #2d3748;
+            --accent: #4fd1c5;
+            --text: #2d3748;
+            --text-light: #718096;
+            --bg: #f7fafc;
+            --card-bg: #ffffff;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --border-color: #e2e8f0;
+            --success: #48bb78;
+            --error: #f56565;
+            --warning-bg: #fff9e6;
+            --summary-bg: linear-gradient(135deg, #e8f4fc 0%, #d1e7f8 100%);
+            --explanation-bg: #f9f9f9;
+        }
+
+        .dark-mode {
+            --text: #edf2f7;
+            --text-light: #a0aec0;
+            --bg: #1a202c;
+            --card-bg: #2d3748;
+            --shadow: 0 4px 6px -1px rgba(0,0,0,0.4), 0 2px 4px -1px rgba(0,0,0,0.2);
+            --border-color: #4a5568;
+            --warning-bg: #4a4a2a;
+            --summary-bg: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            --explanation-bg: #1a202c;
+        }
+
+        html { box-sizing: border-box; overflow-x: hidden; scroll-behavior: smooth; }
+        *, *:before, *:after { box-sizing: inherit; margin: 0; padding: 0; }
+        
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .top-menu-bar {
+            position: fixed; top: 2rem; left: 50%; transform: translateX(-50%);
+            width: calc(100% - 4rem); max-width: 1400px; z-index: 1100;
+            background-color: var(--card-bg); box-shadow: var(--shadow);
+            border: 1px solid var(--border-color); border-radius: 12px;
+            padding: 0 1.5rem; transition: all 0.3s ease-in-out;
+        }
+        
+        .top-menu-content { height: 70px; display: flex; align-items: center; justify-content: space-between; }
+        .logo-container { display: flex; align-items: center; gap: 1rem; }
+        #appLogo { height: 40px; width: 40px; object-fit: cover; border-radius: 8px; }
+        #appBrandNameDisplay { font-size: 1.5rem; font-weight: 600; color: var(--text); }
+        .top-menu-actions { display: flex; align-items: center; gap: 15px; }
+        .fab {
+            width: 40px; height: 40px; border-radius: 50%; background-color: var(--bg);
+            color: var(--text); border: 1px solid var(--border-color); display: flex;
+            justify-content: center; align-items: center; cursor: pointer; transition: all 0.2s ease;
+        }
+        .fab:hover { background-color: var(--border-color); }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            margin-top: 120px; /* Increased margin for fixed nav */
+        }
+        
+        header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            color: var(--text);
+        }
+        
+        header p {
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto;
+            color: var(--text-light);
+        }
+        
+        .calculator-card, .results-container {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+            transition: background-color 0.3s;
+        }
+        
+        .calculator-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .calculator-header h2 {
+            color: var(--primary);
+        }
+        
+        .transaction-type {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .type-btn {
+            padding: 10px 20px;
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            background: transparent;
+            color: var(--primary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .type-btn.active {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text);
+        }
+        
+        .input-with-icon {
+            position: relative;
+        }
+        
+        .input-with-icon input {
+            width: 100%;
+            padding: 12px 15px 12px 40px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            background-color: var(--bg);
+            color: var(--text);
+        }
+        
+        .input-with-icon input:focus {
+            border-color: var(--accent);
+            outline: none;
+        }
+        
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+        }
+        
+        .btn, .calculate-btn {
+            padding: 12px 25px;
+            border: 2px solid var(--primary);
+            border-radius: 8px; /* Consistent radius */
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--primary);
+            color: white;
+            text-decoration: none;
+            font-size: 1rem;
+        }
+        .btn:hover, .calculate-btn:hover {
+            background-color: var(--primary-light);
+            border-color: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .calculate-btn {
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .calculate-btn i {
+            margin-right: 8px;
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            color: var(--primary);
+        }
+        .btn-outline:hover {
+            background-color: var(--primary);
+            color: white !important;
+        }
+        
+        .calculate-btn:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .results-container { display: none; }
+        
+        .result-summary {
+            background: var(--summary-bg);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .dark-mode .result-summary { color: white; }
+        
+        .result-summary h3 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .total-amount {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--secondary);
+            margin: 10px 0;
+        }
+
+        .dark-mode .total-amount { color: var(--text); }
+        
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .result-item:last-child {
+            border-bottom: none;
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+        
+        .result-explanation {
+            background-color: var(--explanation-bg);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 25px;
+        }
+        
+        .result-explanation h4 {
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+        
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .action-btn {
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--primary);
+        }
+        
+        .action-btn i { margin-right: 8px; }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        .btn-primary:hover {
+            background: var(--primary-light);
+            border-color: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--primary);
+        }
+        .dark-mode .btn-secondary { color: var(--primary-light); }
+
+        .btn-secondary:hover { 
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .disclaimer {
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-top: 30px;
+            padding: 15px;
+            background-color: var(--warning-bg);
+            border-radius: 8px;
+        }
+
+        .banner {
+            margin-top: 50px;
+            height: 500px;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+            background-image: url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1973&q=80');
+            background-size: cover;
+            background-position: center;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .banner::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.4));
+            z-index: 1;
+        }
+
+        .banner-content {
+            position: relative;
+            z-index: 2;
+            max-width: 700px;
+            padding: 0 20px;
+        }
+
+        .banner h2 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            line-height: 1.1;
+        }
+
+        .banner p { font-size: 1.5rem; margin-bottom: 30px; line-height: 1.6; }
+
+        .banner-btn {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            background: var(--primary);
+            color: white; 
+            border: 2px solid var(--primary);
+            border-radius: 8px; 
+            cursor: pointer;
+            transition: all 0.3s ease; font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .banner-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            background: var(--primary-light);
+            border-color: var(--primary-light);
+        }
+        
+        #notification {
+            position: fixed;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 25px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            z-index: 2000;
+            transition: top 0.5s ease-in-out;
+            box-shadow: var(--shadow);
+        }
+        #notification.show { top: 90px; }
+        #notification.error { background-color: var(--error); }
+
+        @media (max-width: 768px) {
+            .top-menu-bar { padding: 0 1rem; }
+            #appBrandNameDisplay { display: none; }
+            .calculator-header { flex-direction: column; gap: 15px; align-items: flex-start; }
+            .transaction-type { width: 100%; }
+            .type-btn { flex: 1; text-align: center; }
+            .actions { flex-direction: column; }
+            .banner { height: 600px; min-width: 100%; border-radius: 0; margin: 30px -20px 0 -20px; }
+            .banner h2 { font-size: 2.5rem; }
+            .banner p { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="notification"></div>
+
+<div class="top-menu-bar">
+    <div class="top-menu-content">
+        <div class="logo-container">
+            <img id="appLogo" src="https://bucket.mlcdn.com/a/3336/3336910/images/fa62e06dd2b6ed2d1d9e77e5dd944bef2904d5d1.png" alt="App Logo">
+            <span id="appBrandNameDisplay">Easy Listings</span>
+        </div>
+        <div class="top-menu-actions">
+            <div class="fab" id="langToggle" title="Toggle Language"><i class="fas fa-globe"></i></div>
+            <div class="fab" id="supportBtn" title="Support" onclick="window.open('https://helpcenter.easylistings.website', '_blank')"><i class="fa fa-info-circle"></i></div>
+            <div class="fab" id="darkModeToggle" title="Toggle Theme"><i class="fas fa-moon"></i></div>
+            <button class="btn" id="ctaBtn" data-lang-key="ctaBtn">Contactar</button>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <header>
+        <h1 data-lang-key="headerTitle">Calculadora de Gastos de Cierre</h1>
+        <p data-lang-key="headerSubtitle">Calcula los costos asociados a la compra o alquiler de propiedades en República Dominicana</p>
+    </header>
+    
+    <div class="calculator-card">
+        <div class="calculator-header">
+            <h2 data-lang-key="calculatorTitle">Calculadora</h2>
+            <div class="transaction-type">
+                <button class="type-btn active" id="purchaseBtn" data-lang-key="purchaseBtn">Compra</button>
+                <button class="type-btn" id="rentBtn" data-lang-key="rentBtn">Alquiler</button>
+            </div>
+        </div>
+        
+        <div class="input-group">
+            <label for="propertyValue" data-lang-key="propertyValueLabel">Valor de la propiedad (USD)</label>
+            <div class="input-with-icon">
+                <span class="input-icon"><i class="fas fa-dollar-sign"></i></span>
+                <input type="number" id="propertyValue" data-lang-placeholder="purchasePlaceholder" placeholder="Ej: 150000" min="0">
+            </div>
+        </div>
+        
+        <div class="input-group" id="rentDurationGroup" style="display: none;">
+            <label for="rentDuration" data-lang-key="rentDurationLabel">Duración del contrato (meses)</label>
+            <div class="input-with-icon">
+                <span class="input-icon"><i class="fas fa-calendar-alt"></i></span>
+                <input type="number" id="rentDuration" data-lang-placeholder="rentDurationPlaceholder" placeholder="Ej: 12" min="1" value="12">
+            </div>
+        </div>
+        
+        <button class="calculate-btn" id="calculateBtn">
+            <i class="fas fa-calculator"></i> <span data-lang-key="calculateBtn">Calcular Gastos de Cierre</span>
+        </button>
+    </div>
+    
+    <div class="results-container" id="resultsContainer">
+        <div class="results-header">
+            <h2 data-lang-key="resultsTitle">Resultados del Cálculo</h2>
+            <p data-lang-key="resultsSubtitle">Desglose de gastos de cierre para tu transacción</p>
+        </div>
+        
+        <div class="result-summary">
+            <h3 data-lang-key="totalExpensesTitle">Total de Gastos de Cierre</h3>
+            <p id="transactionTypeText"></p>
+            <div class="total-amount" id="totalAmount">$0.00</div>
+            <p id="percentageText"></p>
+        </div>
+        
+        <div class="result-details">
+            <h3 data-lang-key="expensesBreakdownTitle">Desglose de Gastos</h3>
+            <div id="expensesList"></div>
+        </div>
+        
+        <div class="result-explanation">
+            <h4 data-lang-key="explanationTitle">¿Qué incluyen estos gastos?</h4>
+            <p id="explanationText"></p>
+            <p><strong data-lang-key="noteTitle">Nota:</strong> <span data-lang-key="noteText">Estos valores son estimados basados en promedios del mercado. Los costos reales pueden variar según la propiedad, ubicación y acuerdos específicos.</span></p>
+        </div>
+        
+        <div class="actions">
+            <button class="action-btn btn-primary" id="downloadPdf">
+                <i class="fas fa-download"></i> <span data-lang-key="downloadPdfBtn">Descargar PDF</span>
+            </button>
+            <button class="action-btn btn-secondary" id="recalculateBtn">
+                <i class="fas fa-redo"></i> <span data-lang-key="recalculateBtn">Volver a Calcular</span>
+            </button>
+        </div>
+    </div>
+    
+    <div class="disclaimer">
+        <p><strong data-lang-key="disclaimerTitle">Disclaimer:</strong> <span data-lang-key="disclaimerText">Esta calculadora proporciona estimaciones basadas en promedios del mercado inmobiliario dominicano. Los valores reales pueden variar según la propiedad, negociaciones específicas y cambios regulatorios. Se recomienda consultar con un profesional legal para obtener cálculos exactos.</span></p>
+    </div>
+</div>
+
+<div class="banner">
+    <div class="banner-content">
+        <h2 data-lang-key="bannerTitle">Encuentra Tu Propiedad Ideal</h2>
+        <p data-lang-key="bannerSubtitle">Descubre las mejores oportunidades inmobiliarias en República Dominicana con nuestro equipo de expertos</p>
+        <button class="banner-btn" data-lang-key="bannerBtn">Contactar Ahora</button>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- TRANSLATION DATA ---
+        const translations = {
+            es: {
+                headerTitle: 'Calculadora de Gastos de Cierre',
+                headerSubtitle: 'Calcula los costos asociados a la compra o alquiler de propiedades en República Dominicana',
+                calculatorTitle: 'Calculadora',
+                purchaseBtn: 'Compra',
+                rentBtn: 'Alquiler',
+                propertyValueLabel: 'Valor de la propiedad (USD)',
+                purchasePlaceholder: 'Ej: 150000',
+                rentPlaceholder: 'Ej: 1500',
+                rentDurationLabel: 'Duración del contrato (meses)',
+                rentDurationPlaceholder: 'Ej: 12',
+                calculateBtn: 'Calcular Gastos de Cierre',
+                resultsTitle: 'Resultados del Cálculo',
+                resultsSubtitle: 'Desglose de gastos de cierre para tu transacción',
+                totalExpensesTitle: 'Total de Gastos de Cierre',
+                expensesBreakdownTitle: 'Desglose de Gastos',
+                explanationTitle: '¿Qué incluyen estos gastos?',
+                noteTitle: 'Nota:',
+                noteText: 'Estos valores son estimados basados en promedios del mercado. Los costos reales pueden variar según la propiedad, ubicación y acuerdos específicos.',
+                downloadPdfBtn: 'Descargar PDF',
+                recalculateBtn: 'Volver a Calcular',
+                disclaimerTitle: 'Disclaimer:',
+                disclaimerText: 'Esta calculadora proporciona estimaciones basadas en promedios del mercado inmobiliario dominicano. Los valores reales pueden variar según la propiedad, negociaciones específicas y cambios regulatorios. Se recomienda consultar con un profesional legal para obtener cálculos exactos.',
+                bannerTitle: 'Encuentra Tu Propiedad Ideal',
+                bannerSubtitle: 'Descubre las mejores oportunidades inmobiliarias en República Dominicana con nuestro equipo de expertos',
+                bannerBtn: 'Contactar Ahora',
+                ctaBtn: 'Contactar',
+                // Dynamic Text
+                transactionTypePurchase: 'Para una transacción de compra',
+                transactionTypeRent: 'Para un contrato de alquiler de {months} meses',
+                percentageTextPurchase: 'Representa aproximadamente el {percentage}% del valor de la propiedad',
+                percentageTextRent: 'Representa aproximadamente el {percentage}% del valor anual del alquiler',
+                explanationPurchase: 'Los gastos de cierre para una transacción de compra en República Dominicana generalmente incluyen impuestos de transferencia, honorarios legales, costos de registro y la comisión inmobiliaria.',
+                explanationRent: 'Los gastos de cierre para un contrato de alquiler generalmente incluyen la comisión inmobiliaria, honorarios por preparación de contrato y posibles honorarios legales. En muchos casos, el inquilino paga el primer mes de renta más un depósito de seguridad.',
+                transferTax: 'Impuesto de Transferencia (3%)',
+                notaryFees: 'Honorarios Notariales (1%)',
+                registryFees: 'Derechos de Registro (0.5%)',
+                agentCommission: 'Comisión Inmobiliaria (5%)',
+                agentCommissionRent: 'Comisión Inmobiliaria (5% de {months} meses)',
+                contractFees: 'Honorarios por Contrato',
+                legalFees: 'Honorarios Legales (1%)',
+                totalClosingCosts: 'Total de Gastos de Cierre',
+                invalidInputError: 'Por favor ingresa un valor válido para la propiedad.',
+                pdfNotice: 'Función de PDF en desarrollo. Esto generaría un reporte detallado.'
+            },
+            en: {
+                headerTitle: 'Closing Costs Calculator',
+                headerSubtitle: 'Calculate the costs associated with buying or renting properties in the Dominican Republic',
+                calculatorTitle: 'Calculator',
+                purchaseBtn: 'Purchase',
+                rentBtn: 'Rent',
+                propertyValueLabel: 'Property Value (USD)',
+                purchasePlaceholder: 'Ex: 150000',
+                rentPlaceholder: 'Ex: 1500',
+                rentDurationLabel: 'Contract Duration (months)',
+                rentDurationPlaceholder: 'Ex: 12',
+                calculateBtn: 'Calculate Closing Costs',
+                resultsTitle: 'Calculation Results',
+                resultsSubtitle: 'Breakdown of closing costs for your transaction',
+                totalExpensesTitle: 'Total Closing Costs',
+                expensesBreakdownTitle: 'Expenses Breakdown',
+                explanationTitle: 'What do these costs include?',
+                noteTitle: 'Note:',
+                noteText: 'These values are estimates based on market averages. Actual costs may vary depending on the property, location, and specific agreements.',
+                downloadPdfBtn: 'Download PDF',
+                recalculateBtn: 'Recalculate',
+                disclaimerTitle: 'Disclaimer:',
+                disclaimerText: 'This calculator provides estimates based on averages in the Dominican real estate market. Actual values may vary depending on the property, specific negotiations, and regulatory changes. It is recommended to consult with a legal professional for exact calculations.',
+                bannerTitle: 'Find Your Ideal Property',
+                bannerSubtitle: 'Discover the best real estate opportunities in the Dominican Republic with our team of experts',
+                bannerBtn: 'Contact Now',
+                // Dynamic Text
+                transactionTypePurchase: 'For a purchase transaction',
+                transactionTypeRent: 'For a rental contract of {months} months',
+                percentageTextPurchase: 'Represents approximately {percentage}% of the property value',
+                percentageTextRent: 'Represents approximately {percentage}% of the annual rental value',
+                explanationPurchase: 'Closing costs for a purchase transaction in the Dominican Republic generally include transfer taxes, legal fees, registration costs, and real estate commission.',
+                explanationRent: 'Closing costs for a rental agreement typically include the real estate commission, contract preparation fees, and possible legal fees. In many cases, the tenant pays the first month\'s rent plus a security deposit.',
+                transferTax: 'Transfer Tax (3%)',
+                notaryFees: 'Notary Fees (1%)',
+                registryFees: 'Registry Fees (0.5%)',
+                agentCommission: 'Real Estate Commission (5%)',
+                agentCommissionRent: 'Real Estate Commission (5% of {months} months)',
+                contractFees: 'Contract Fees',
+                legalFees: 'Legal Fees (1%)',
+                totalClosingCosts: 'Total Closing Costs',
+                invalidInputError: 'Please enter a valid value for the property.',
+                pdfNotice: 'PDF feature in development. This would generate a detailed report.',
+                ctaBtn: 'Contact Us'
+            }
+        };
+
+        // --- DOM Elements ---
+        const purchaseBtn = document.getElementById('purchaseBtn');
+        const rentBtn = document.getElementById('rentBtn');
+        const propertyValueInput = document.getElementById('propertyValue');
+        const rentDurationGroup = document.getElementById('rentDurationGroup');
+        const rentDurationInput = document.getElementById('rentDuration');
+        const calculateBtn = document.getElementById('calculateBtn');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const transactionTypeText = document.getElementById('transactionTypeText');
+        const totalAmount = document.getElementById('totalAmount');
+        const percentageText = document.getElementById('percentageText');
+        const expensesList = document.getElementById('expensesList');
+        const explanationText = document.getElementById('explanationText');
+        const downloadPdfBtn = document.getElementById('downloadPdf');
+        const recalculateBtn = document.getElementById('recalculateBtn');
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const langToggle = document.getElementById('langToggle');
+        
+        // --- State Variables ---
+        let isPurchase = true;
+        let currentLanguage = 'es';
+
+        // --- Functions ---
+        
+        function showNotification(messageKey, type = 'error') {
+            const notification = document.getElementById('notification');
+            notification.textContent = translations[currentLanguage][messageKey];
+            notification.className = type; // e.g., 'error'
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 4000);
+        }
+
+        function setLanguage(lang) {
+            currentLanguage = lang;
+            document.documentElement.lang = lang;
+            document.querySelectorAll('[data-lang-key]').forEach(el => {
+                const key = el.dataset.langKey;
+                if (translations[lang][key]) {
+                    el.textContent = translations[lang][key];
+                }
+            });
+            document.querySelectorAll('[data-lang-placeholder]').forEach(el => {
+                const key = el.dataset.langPlaceholder;
+                if(translations[lang][key]){
+                    el.placeholder = translations[lang][key];
+                }
+            });
+        }
+
+        function setTransactionType(purchase) {
+            isPurchase = purchase;
+            purchaseBtn.classList.toggle('active', purchase);
+            rentBtn.classList.toggle('active', !purchase);
+            rentDurationGroup.style.display = purchase ? 'none' : 'block';
+            propertyValueInput.setAttribute('data-lang-placeholder', purchase ? 'purchasePlaceholder' : 'rentPlaceholder');
+            propertyValueInput.placeholder = translations[currentLanguage][purchase ? 'purchasePlaceholder' : 'rentPlaceholder'];
+        }
+
+        function calculateCosts() {
+            const propertyValue = parseFloat(propertyValueInput.value);
+            if (!propertyValue || propertyValue <= 0) {
+                showNotification('invalidInputError', 'error');
+                return;
+            }
+
+            let expenses = [];
+            let total = 0;
+            const lang = translations[currentLanguage];
+
+            if (isPurchase) {
+                const transferTax = propertyValue * 0.03;
+                const notaryFees = propertyValue * 0.01;
+                const registryFees = propertyValue * 0.005;
+                const agentCommission = propertyValue * 0.05;
+                
+                expenses = [
+                    { name: lang.transferTax, amount: transferTax },
+                    { name: lang.notaryFees, amount: notaryFees },
+                    { name: lang.registryFees, amount: registryFees },
+                    { name: lang.agentCommission, amount: agentCommission }
+                ];
+                total = transferTax + notaryFees + registryFees + agentCommission;
+                
+                transactionTypeText.textContent = lang.transactionTypePurchase;
+                explanationText.textContent = lang.explanationPurchase;
+                const percentage = (total / propertyValue) * 100;
+                percentageText.textContent = lang.percentageTextPurchase.replace('{percentage}', percentage.toFixed(1));
+
+            } else {
+                const rentDuration = parseInt(rentDurationInput.value) || 12;
+                const annualRent = propertyValue * 12; // Base commission on annual value
+                
+                const agentCommission = (propertyValue * 1); // Typically one month's rent
+                const contractFees = 200; 
+                const legalFees = annualRent * 0.01; 
+                
+                expenses = [
+                    { name: lang.agentCommissionRent.replace('{months}', rentDuration), amount: agentCommission },
+                    { name: lang.contractFees, amount: contractFees },
+                    { name: lang.legalFees, amount: legalFees }
+                ];
+                total = agentCommission + contractFees + legalFees;
+                
+                transactionTypeText.textContent = lang.transactionTypeRent.replace('{months}', rentDuration);
+                explanationText.textContent = lang.explanationRent;
+                const percentage = (total / annualRent) * 100;
+                percentageText.textContent = lang.percentageTextRent.replace('{percentage}', percentage.toFixed(1));
+            }
+            
+            totalAmount.textContent = `$${total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            
+            expensesList.innerHTML = '';
+            expenses.forEach(expense => {
+                const expenseElement = document.createElement('div');
+                expenseElement.className = 'result-item';
+                expenseElement.innerHTML = `
+                    <span>${expense.name}</span>
+                    <span>$${expense.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                `;
+                expensesList.appendChild(expenseElement);
+            });
+            
+            const totalElement = document.createElement('div');
+            totalElement.className = 'result-item';
+            totalElement.innerHTML = `
+                <span>${lang.totalClosingCosts}</span>
+                <span>$${total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            `;
+            expensesList.appendChild(totalElement);
+            
+            resultsContainer.style.display = 'block';
+            resultsContainer.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // --- Event Listeners ---
+        purchaseBtn.addEventListener('click', () => setTransactionType(true));
+        rentBtn.addEventListener('click', () => setTransactionType(false));
+        calculateBtn.addEventListener('click', calculateCosts);
+        recalculateBtn.addEventListener('click', () => {
+            resultsContainer.style.display = 'none';
+            document.querySelector('.calculator-card').scrollIntoView({ behavior: 'smooth'});
+        });
+        downloadPdfBtn.addEventListener('click', () => showNotification('pdfNotice', 'error'));
+
+        darkModeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            darkModeToggle.innerHTML = isDarkMode ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+            localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+        });
+
+        langToggle.addEventListener('click', () => {
+            const newLang = currentLanguage === 'es' ? 'en' : 'es';
+            setLanguage(newLang);
+        });
+
+        // --- Initialization ---
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+            document.body.classList.add('dark-mode');
+            darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+        
+        setLanguage('es');
+        setTransactionType(true);
+    });
+</script>
+</body>
+</html>
+
