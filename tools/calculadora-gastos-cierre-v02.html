@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Gastos de Cierre - República Dominicana</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- jsPDF Library for PDF Generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- Confetti Library for Animation -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --primary: #DF1783;
+            --primary-light: #f8a4d4;
+            --secondary: #2d3748;
+            --accent: #4fd1c5;
+            --text: #2d3748;
+            --text-light: #718096;
+            --bg: #f7fafc;
+            --card-bg: #ffffff;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --border-color: #e2e8f0;
+            --success: #48bb78;
+            --error: #f56565;
+            --warning-bg: #fff9e6;
+            --summary-bg: linear-gradient(135deg, #e8f4fc 0%, #d1e7f8 100%);
+            --explanation-bg: #f9f9f9;
+        }
+
+        .dark-mode {
+            --text: #edf2f7;
+            --text-light: #a0aec0;
+            --bg: #1a202c;
+            --card-bg: #2d3748;
+            --shadow: 0 4px 6px -1px rgba(0,0,0,0.4), 0 2px 4px -1px rgba(0,0,0,0.2);
+            --border-color: #4a5568;
+            --warning-bg: #4a4a2a;
+            --summary-bg: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            --explanation-bg: #1a202c;
+        }
+
+        html { box-sizing: border-box; overflow-x: hidden; scroll-behavior: smooth; }
+        *, *:before, *:after { box-sizing: inherit; margin: 0; padding: 0; }
+        
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .top-menu-bar {
+            position: fixed; top: 2rem; left: 50%; transform: translateX(-50%);
+            width: calc(100% - 4rem); max-width: 1400px; z-index: 1100;
+            background-color: var(--card-bg); box-shadow: var(--shadow);
+            border: 1px solid var(--border-color); border-radius: 12px;
+            padding: 0 1.5rem; transition: all 0.3s ease-in-out;
+        }
+        
+        .top-menu-content { height: 70px; display: flex; align-items: center; justify-content: space-between; }
+        .logo-container { display: flex; align-items: center; gap: 1rem; }
+        #appLogo { height: 40px; width: 40px; object-fit: cover; border-radius: 8px; }
+        #appBrandNameDisplay { font-size: 1.5rem; font-weight: 600; color: var(--text); }
+        .top-menu-actions { display: flex; align-items: center; gap: 15px; }
+        .fab {
+            width: 40px; height: 40px; border-radius: 50%; background-color: var(--bg);
+            color: var(--text); border: 1px solid var(--border-color); display: flex;
+            justify-content: center; align-items: center; cursor: pointer; transition: all 0.2s ease;
+        }
+        .fab:hover { background-color: var(--border-color); }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            margin-top: 120px; /* Increased margin for fixed nav */
+        }
+        
+        .header-content {
+            position: relative;
+        }
+
+        .admin-greeting {
+            background-color: var(--primary);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .dark-mode .admin-greeting {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .waving-hand {
+            display: inline-block;
+            animation: wave-animation 2.5s infinite;
+            transform-origin: 70% 70%;
+        }
+
+        @keyframes wave-animation {
+            0% { transform: rotate(0.0deg) }
+            10% { transform: rotate(14.0deg) }
+            20% { transform: rotate(-8.0deg) }
+            30% { transform: rotate(14.0deg) }
+            40% { transform: rotate(-4.0deg) }
+            50% { transform: rotate(10.0deg) }
+            60% { transform: rotate(0.0deg) }
+            100% { transform: rotate(0.0deg) }
+        }
+
+        header h1 { font-size: 2.2rem; margin-bottom: 10px; color: var(--text); }
+        header p { font-size: 1.1rem; max-width: 800px; margin: 0 auto; color: var(--text-light); }
+        
+        .calculator-card, .results-container {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+            transition: background-color 0.3s;
+        }
+        
+        .calculator-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid var(--border-color); flex-wrap: wrap; gap: 15px; }
+        .calculator-header h2 { color: var(--primary); }
+        .transaction-type, .currency-toggle { display: flex; gap: 15px; }
+        .type-btn { padding: 10px 20px; border: 2px solid var(--primary); border-radius: 8px; background: transparent; color: var(--primary); font-weight: 600; cursor: pointer; transition: all 0.3s; }
+        .type-btn.active { background-color: var(--primary); color: white; }
+
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; margin-bottom: 8px; font-weight: 500; color: var(--text); }
+        .input-with-icon { position: relative; }
+        .input-with-icon input { width: 100%; padding: 12px 15px 12px 40px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 1rem; transition: border-color 0.3s; background-color: var(--bg); color: var(--text); }
+        .input-with-icon input:focus { border-color: var(--accent); outline: none; }
+        .input-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--primary); }
+        
+        .btn, .calculate-btn { padding: 12px 25px; border: 2px solid var(--primary); border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; justify-content: center; background-color: var(--primary); color: white; text-decoration: none; font-size: 1rem; }
+        .btn:hover, .calculate-btn:hover { background-color: var(--primary-light); border-color: var(--primary-light); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); }
+
+        .calculate-btn { width: 100%; margin-top: 10px; }
+        .calculate-btn i { margin-right: 8px; }
+        
+        .results-container { display: none; }
+        .result-summary { background: var(--summary-bg); border-radius: 8px; padding: 20px; margin-bottom: 25px; text-align: center; }
+        .dark-mode .result-summary { color: white; }
+        .result-summary h3 { color: var(--primary); margin-bottom: 10px; }
+        .total-amount { font-size: 2.5rem; font-weight: 700; color: var(--secondary); margin: 10px 0; }
+        .dark-mode .total-amount { color: var(--text); }
+        .result-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border-color); }
+        .result-item:last-child { border-bottom: none; font-weight: 700; color: var(--primary); font-size: 1.1rem; }
+        .result-explanation { background-color: var(--explanation-bg); border-radius: 8px; padding: 20px; margin-top: 25px; }
+        .result-explanation h4 { color: var(--primary); margin-bottom: 15px; }
+        .actions { display: flex; justify-content: center; gap: 15px; margin-top: 20px; }
+        .action-btn { padding: 12px 25px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; border: 2px solid var(--primary); }
+        .action-btn i { margin-right: 8px; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-light); border-color: var(--primary-light); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); }
+        .btn-secondary { background-color: transparent; color: var(--primary); }
+        .dark-mode .btn-secondary { color: var(--primary-light); }
+        .btn-secondary:hover { background-color: var(--primary); color: white; }
+        .disclaimer { text-align: center; font-size: 0.9rem; color: var(--text-light); margin-top: 30px; padding: 15px; background-color: var(--warning-bg); border-radius: 8px; }
+        
+        .banner { margin-top: 50px; height: 500px; max-width: 1000px; margin-left: auto; margin-right: auto; background-image: url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1YWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1973&q=80'); background-size: cover; background-position: center; border-radius: 12px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; color: white; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); }
+        .banner::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.4)); z-index: 1; }
+        .banner-content { position: relative; z-index: 2; max-width: 700px; padding: 0 20px; }
+        .banner h2 { font-size: 3.5rem; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); line-height: 1.1; }
+        .banner p { font-size: 1.5rem; margin-bottom: 30px; line-height: 1.6; }
+        .banner-btn { padding: 15px 40px; font-size: 1.2rem; background: var(--primary); color: white; border: 2px solid var(--primary); border-radius: 8px; cursor: pointer; transition: all 0.3s ease; font-weight: 600; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); }
+        .banner-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); background: var(--primary-light); border-color: var(--primary-light); }
+        
+        #notification { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); padding: 15px 25px; border-radius: 8px; color: white; font-weight: 500; z-index: 3100; transition: top 0.5s ease-in-out; box-shadow: var(--shadow); }
+        #notification.show { top: 90px; }
+        #notification.error { background-color: var(--error); }
+        #notification.success { background-color: var(--success); }
+
+        /* Modal Styles */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); display: flex; justify-content: center; align-items: center; z-index: 3000; transition: opacity 0.3s; }
+        .modal-overlay.hidden { opacity: 0; pointer-events: none; }
+        .modal-content { background-color: var(--card-bg); padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); width: 90%; max-width: 450px; position: relative; text-align: center; }
+        .modal-content .close-btn { position: absolute; top: 10px; right: 15px; font-size: 1.5rem; color: var(--text-light); cursor: pointer; border: none; background: none; }
+        .modal-content h2 { text-align: center; margin-bottom: 25px; color: var(--primary); }
+        .form-group { margin-bottom: 20px; text-align: left; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; }
+        .form-group input { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 1rem; background-color: var(--bg); color: var(--text); }
+        .form-switch { text-align: center; margin-top: 20px; font-size: 0.9rem; }
+        .form-switch a { color: var(--primary); text-decoration: none; font-weight: 600; }
+        #loginForm.hidden, #registerForm.hidden { display: none; }
+        .modal-content .btn, .modal-content .btn-primary { width: 100%; }
+        .modal-lang-toggle { position: absolute; top: 15px; left: 15px; }
+        
+        #upgradeModal .modal-content { text-align: center; }
+        #upgradeModal h2 { font-size: 1.8rem; }
+        #upgradeModal p { margin: 15px 0; font-size: 1.1rem; color: var(--text-light); }
+        #upgradeModal .price { font-size: 2.5rem; font-weight: bold; color: var(--primary); margin: 20px 0; }
+        #upgradeModal ul { list-style-type: none; text-align: left; margin: 20px auto; max-width: 300px; }
+        #upgradeModal ul li { margin-bottom: 10px; display: flex; align-items: center; }
+        #upgradeModal ul li i { color: var(--success); margin-right: 10px; }
+
+
+        /* Multiselect Styles */
+        .multiselect-container { margin-top: 5px; }
+        .multiselect-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px; /* Space between each checkbox line */
+        }
+        .multiselect-options label {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            cursor: pointer;
+            padding: 2px 0; /* Minimal padding */
+            background-color: transparent !important; /* Ensure no background color */
+        }
+        .multiselect-options label:hover {
+            background-color: transparent; /* No hover effect on the entire line */
+        }
+        .multiselect-options input[type="checkbox"] {
+            margin: 0;
+            margin-right: 8px;
+            width: 1.1em;
+            height: 1.1em;
+            flex-shrink: 0;
+        }
+
+
+        @media (max-width: 768px) {
+            .top-menu-bar { padding: 0 1rem; }
+            #appBrandNameDisplay { display: none; }
+            .calculator-header { flex-direction: column; gap: 15px; align-items: flex-start; }
+            .transaction-type { width: 100%; }
+            .type-btn { flex: 1; text-align: center; }
+            .actions { flex-direction: column; }
+            .banner { height: 600px; min-width: 100%; border-radius: 0; margin: 30px -20px 0 -20px; }
+            .banner h2 { font-size: 2.5rem; }
+            .banner p { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="notification"></div>
+
+<!-- Login/Registration Modal -->
+<div id="userModal" class="modal-overlay hidden">
+    <div class="modal-content">
+        <button class="close-btn" onclick="document.getElementById('userModal').classList.add('hidden')">&times;</button>
+        <div class="fab modal-lang-toggle" id="modalLangToggle" title="Toggle Language"><i class="fas fa-globe"></i></div>
+        <form id="loginForm">
+            <h2 data-lang-key="login">Login</h2>
+            <div class="form-group">
+                <label for="loginEmail" data-lang-key="email">Email Address</label>
+                <input type="email" id="loginEmail" required>
+            </div>
+            <div class="form-group">
+                <label for="loginPassword" data-lang-key="password">Password</label>
+                <input type="password" id="loginPassword" required>
+            </div>
+            <button type="submit" class="btn btn-primary" data-lang-key="login">Login</button>
+            <p class="form-switch">
+                <span data-lang-key="noAccount">Don't have an account? </span>
+                <a id="showRegister" data-lang-key="register" href="#">Register</a>
+            </p>
+        </form>
+        <form id="registerForm" class="hidden">
+            <h2 data-lang-key="register">Register</h2>
+            <div class="form-group">
+                <label for="fullName" data-lang-key="fullName">Full Name (Optional)</label>
+                <input type="text" id="fullName">
+            </div>
+            <div class="form-group">
+                <label for="registerEmail" data-lang-key="email">Email Address</label>
+                <input type="email" id="registerEmail" required>
+            </div>
+            <div class="form-group">
+                <label for="registerPassword" data-lang-key="password">Password</label>
+                <input type="password" id="registerPassword" required>
+            </div>
+            <div class="form-group">
+                <label data-lang-key="interests">Real Estate Interests</label>
+                <div class="multiselect-container">
+                    <div class="multiselect-options">
+                        <label><input type="checkbox" class="multiselect" value="First Home"> <span data-lang-key="firstHome">First Time Home Buyer</span></label>
+                        <label><input type="checkbox" class="multiselect" value="Investment"> <span data-lang-key="investment">Investment Properties</span></label>
+                        <label><input type="checkbox" class="multiselect" value="Vacation Home"> <span data-lang-key="vacationHome">Vacation Home</span></label>
+                        <label><input type="checkbox" class="multiselect" value="Commercial"> <span data-lang-key="commercial">Commercial Real Estate</span></label>
+                        <label><input type="checkbox" class="multiselect" value="Land"> <span data-lang-key="land">Land/Lot Purchase</span></label>
+                        <label><input type="checkbox" class="multiselect" value="Short-term Rental"> <span data-lang-key="shortTermRental">Short-term Rentals</span></label>
+                        <label><input type="checkbox" class="multiselect" value="Long-term Rental"> <span data-lang-key="longTermRental">Long-term Rentals</span></label>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary" data-lang-key="register">Register</button>
+            <p class="form-switch">
+                <span data-lang-key="hasAccount">Already have an account? </span>
+                <a id="showLogin" data-lang-key="login" href="#">Login</a>
+            </p>
+        </form>
+    </div>
+</div>
+
+<!-- Upgrade Modal -->
+<div id="upgradeModal" class="modal-overlay hidden">
+    <div class="modal-content">
+        <button class="close-btn" onclick="document.getElementById('upgradeModal').classList.add('hidden')">&times;</button>
+        <h2 data-lang-key="upgradeTitle">Upgrade for Full Access</h2>
+        <p data-lang-key="upgradeSubtitle">You've used your one-time free calculation. Upgrade now to unlock unlimited access!</p>
+        <div class="price">$5.99 <span data-lang-key="perMonth">/ mth</span></div>
+        <ul>
+            <li><i class="fas fa-check-circle"></i> <span data-lang-key="feature1">Unlimited calculations</span></li>
+            <li><i class="fas fa-check-circle"></i> <span data-lang-key="feature2">Access to all our tools</span></li>
+            <li><i class="fas fa-check-circle"></i> <span data-lang-key="feature3">Download unlimited PDF reports</span></li>
+        </ul>
+        <button class="btn btn-primary" id="subscribeBtn" data-lang-key="subscribeNow">Subscribe Now</button>
+    </div>
+</div>
+
+
+<div class="top-menu-bar">
+    <div class="top-menu-content">
+        <div class="logo-container">
+            <img id="appLogo" src="https://bucket.mlcdn.com/a/3336/3336910/images/fa62e06dd2b6ed2d1d9e77e5dd944bef2904d5d1.png" alt="App Logo">
+            <span id="appBrandNameDisplay">Easy Listings</span>
+        </div>
+        <div class="top-menu-actions">
+            <div class="fab" id="langToggle" title="Toggle Language"><i class="fas fa-globe"></i></div>
+            <div class="fab" id="supportBtn" title="Support" onclick="window.open('https://helpcenter.easylistings.website', '_blank')"><i class="fa fa-info-circle"></i></div>
+            <div class="fab" id="darkModeToggle" title="Toggle Theme"><i class="fas fa-moon"></i></div>
+            <button class="btn" id="ctaBtn" data-lang-key="ctaBtn">Contactar</button>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <header>
+        <div class="header-content">
+            <div id="adminGreeting" class="admin-greeting"></div>
+            <h1 data-lang-key="headerTitle">Calculadora de Gastos de Cierre</h1>
+            <p data-lang-key="headerSubtitle">Calcula los costos asociados a la compra o alquiler de propiedades en República Dominicana</p>
+        </div>
+    </header>
+    
+    <div class="calculator-card">
+        <div class="calculator-header">
+            <div class="transaction-type">
+                <button class="type-btn active" id="purchaseBtn" data-lang-key="purchaseBtn">Compra</button>
+                <button class="type-btn" id="rentBtn" data-lang-key="rentBtn">Alquiler</button>
+            </div>
+            <div class="currency-toggle">
+                <button class="type-btn active" id="usdBtn">USD</button>
+                <button class="type-btn" id="dopBtn">DOP</button>
+            </div>
+        </div>
+        
+        <div class="input-group">
+            <label for="propertyValue" id="propertyValueLabel" data-lang-key="propertyValueLabel">Valor de la Propiedad (USD)</label>
+            <div class="input-with-icon">
+                <span class="input-icon" id="currencyIcon">$</span>
+                <input type="number" id="propertyValue" data-lang-placeholder="purchasePlaceholder" placeholder="Ej: 150000" min="0">
+            </div>
+        </div>
+        
+        <div id="rentFieldsContainer" style="display: none;">
+            <div class="input-group" id="rentDurationGroup">
+                <label for="rentDuration" data-lang-key="rentDurationLabel">Duración del contrato (meses)</label>
+                <div class="input-with-icon">
+                    <span class="input-icon"><i class="fas fa-calendar-alt"></i></span>
+                    <input type="number" id="rentDuration" data-lang-placeholder="rentDurationPlaceholder" placeholder="Ej: 12" min="1" value="12">
+                </div>
+            </div>
+            <div class="input-group" id="annualIncreaseGroup">
+                <label for="annualIncrease" data-lang-key="annualIncreaseLabel">Aumento Anual Acordado (%) (Opcional)</label>
+                <div class="input-with-icon">
+                    <span class="input-icon"><i class="fas fa-percent"></i></span>
+                    <input type="number" id="annualIncrease" data-lang-placeholder="annualIncreasePlaceholder" placeholder="Ej: 10" min="0">
+                </div>
+            </div>
+        </div>
+        
+        <button class="calculate-btn" id="calculateBtn">
+            <i class="fas fa-calculator"></i> <span data-lang-key="calculateBtn">Calcular Gastos de Cierre</span>
+        </button>
+    </div>
+    
+    <div class="results-container" id="resultsContainer">
+        <!-- Results will be populated by JS -->
+    </div>
+    
+    <div class="disclaimer">
+        <p><strong data-lang-key="disclaimerTitle">Disclaimer:</strong> <span data-lang-key="disclaimerText">Esta calculadora proporciona estimaciones basadas en promedios del mercado inmobiliario dominicano...</span></p>
+    </div>
+</div>
+
+<div class="banner">
+    <div class="banner-content">
+        <h2 data-lang-key="bannerTitle">Encuentra Tu Propiedad Ideal</h2>
+        <p data-lang-key="bannerSubtitle">Descubre las mejores oportunidades inmobiliarias en República Dominicana con nuestro equipo de expertos</p>
+        <button class="banner-btn" data-lang-key="bannerBtn">Contactar Ahora</button>
+    </div>
+</div>
+
+<!-- Firebase SDK -->
+<script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { 
+        getAuth, 
+        onAuthStateChanged, 
+        createUserWithEmailAndPassword, 
+        signInWithEmailAndPassword, 
+        signOut
+    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { 
+        getFirestore, 
+        doc, 
+        setDoc,
+        getDoc,
+        setLogLevel
+    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // --- App Configuration & Initialization ---
+    const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "AIza...", authDomain: "...", projectId: "..." };
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-closing-cost-calculator';
+    
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    setLogLevel('debug');
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- TRANSLATION DATA ---
+        const translations = {
+            es: {
+                // ... (existing ES translations) ...
+                propertyValueLabelPurchase: 'Valor de la Propiedad ({currency})',
+                propertyValueLabelRent: 'Valor de la Renta ({currency})',
+                annualIncreaseLabel: 'Aumento Anual Acordado (%) (Opcional)',
+                annualIncreasePlaceholder: 'Ej: 10',
+                freeTrialUsed: 'Has utilizado tu cálculo gratuito. Por favor, actualiza para continuar.',
+                upgradeTitle: 'Actualiza para Acceso Completo',
+                upgradeSubtitle: 'Has utilizado tu cálculo gratuito de única vez. ¡Actualiza ahora para desbloquear acceso ilimitado!',
+                perMonth: '/ mes',
+                feature1: 'Cálculos ilimitados',
+                feature2: 'Acceso a todas nuestras herramientas',
+                feature3: 'Descarga de reportes PDF ilimitados',
+                subscribeNow: 'Suscribir Ahora',
+                 welcomeDefault: '¡Bienvenido! <span class="waving-hand">👋</span>',
+                welcomeUser: '¡Hola, {name}! <span class="waving-hand">👋</span>',
+                pdfAuthPrompt: 'Por favor, inicia sesión o regístrate para descargar el PDF.',
+                headerTitle: 'Calculadora de Gastos de Cierre',
+                headerSubtitle: 'Calcula los costos asociados a la compra o alquiler de propiedades en República Dominicana',
+                calculatorTitle: 'Calculadora',
+                purchaseBtn: 'Compra',
+                rentBtn: 'Alquiler',
+                rentDurationLabel: 'Duración del contrato (meses)',
+                rentDurationPlaceholder: 'Ej: 12',
+                calculateBtn: 'Calcular Gastos de Cierre',
+                resultsTitle: 'Resultados del Cálculo',
+                resultsSubtitle: 'Desglose de gastos de cierre para tu transacción',
+                totalExpensesTitle: 'Total de Gastos de Cierre',
+                expensesBreakdownTitle: 'Desglose de Gastos',
+                explanationTitle: '¿Qué incluyen estos gastos?',
+                noteTitle: 'Nota:',
+                noteText: 'Estos valores son estimados basados en promedios del mercado. Los costos reales pueden variar según la propiedad, ubicación y acuerdos específicos.',
+                downloadPdfBtn: 'Descargar PDF',
+                recalculateBtn: 'Volver a Calcular',
+                disclaimerTitle: 'Disclaimer:',
+                disclaimerText: 'Esta calculadora proporciona estimaciones basadas en promedios del mercado inmobiliario dominicano. Los valores reales pueden variar según la propiedad, negociaciones específicas y cambios regulatorios. Se recomienda consultar con un profesional legal para obtener cálculos exactos.',
+                bannerTitle: 'Encuentra Tu Propiedad Ideal',
+                bannerSubtitle: 'Descubre las mejores oportunidades inmobiliarias en República Dominicana con nuestro equipo de expertos',
+                bannerBtn: 'Contactar Ahora',
+                ctaBtn: 'Contactar',
+                logoutBtn: 'Cerrar Sesión',
+                login: 'Iniciar Sesión',
+                register: 'Registrarse',
+                email: 'Correo Electrónico',
+                password: 'Contraseña',
+                fullName: 'Nombre Completo (Opcional)',
+                interests: 'Intereses Inmobiliarios',
+                firstHome: 'Comprador de Primera Vivienda',
+                investment: 'Propiedades de Inversión',
+                vacationHome: 'Casa de Vacaciones',
+                commercial: 'Bienes Raíces Comerciales',
+                land: 'Compra de Terreno/Lote',
+                shortTermRental: 'Alquileres a Corto Plazo',
+                longTermRental: 'Alquileres a Largo Plazo',
+                noAccount: '¿No tienes una cuenta?',
+                hasAccount: '¿Ya tienes una cuenta?',
+                invalidInputError: 'Por favor ingresa un valor válido para la propiedad.',
+                loginSuccess: 'Inicio de sesión exitoso.',
+                registerSuccess: 'Registro exitoso.',
+                registerSuccessLoginPrompt: '¡Registro completo! Por favor, inicia sesión para continuar.',
+                logoutSuccess: 'Has cerrado la sesión.',
+                authError: 'Error de autenticación. Por favor, inténtalo de nuevo.',
+                passwordShort: 'La contraseña debe tener al menos 6 caracteres.',
+                transactionTypePurchase: 'Para una transacción de compra',
+                transactionTypeRent: 'Para un contrato de alquiler de {months} meses',
+                percentageTextPurchase: 'Representa aproximadamente el {percentage}% del valor de la propiedad',
+                percentageTextRent: 'Representa aproximadamente el {percentage}% del valor anual del alquiler',
+                explanationPurchase: 'Los gastos de cierre para una transacción de compra en República Dominicana generalmente incluyen impuestos de transferencia, honorarios legales, costos de registro y la comisión inmobiliaria.',
+                explanationRent: 'Los gastos de cierre para un contrato de alquiler generalmente incluyen la comisión inmobiliaria, honorarios por preparación de contrato y posibles honorarios legales. En muchos casos, el inquilino paga el primer mes de renta más un depósito de seguridad.',
+                transferTax: 'Impuesto de Transferencia (3%)',
+                notaryFees: 'Honorarios Notariales (1%)',
+                registryFees: 'Derechos de Registro (0.5%)',
+                agentCommission: 'Comisión Inmobiliaria (5%)',
+                agentCommissionRent: 'Comisión Inmobiliaria (Equivalente a 1 mes de renta)',
+                contractFees: 'Honorarios por Contrato',
+                legalFees: 'Honorarios Legales (1% del valor anual)',
+                totalClosingCosts: 'Total de Gastos de Cierre',
+                // PDF Translations
+                reportTitle: 'Reporte de Gastos de Cierre',
+                summaryTitle: 'Resumen de la Transacción',
+                propertyValuePdf: 'Valor de la Propiedad:',
+                monthlyRentPdf: 'Alquiler Mensual:',
+                totalCostsPdf: 'Costos Totales de Cierre:',
+                breakdownTitlePdf: 'Desglose de Gastos',
+                reportDate: 'Fecha del Reporte:',
+                noDataForPdf: 'Por favor, realiza un cálculo primero para generar un PDF.'
+            },
+            en: {
+                // ... (existing EN translations) ...
+                propertyValueLabelPurchase: 'Property Value ({currency})',
+                propertyValueLabelRent: 'Rent Value ({currency})',
+                annualIncreaseLabel: 'Agreed Annual Increase (%) (Optional)',
+                annualIncreasePlaceholder: 'Ex: 10',
+                freeTrialUsed: 'You have used your free calculation. Please upgrade to continue.',
+                upgradeTitle: 'Upgrade for Full Access',
+                upgradeSubtitle: "You've used your one-time free calculation. Upgrade now to unlock unlimited access!",
+                perMonth: '/ mth',
+                feature1: 'Unlimited calculations',
+                feature2: 'Access to all our tools',
+                feature3: 'Download unlimited PDF reports',
+                subscribeNow: 'Subscribe Now',
+                welcomeDefault: 'Hey there! <span class="waving-hand">👋</span>',
+                welcomeUser: 'Hey, {name}! <span class="waving-hand">👋</span>',
+                pdfAuthPrompt: 'Please log in or register to download the PDF.',
+                headerTitle: 'Closing Costs Calculator',
+                headerSubtitle: 'Calculate the costs associated with buying or renting properties in the Dominican Republic',
+                calculatorTitle: 'Calculator',
+                purchaseBtn: 'Purchase',
+                rentBtn: 'Rent',
+                rentDurationLabel: 'Contract Duration (months)',
+                rentDurationPlaceholder: 'Ex: 12',
+                calculateBtn: 'Calculate Closing Costs',
+                resultsTitle: 'Calculation Results',
+                resultsSubtitle: 'Breakdown of closing costs for your transaction',
+                totalExpensesTitle: 'Total Closing Costs',
+                expensesBreakdownTitle: 'Expenses Breakdown',
+                explanationTitle: 'What do these costs include?',
+                noteTitle: 'Note:',
+                noteText: 'These values are estimates based on market averages. Actual costs may vary depending on the property, location, and specific agreements.',
+                downloadPdfBtn: 'Download PDF',
+                recalculateBtn: 'Recalculate',
+                disclaimerTitle: 'Disclaimer:',
+                disclaimerText: 'This calculator provides estimates based on averages in the Dominican real estate market. Actual values may vary depending on the property, specific negotiations, and regulatory changes. It is recommended to consult with a legal professional for exact calculations.',
+                bannerTitle: 'Find Your Ideal Property',
+                bannerSubtitle: 'Discover the best real estate opportunities in the Dominican Republic with our team of experts',
+                bannerBtn: 'Contact Now',
+                ctaBtn: 'Contact Us',
+                logoutBtn: 'Logout',
+                login: 'Login',
+                register: 'Register',
+                email: 'Email Address',
+                password: 'Password',
+                fullName: 'Full Name (Optional)',
+                interests: 'Real Estate Interests',
+                firstHome: 'First Time Home Buyer',
+                investment: 'Investment Properties',
+                vacationHome: 'Vacation Home',
+                commercial: 'Commercial Real Estate',
+                land: 'Land/Lot Purchase',
+                shortTermRental: 'Short-term Rentals',
+                longTermRental: 'Long-term Rentals',
+                noAccount: "Don't have an account?",
+                hasAccount: 'Already have an account?',
+                invalidInputError: 'Please enter a valid value for the property.',
+                loginSuccess: 'Login successful.',
+                registerSuccess: 'Registration successful.',
+                registerSuccessLoginPrompt: 'Registration complete! Please log in to continue.',
+                logoutSuccess: 'You have been logged out.',
+                authError: 'Authentication error. Please try again.',
+                passwordShort: 'Password should be at least 6 characters.',
+                transactionTypePurchase: 'For a purchase transaction',
+                transactionTypeRent: 'For a rental contract of {months} months',
+                percentageTextPurchase: 'Represents approximately {percentage}% of the property value',
+                percentageTextRent: 'Represents approximately {percentage}% of the annual rental value',
+                explanationPurchase: 'Closing costs for a purchase transaction in the Dominican Republic generally include transfer taxes, legal fees, registration costs, and real estate commission.',
+                explanationRent: 'Closing costs for a rental agreement typically include the real estate commission, contract preparation fees, and possible legal fees. In many cases, the tenant pays the first month\'s rent plus a security deposit.',
+                transferTax: 'Transfer Tax (3%)',
+                notaryFees: 'Notary Fees (1%)',
+                registryFees: 'Registry Fees (0.5%)',
+                agentCommission: 'Real Estate Commission (5%)',
+                agentCommissionRent: 'Real Estate Commission (Equivalent to 1 month\'s rent)',
+                contractFees: 'Contract Fees',
+                legalFees: 'Legal Fees (1% of annual value)',
+                totalClosingCosts: 'Total Closing Costs',
+                // PDF Translations
+                reportTitle: 'Closing Costs Report',
+                summaryTitle: 'Transaction Summary',
+                propertyValuePdf: 'Property Value:',
+                monthlyRentPdf: 'Monthly Rent:',
+                totalCostsPdf: 'Total Closing Costs:',
+                breakdownTitlePdf: 'Expenses Breakdown',
+                reportDate: 'Report Date:',
+                noDataForPdf: 'Please perform a calculation first to generate a PDF.'
+            }
+        };
+
+        // --- DOM Elements ---
+        const purchaseBtn = document.getElementById('purchaseBtn');
+        const rentBtn = document.getElementById('rentBtn');
+        const usdBtn = document.getElementById('usdBtn');
+        const dopBtn = document.getElementById('dopBtn');
+        const propertyValueInput = document.getElementById('propertyValue');
+        const propertyValueLabel = document.getElementById('propertyValueLabel');
+        const currencyIcon = document.getElementById('currencyIcon');
+        const rentFieldsContainer = document.getElementById('rentFieldsContainer');
+        const annualIncreaseInput = document.getElementById('annualIncrease');
+        const rentDurationInput = document.getElementById('rentDuration');
+        const calculateBtn = document.getElementById('calculateBtn');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const langToggle = document.getElementById('langToggle');
+        const ctaBtn = document.getElementById('ctaBtn');
+        const userModal = document.getElementById('userModal');
+        const upgradeModal = document.getElementById('upgradeModal');
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const showRegisterLink = document.getElementById('showRegister');
+        const showLoginLink = document.getElementById('showLogin');
+        const modalLangToggle = document.getElementById('modalLangToggle');
+        
+        // --- State Variables ---
+        let isPurchase = true;
+        let currentLanguage = 'es';
+        let currentCurrency = 'USD';
+        const exchangeRate = 59.00; // Static exchange rate for DOP to USD
+        let actionAfterAuth = null;
+        let lastCalculationResult = null;
+        let currentUserData = null;
+
+        // --- Core Functions ---
+        
+        function showNotification(messageKey, type = 'error', duration = 4000) {
+            const notification = document.getElementById('notification');
+            notification.textContent = translations[currentLanguage][messageKey] || messageKey;
+            notification.className = type;
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, duration);
+        }
+
+        async function updateGreeting(user) {
+            const greetingEl = document.getElementById('adminGreeting');
+            if (user && currentUserData) {
+                const name = currentUserData.fullName || user.email;
+                greetingEl.innerHTML = translations[currentLanguage].welcomeUser.replace('{name}', name);
+            } else {
+                greetingEl.innerHTML = translations[currentLanguage].welcomeDefault;
+            }
+        }
+
+        function setLanguage(lang) {
+            currentLanguage = lang;
+            document.documentElement.lang = lang;
+            document.querySelectorAll('[data-lang-key]').forEach(el => {
+                const key = el.dataset.langKey;
+                if (translations[lang][key]) {
+                    el.textContent = translations[lang][key];
+                }
+            });
+            document.querySelectorAll('[data-lang-placeholder]').forEach(el => {
+                const key = el.dataset.langPlaceholder;
+                if(translations[lang][key]){
+                    el.placeholder = translations[lang][key];
+                }
+            });
+            updateCurrencyUI();
+            updateGreeting(auth.currentUser);
+        }
+
+        function setCurrency(currency) {
+            currentCurrency = currency;
+            usdBtn.classList.toggle('active', currency === 'USD');
+            dopBtn.classList.toggle('active', currency === 'DOP');
+            updateCurrencyUI();
+        }
+
+        function updateCurrencyUI() {
+            const langKey = isPurchase ? 'propertyValueLabelPurchase' : 'propertyValueLabelRent';
+            propertyValueLabel.textContent = translations[currentLanguage][langKey].replace('{currency}', currentCurrency);
+            currencyIcon.textContent = currentCurrency === 'USD' ? '$' : 'DOP$';
+        }
+
+        function setTransactionType(purchase) {
+            isPurchase = purchase;
+            purchaseBtn.classList.toggle('active', purchase);
+            rentBtn.classList.toggle('active', !purchase);
+            rentFieldsContainer.style.display = purchase ? 'none' : 'block';
+            updateCurrencyUI();
+        }
+
+        function renderResults(result) {
+            const { total, expenses, lang, propertyValue, rentDuration, annualIncrease } = result;
+            
+            const formatCurrency = (amount) => {
+                const finalAmount = currentCurrency === 'DOP' ? amount * exchangeRate : amount;
+                return `${currentCurrency === 'DOP' ? 'DOP' : ''}$${finalAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            };
+
+            let percentageTextContent = '';
+            if (isPurchase) {
+                const percentage = (total / propertyValue) * 100;
+                percentageTextContent = lang.percentageTextPurchase.replace('{percentage}', percentage.toFixed(1));
+            } else {
+                const annualRent = propertyValue * 12;
+                if (annualRent > 0) {
+                    const percentage = (total / annualRent) * 100;
+                    percentageTextContent = lang.percentageTextRent.replace('{percentage}', percentage.toFixed(1));
+                }
+            }
+
+            let expensesHtml = expenses.map(expense => `
+                <div class="result-item">
+                    <span>${expense.name}</span>
+                    <span>${formatCurrency(expense.amount)}</span>
+                </div>`).join('');
+            
+            expensesHtml += `
+                <div class="result-item">
+                    <span><strong>${lang.totalClosingCosts}</strong></span>
+                    <span><strong>${formatCurrency(total)}</strong></span>
+                </div>`;
+
+            resultsContainer.innerHTML = `
+                <div class="result-summary">
+                    <h3 data-lang-key="totalExpensesTitle">${lang.totalExpensesTitle}</h3>
+                    <p>${isPurchase ? lang.transactionTypePurchase : lang.transactionTypeRent.replace('{months}', rentDuration)}</p>
+                    <div class="total-amount">${formatCurrency(total)}</div>
+                    <p>${percentageTextContent}</p>
+                </div>
+                <div class="result-details">
+                    <h3 data-lang-key="expensesBreakdownTitle">${lang.expensesBreakdownTitle}</h3>
+                    <div id="expensesList">${expensesHtml}</div>
+                </div>
+                <div class="result-explanation">
+                    <h4 data-lang-key="explanationTitle">${lang.explanationTitle}</h4>
+                    <p>${isPurchase ? lang.explanationPurchase : lang.explanationRent}</p>
+                    <p><strong>${lang.noteTitle}</strong> <span>${lang.noteText}</span></p>
+                </div>
+                <div class="actions">
+                    <button class="action-btn btn-primary" id="downloadPdfBtn">
+                        <i class="fas fa-download"></i> <span data-lang-key="downloadPdfBtn">${lang.downloadPdfBtn}</span>
+                    </button>
+                    <button class="action-btn btn-secondary" id="recalculateBtn">
+                        <i class="fas fa-redo"></i> <span data-lang-key="recalculateBtn">${lang.recalculateBtn}</span>
+                    </button>
+                </div>`;
+            
+            document.getElementById('downloadPdfBtn').addEventListener('click', () => {
+                if (auth.currentUser) {
+                    generatePdf();
+                } else {
+                    actionAfterAuth = 'downloadPdf';
+                    openModal('userModal');
+                }
+            });
+
+            document.getElementById('recalculateBtn').addEventListener('click', handleRecalculateClick);
+
+            resultsContainer.style.display = 'block';
+            resultsContainer.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        async function calculateCosts() {
+            const propertyValueRaw = parseFloat(propertyValueInput.value);
+            if (!propertyValueRaw || propertyValueRaw <= 0) {
+                showNotification('invalidInputError', 'error');
+                return;
+            }
+
+            // Convert input value to USD for consistent calculations
+            const propertyValueUSD = currentCurrency === 'DOP' ? propertyValueRaw / exchangeRate : propertyValueRaw;
+
+            let expenses = [];
+            let total = 0;
+            const lang = translations[currentLanguage];
+            const rentDuration = parseInt(rentDurationInput.value) || 12;
+            const annualIncrease = parseFloat(annualIncreaseInput.value) || 0;
+
+            if (isPurchase) {
+                const transferTax = propertyValueUSD * 0.03;
+                const notaryFees = propertyValueUSD * 0.01;
+                const registryFees = propertyValueUSD * 0.005;
+                const agentCommission = propertyValueUSD * 0.05;
+                expenses = [
+                    { name: lang.transferTax, amount: transferTax },
+                    { name: lang.notaryFees, amount: notaryFees },
+                    { name: lang.registryFees, amount: registryFees },
+                    { name: lang.agentCommission, amount: agentCommission }
+                ];
+            } else {
+                const annualRent = propertyValueUSD * 12;
+                const agentCommission = propertyValueUSD * 1; 
+                const contractFees = 200; 
+                const legalFees = annualRent * 0.01; 
+                expenses = [
+                    { name: lang.agentCommissionRent, amount: agentCommission },
+                    { name: lang.contractFees, amount: contractFees },
+                    { name: lang.legalFees, amount: legalFees }
+                ];
+            }
+            
+            total = expenses.reduce((sum, item) => sum + item.amount, 0);
+            
+            // Mark the free trial as used for new users
+            if (currentUserData && currentUserData.status === 'New User' && !currentUserData.hasUsedCalculator) {
+                const userDocRef = doc(db, `/artifacts/${appId}/users`, auth.currentUser.uid);
+                await setDoc(userDocRef, { hasUsedCalculator: true }, { merge: true });
+                currentUserData.hasUsedCalculator = true; // Update local state
+            }
+            
+            lastCalculationResult = { total, expenses, lang, propertyValue: propertyValueUSD, isPurchase, rentDuration, annualIncrease };
+            renderResults(lastCalculationResult);
+        }
+        
+        async function handleCalculationRequest() {
+            if (!auth.currentUser) {
+                actionAfterAuth = 'calculate';
+                openModal('userModal');
+                return;
+            }
+            
+            if (currentUserData.status === 'New User' && currentUserData.hasUsedCalculator) {
+                showNotification('freeTrialUsed', 'error');
+                openModal('upgradeModal');
+                return;
+            }
+
+            calculateCosts();
+        }
+
+        function generatePdf() {
+             if (!lastCalculationResult) {
+                showNotification('noDataForPdf', 'error');
+                return;
+            }
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const { total, expenses, lang, propertyValue, isPurchase, rentDuration } = lastCalculationResult;
+            
+            const formatCurrency = (amount) => {
+                const finalAmount = currentCurrency === 'DOP' ? amount * exchangeRate : amount;
+                return `${currentCurrency === 'DOP' ? 'DOP' : ''}$${finalAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            };
+
+            let y = 20;
+            doc.setFontSize(22); doc.text(lang.reportTitle, 105, y, { align: 'center' });
+            y += 10;
+            doc.setFontSize(10); doc.text(`${lang.reportDate} ${new Date().toLocaleDateString()}`, 105, y, { align: 'center' });
+            y += 15;
+            doc.setFontSize(16); doc.text(lang.summaryTitle, 14, y);
+            y += 8;
+            doc.line(14, y - 2, 196, y - 2);
+            doc.setFontSize(12);
+            const valueLabel = isPurchase ? lang.propertyValuePdf : lang.monthlyRentPdf;
+            doc.text(`${valueLabel} ${formatCurrency(propertyValue)}`, 14, y);
+            y += 7;
+            doc.text(`${lang.totalCostsPdf} ${formatCurrency(total)}`, 14, y);
+            y += 15;
+            doc.setFontSize(16); doc.text(lang.breakdownTitlePdf, 14, y);
+            y += 8;
+            doc.line(14, y - 2, 196, y - 2);
+            doc.setFontSize(11);
+            
+            expenses.forEach(expense => {
+                doc.text(expense.name, 14, y);
+                doc.text(formatCurrency(expense.amount), 196, y, { align: 'right' });
+                y += 7;
+            });
+            
+            doc.setFontSize(12); doc.setFont(undefined, 'bold');
+            doc.text(lang.totalClosingCosts, 14, y);
+            doc.text(formatCurrency(total), 196, y, { align: 'right' });
+            
+            const disclaimerText = `${lang.disclaimerTitle} ${lang.disclaimerText}`;
+            const splitDisclaimer = doc.splitTextToSize(disclaimerText, 180);
+            doc.setFontSize(8); doc.setFont(undefined, 'normal');
+            doc.text(splitDisclaimer, 14, 280);
+
+            doc.save('Closing-Costs-Report-EasyListings.pdf');
+        }
+
+        function updateUIForAuthState(user) {
+            const key = user ? 'logoutBtn' : 'ctaBtn';
+            ctaBtn.dataset.langKey = key;
+            ctaBtn.textContent = translations[currentLanguage][key];
+        }
+
+        function openModal(modalId) { document.getElementById(modalId).classList.remove('hidden'); }
+        function closeModal(modalId) { document.getElementById(modalId).classList.add('hidden'); }
+
+        function handlePostAuthAction() {
+            if (actionAfterAuth === 'calculate') {
+                handleCalculationRequest();
+            } else if (actionAfterAuth === 'downloadPdf') {
+                generatePdf();
+            } else if (actionAfterAuth === 'recalculate') {
+                handleRecalculateClick();
+            }
+            actionAfterAuth = null;
+        }
+
+        async function handleRecalculateClick() {
+            if (!auth.currentUser) {
+                actionAfterAuth = 'recalculate';
+                openModal('userModal');
+                return;
+            }
+
+            if (currentUserData.status === 'New User') {
+                // For a new user, recalculating is the same as the initial calculation attempt
+                openModal('upgradeModal');
+                return;
+            }
+
+            // Paid users can recalculate
+            resultsContainer.style.display = 'none';
+            resultsContainer.innerHTML = '';
+            propertyValueInput.value = '';
+            annualIncreaseInput.value = '';
+            rentDurationInput.value = '12';
+            lastCalculationResult = null;
+            document.querySelector('.calculator-card').scrollIntoView({ behavior: 'smooth'});
+        }
+
+        // --- Event Listeners & Initialization ---
+        
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const userDocRef = doc(db, `/artifacts/${appId}/users`, user.uid);
+                const userDoc = await getDoc(userDocRef);
+                if (userDoc.exists()) {
+                    currentUserData = userDoc.data();
+                }
+            } else {
+                currentUserData = null;
+            }
+            updateUIForAuthState(user);
+            updateGreeting(user);
+        });
+
+        purchaseBtn.addEventListener('click', () => setTransactionType(true));
+        rentBtn.addEventListener('click', () => setTransactionType(false));
+        usdBtn.addEventListener('click', () => setCurrency('USD'));
+        dopBtn.addEventListener('click', () => setCurrency('DOP'));
+
+        calculateBtn.addEventListener('click', handleCalculationRequest);
+
+        ctaBtn.addEventListener('click', () => {
+            if (auth.currentUser) {
+                signOut(auth).then(() => showNotification('logoutSuccess', 'success'));
+            } else {
+                openModal('userModal');
+            }
+        });
+
+        darkModeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            darkModeToggle.innerHTML = isDarkMode ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+            localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+        });
+
+        const toggleLanguage = () => setLanguage(currentLanguage === 'es' ? 'en' : 'es');
+        langToggle.addEventListener('click', toggleLanguage);
+        modalLangToggle.addEventListener('click', toggleLanguage);
+
+        userModal.addEventListener('click', (e) => { if (e.target === userModal) closeModal('userModal'); });
+        upgradeModal.addEventListener('click', (e) => { if (e.target === upgradeModal) closeModal('upgradeModal'); });
+        showRegisterLink.addEventListener('click', (e) => { e.preventDefault(); loginForm.classList.add('hidden'); registerForm.classList.remove('hidden'); });
+        showLoginLink.addEventListener('click', (e) => { e.preventDefault(); registerForm.classList.add('hidden'); loginForm.classList.remove('hidden'); });
+        
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = loginForm.querySelector('#loginEmail').value;
+            const password = loginForm.querySelector('#loginPassword').value;
+            signInWithEmailAndPassword(auth, email, password)
+                .then(() => {
+                    closeModal('userModal');
+                    showNotification('loginSuccess', 'success', 2000);
+                    setTimeout(handlePostAuthAction, 100);
+                })
+                .catch(error => showNotification(error.code || 'authError', 'error'));
+        });
+
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fullName = registerForm.querySelector('#fullName').value;
+            const email = registerForm.querySelector('#registerEmail').value;
+            const password = registerForm.querySelector('#registerPassword').value;
+            const interests = Array.from(registerForm.querySelectorAll('.multiselect:checked')).map(el => el.value);
+
+            if (password.length < 6) {
+                showNotification('passwordShort', 'error');
+                return;
+            }
+
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                
+                const userData = { 
+                    fullName, 
+                    email, 
+                    interests, 
+                    createdAt: new Date().toISOString(),
+                    status: 'New User',
+                    hasUsedCalculator: false
+                };
+                const userDocRef = doc(db, `/artifacts/${appId}/users`, user.uid);
+                await setDoc(userDocRef, userData);
+
+                const googleWebAppUrl = 'YOUR_GOOGLE_WEB_APP_URL_HERE';
+                if (googleWebAppUrl !== 'YOUR_GOOGLE_WEB_APP_URL_HERE') {
+                    fetch(googleWebAppUrl, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        cache: 'no-cache',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ fullName, email, interests: interests.join(', '), status: 'New User' }),
+                    }).catch(err => console.error("Error sending data to Google Sheet:", err));
+                }
+                
+                confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 }});
+                showNotification('registerSuccessLoginPrompt', 'success', 5000);
+                
+                registerForm.classList.add('hidden');
+                loginForm.classList.remove('hidden');
+
+            } catch (error) {
+                showNotification(error.code || 'authError', 'error');
+            }
+        });
+
+        document.getElementById('subscribeBtn').addEventListener('click', () => {
+            alert('Redirecting to subscription page...'); // Placeholder for actual subscription logic
+        });
+        
+        // --- Final Initialization ---
+        const init = async () => {
+            await signOut(auth).catch(err => console.error("Initial sign out failed:", err));
+            
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+                document.body.classList.add('dark-mode');
+                darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+            }
+            
+            setLanguage('es');
+            setTransactionType(true);
+            setCurrency('USD');
+        };
+
+        init();
+    });
+</script>
+</body>
+</html>
+
+
+
