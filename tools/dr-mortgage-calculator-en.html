@@ -1,0 +1,269 @@
+   <style>
+        :root {
+            --primary: #DF1783;
+            --primary-light: #f8a4d4;
+            --secondary: #2d3748;
+            --accent: #4fd1c5;
+            --text: #2d3748;
+            --text-light: #a0aec0;
+            --bg: #f7fafc;
+            --card-bg: #ffffff;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --border-color: #e2e8f0;
+            --status-paid: #28a745;
+            --status-due: #ffc107;
+            --status-late: #dc3545;
+        }
+        .dark-mode {
+            --text: #f7fafc;
+            --text-light: #a0aec0;
+            --bg: #1a202c;
+            --card-bg: #2d3748;
+            --shadow: 0 4px 6px -1px rgba(0,0,0,0.4), 0 2px 4px -1px rgba(0,0,0,0.2);
+            --border-color: #4a5568;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background-color: var(--bg);
+            color: var(--text);
+            padding-top: 100px; /* Space for the fixed top menu */
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Top Menu Bar Styles */
+        .top-menu-bar {
+            position: fixed; top: 1rem; left: 50%; transform: translateX(-50%);
+            width: calc(100% - 2rem); max-width: 1200px; z-index: 1100;
+            background-color: var(--card-bg); box-shadow: var(--shadow);
+            border: 1px solid var(--border-color); border-radius: 12px;
+            padding: 0 1.5rem; transition: top 0.3s ease-in-out;
+        }
+        .top-menu-content { height: 70px; display: flex; align-items: center; justify-content: space-between; }
+        .logo-container { display: flex; align-items: center; gap: 1rem; }
+        #appLogo { height: 40px; width: 40px; object-fit: cover; border-radius: 8px; }
+        #appBrandNameDisplay {
+            font-size: 16px; /* Mobile First */
+            font-weight: 600;
+            color: var(--text);
+        }
+        .top-menu-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            overflow-x: auto; /* Allow horizontal scroll on mobile */
+            white-space: nowrap; /* Prevent buttons from wrapping */
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+        .top-menu-actions::-webkit-scrollbar {
+            display: none; /* Hide scrollbar for WebKit browsers */
+        }
+        #dateTimeDisplay {
+             display: none; /* Hidden on mobile by default */
+             font-size: 0.9rem;
+             color: var(--text-light);
+             text-align: right;
+             margin-right: 1rem;
+        }
+        .fab {
+            width: 40px; height: 40px; border-radius: 50%; background-color: var(--bg);
+            color: var(--text); border: 1px solid var(--border-color); display: flex;
+            justify-content: center; align-items: center; cursor: pointer; transition: all 0.2s ease;
+        }
+        .fab:hover { background-color: var(--border-color); }
+
+        /* --- RESPONSIVENESS FOR LARGER SCREENS --- */
+        @media (min-width: 768px) {
+            #appBrandNameDisplay {
+                font-size: 20px; /* Larger font on desktop */
+            }
+            .top-menu-actions {
+                overflow-x: visible; /* Disable scroll on desktop */
+            }
+            #dateTimeDisplay {
+                display: block; /* Show date/time on desktop */
+            }
+        }
+
+        .calculator-grid, .timer-grid {
+            display: grid;
+            /* Mobile-first: default to a single column */
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+
+        /* --- RESPONSIVENESS FOR THE MAIN GRID --- */
+        /* Switch to two equal columns on larger screens (tablets and up) */
+        @media (min-width: 1024px) {
+            .calculator-grid, .timer-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+
+        .input-section, .results-section, .timer-section, .amortization-section {
+            background-color: var(--card-bg);
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+
+        h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 500; }
+        input, select, textarea {
+            width: 100%; padding: 12px; border: 1px solid var(--border-color);
+            border-radius: 5px; font-size: 16px; background-color: var(--bg); color: var(--text);
+        }
+        
+        button {
+            padding: 10px 15px; border: none; border-radius: 5px;
+            cursor: pointer; font-weight: 600;
+        }
+
+        .btn-primary {
+            background-color: var(--primary); color: white; width: 100%;
+            padding: 15px; font-size: 16px;
+        }
+        .btn-primary:hover { opacity: 0.9; }
+        .btn-secondary { background-color: var(--accent); color: var(--secondary); }
+        .btn-secondary:hover { background-color: var(--primary-light); color: var(--secondary); }
+        .btn-danger { background-color: #e53e3e; color: white; }
+        .btn-danger:hover { background-color: #c53030; }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.6); display: flex;
+            justify-content: center; align-items: center; z-index: 2000;
+        }
+        .modal-content {
+            background-color: var(--card-bg); padding: 30px; border-radius: 10px;
+            width: 90%; max-width: 500px; box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        .modal-content h2 { text-align: center; }
+        .form-switch { text-align: center; margin-top: 15px; }
+        .form-switch a { color: var(--primary); cursor: pointer; text-decoration: underline;}
+
+        /* Floating language toggle for modal */
+        .modal-lang-toggle { position: absolute; top: 20px; right: 20px; z-index: 2010; }
+
+        /* Multi-select dropdown */
+        .multiselect { display: none; }
+        .multiselect-label { display: block; width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 5px; background-color: var(--bg); cursor: pointer; }
+        .multiselect-options { display: none; border: 1px solid var(--border-color); border-radius: 5px; max-height: 150px; overflow-y: auto; }
+        .multiselect-options label { display: block; padding: 10px; cursor: pointer; }
+        .multiselect-options label:hover { background-color: var(--border-color); }
+        
+        .hidden { display: none; }
+        
+        /* Calculator Specific Styles */
+        .range-container { display: flex; align-items: center; gap: 15px; }
+        .range-container input[type="range"] { flex: 1; }
+        .range-value { min-width: 80px; text-align: center; font-weight: bold; color: var(--primary); }
+        .results-card { background: linear-gradient(135deg, var(--primary-light), var(--primary)); color: white; padding: 20px; border-radius: 10px; margin-bottom: 25px; text-align: center; }
+        .monthly-payment { font-size: 36px; font-weight: bold; margin: 10px 0; }
+        .results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+        .result-item { background-color: rgba(223, 23, 131, 0.1); padding: 15px; border-radius: 8px; text-align: center; }
+        .result-value { font-size: 20px; font-weight: bold; color: var(--primary); }
+        .chart-container { height: 300px; margin-bottom: 25px; }
+        .action-buttons { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+        .amortization-container { margin-top: 20px; max-height: 400px; overflow-y: auto; }
+        .amortization-table { width: 100%; border-collapse: collapse; }
+        .amortization-table th { background-color: var(--primary); color: white; padding: 12px; text-align: left; position: sticky; top: 0; }
+        .amortization-table tr:nth-child(even) { background-color: rgba(223, 23, 131, 0.05); }
+        .amortization-table td { padding: 10px; border-bottom: 1px solid var(--border-color); }
+
+        /* Image with Quote Styles */
+        .image-container {
+            position: relative;
+            margin-top: 20px;
+        }
+        .image-container img {
+            display: block;
+            width: 100%;
+            border-radius: 10px;
+        }
+        .image-quote {
+            position: absolute;
+            top: 20%;
+            left: 15px;
+            right: 15px;
+            color: black;
+            text-shadow: none;
+            font-size: 25px;
+            font-weight: 500;
+            font-style: italic;
+            text-align: center;
+            z-index: 1;
+        }
+
+
+        /* Calendar View Styles */
+        #calendarView {
+            background-color: var(--card-bg); padding: 25px;
+            border-radius: 10px; box-shadow: var(--shadow); margin-top: 30px;
+        }
+        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .calendar-header button { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--primary); }
+        #calendarGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .month-container { border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; }
+        .month-header { text-align: center; font-weight: bold; color: var(--primary); margin-bottom: 10px; }
+        .days-header { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 0.8em; color: var(--text-light); }
+        .days-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+        .day-cell { min-height: 40px; text-align: center; font-size: 0.8em; padding-top: 5px; }
+        .day-cell.other-month { color: var(--text-light); }
+        .payment-event {
+            font-size: 0.7em; padding: 2px 4px; border-radius: 4px;
+            color: white; margin-top: 2px; white-space: nowrap;
+            overflow: hidden; text-overflow: ellipsis; cursor: pointer;
+        }
+        .payment-status-paid { background-color: var(--status-paid); }
+        .payment-status-due { background-color: var(--status-due); }
+        .payment-status-late { background-color: var(--status-late); }
+
+        /* Timer View Styles */
+        .timer-actions { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+        #timersList { list-style: none; padding: 0; }
+        #timersList li { background-color: var(--bg); padding: 15px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: -100px; /* Start hidden */
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--secondary);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            z-index: 3000;
+            opacity: 0;
+            transition: opacity 0.3s ease, bottom 0.3s ease;
+        }
+        .toast.show {
+            bottom: 30px;
+            opacity: 1;
+        }
+
+    </style>
