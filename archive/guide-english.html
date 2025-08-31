@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infographic: The Easy Listings Application</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Caveat:wght@500&display=swap" rel="stylesheet">
+    <!-- Favicon -->
+    <link rel="icon" href="https://bucket.mlcdn.com/a/3336/3336910/images/fa62e06dd2b6ed2d1d9e77e5dd944bef2904d5d1.png">
+    <style>
+        :root {
+            --primary: #DF1783;
+            --primary-light: #f8a4d4;
+            --secondary: #2d3748;
+            --accent: #4fd1c5;
+            --text: #2d3748;
+            --text-light: #a0aec0;
+            --bg: #f7fafc;
+            --card-bg: #ffffff;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --border-color: #e2e8f0;
+        }
+        .dark-mode {
+            --text: #f7fafc; 
+            --text-light: #a0aec0; 
+            --bg: #1a202c;
+            --card-bg: #2d3748; 
+            --shadow: 0 4px 6px -1px rgba(0,0,0,0.4), 0 2px 4px -1px rgba(0,0,0,0.2);
+            --border-color: #4a5568;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            padding-top: 100px;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        .flowchart-node {
+            background-color: var(--card-bg);
+            border: 2px solid var(--primary-light);
+            color: var(--text);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: var(--shadow);
+            width: 100%;
+        }
+        .flowchart-arrow {
+            font-size: 2.5rem;
+            color: var(--primary);
+            line-height: 1;
+            transform: rotate(0deg);
+        }
+        .top-menu-bar {
+            position: fixed;
+            top: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 2rem);
+            max-width: 1200px;
+            z-index: 1100;
+            background-color: var(--card-bg);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 0 1rem;
+            transition: top 0.3s ease-in-out;
+        }
+        .top-menu-bar.hidden {
+            top: -80px;
+        }
+        .top-menu-content {
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        #appLogo {
+            height: 40px;
+            width: 40px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        #appBrandNameDisplay {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--text);
+        }
+        .top-menu-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .fab {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--bg);
+            color: var(--text);
+            border: 1px solid var(--border-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .fab:hover {
+            background-color: var(--border-color);
+            transform: scale(1.1);
+        }
+        .primary-btn {
+            background-color: var(--primary);
+            color: white;
+            transition: background-color 0.3s;
+        }
+        .primary-btn:hover {
+             background-color: var(--primary-light);
+             color: var(--secondary);
+        }
+        details > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--primary);
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            transition: background-color 0.2s;
+        }
+        details > summary:hover {
+            background-color: var(--border-color);
+        }
+        details[open] > summary {
+            background-color: var(--primary-light);
+            color: var(--primary);
+        }
+        .code-block {
+            position: relative;
+        }
+        .code-block textarea {
+            background-color: var(--secondary);
+            color: #e0e0e0;
+            font-family: monospace;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            width: 100%;
+            min-height: 150px;
+            white-space: pre;
+            overflow-x: auto;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .copy-btn:hover {
+            opacity: 0.8;
+        }
+        #backToTopBtn {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 30px;
+            z-index: 99;
+            border: none;
+            outline: none;
+            background-color: var(--primary);
+            color: white;
+            cursor: pointer;
+            padding: 0;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 18px;
+            box-shadow: var(--shadow);
+        }
+        #backToTopBtn:hover {
+            opacity: 0.8;
+        }
+        .bebell-footer p {
+            align-items: center;
+            text-align: center;
+            font-size: 12px;
+            line-height: 1.5;
+            margin: 0;
+            padding: 10px;
+        }
+        .bebell-link {
+            color: #718096;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .bebell-link:hover {
+            color: #df1783;
+        }
+        .heart {
+            display: inline-block;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+        .hero-badge {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            font-family: 'Caveat', cursive;
+            font-size: 1.5rem;
+        }
+        .hero-badge:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px -10px var(--primary);
+        }
+        @keyframes wave {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(20deg); }
+            75% { transform: rotate(-15deg); }
+        }
+        .waving-hand {
+            display: inline-block;
+            animation: wave 1.5s infinite;
+            transform-origin: 70% 70%;
+        }
+
+        @media (max-width: 767px) {
+            .flowchart-arrow {
+                transform: rotate(90deg);
+            }
+        }
+    </style>
+</head>
+<body class="bg-[var(--bg)]">
+
+    <div class="top-menu-bar">
+        <div class="top-menu-content">
+            <div class="logo-container">
+                <img id="appLogo" src="https://bucket.mlcdn.com/a/3336/3336910/images/fa62e06dd2b6ed2d1d9e77e5dd944bef2904d5d1.png" alt="Easy Listings Logo">
+                <span id="appBrandNameDisplay" data-translate-key="appName">Easy Listings</span>
+            </div>
+            <div class="top-menu-actions">
+                <div class="fab" id="translateBtn" title="Spanish / Español 🇪🇸"><i class="fa fa-globe"></i></div>
+                <div class="fab" title="Support" onclick="window.open('https://helpcenter.easylistings.website', '_blank')"><i class="fa fa-info-circle"></i></div>
+                <div class="fab" id="darkModeToggle" title="Toggle Theme" style="margin-right: 10px;"><i class="fas fa-moon"></i></div>
+                <a href="#cta-banner" class="primary-btn font-semibold px-4 py-2 rounded-lg text-sm hidden sm:block" data-translate-key="topCta">Get Lifetime Deal</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container mx-auto p-4 md:p-8">
+
+        <header class="text-center my-12">
+            <div class="hero-badge inline-block bg-[var(--primary)] text-white font-semibold px-4 py-2 rounded-full mb-6">
+                <span data-translate-key="greeting">Hey There!</span> <div class="waving-hand">👋</div>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-bold text-[--primary]" data-translate-key="mainTitle">Welcome to Easy Listings</h1>
+            <p class="text-lg mt-4 max-w-3xl mx-auto text-[--text-light]" data-translate-key="mainSubtitle">A visual breakdown of our versatile, single-page application designed for customizable and shareable property directories. Made for realtors.</p>
+            <div class="mt-8 flex flex-wrap justify-center gap-4">
+                <a href="https://agency-plan.easylistings.website" target="_blank" class="primary-btn font-semibold px-6 py-3 rounded-lg text-lg inline-block transition transform hover:scale-105" data-translate-key="agencyPlanBtn">Agency Plan</a>
+                <a href="https://contact.easylistings.website" target="_blank" class="bg-gray-200 text-[--secondary] font-semibold px-6 py-3 rounded-lg text-lg inline-block transition transform hover:scale-105 hover:bg-gray-300 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600" data-translate-key="contactUsBtn">Contact Us</a>
+            </div>
+            <div class="mt-8 mx-auto rounded-lg overflow-hidden">
+                <img src="https://bucket.mlcdn.com/a/3336/3336910/images/1f4b177f95f3b4c45493af1fe9442e095696e1c7.png" alt="Modern house banner" class="w-full h-auto">
+            </div>
+        </header>
+
+        <main class="space-y-16">
+            
+            <section id="core-features">
+                <h2 class="text-3xl font-bold text-center mb-8 text-[--primary]" data-translate-key="pillarsTitle">Core Application Pillars 🏗️</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div class="bg-[--card-bg] p-6 rounded-lg shadow-xl border border-[--border-color]">
+                        <h3 class="text-2xl font-bold mb-4 text-[--text]" data-translate-key="glanceTitle">At a Glance</h3>
+                        <p class="mb-6 text-[--text-light]" data-translate-key="glanceDesc">The application is built on four key principles, ensuring a powerful and user-friendly experience. Each component is designed for flexibility and ease of use, making it a robust platform for any listing-based business.</p>
+                        <div class="text-center">
+                            <div class="text-6xl font-bold text-[--accent]">100%</div>
+                            <p class="text-xl font-semibold text-[--text]" data-translate-key="glanceStat">Customizable Template</p>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="chart-container">
+                            <canvas id="featuresChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="onboarding">
+                <h2 class="text-3xl font-bold text-center mb-12 text-[--primary]" data-translate-key="journeyTitle">The New User Journey 🗺️</h2>
+                <div class="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8">
+                    <div class="flowchart-node">
+                        <div class="text-4xl mb-2">1️⃣</div>
+                        <h3 class="font-bold" data-translate-key="journey1Title">Initial Login</h3>
+                        <p class="text-sm" data-translate-key="journey1Desc">A new user attempts to log in with their email and password.</p>
+                    </div>
+                    <div class="flowchart-arrow">→</div>
+                    <div class="flowchart-node">
+                        <div class="text-4xl mb-2">2️⃣</div>
+                        <h3 class="font-bold" data-translate-key="journey2Title">Admin Review</h3>
+                        <p class="text-sm" data-translate-key="journey2Desc">The system flags the new account as "Waiting Approval" for an admin to review.</p>
+                    </div>
+                    <div class="flowchart-arrow">→</div>
+                    <div class="flowchart-node">
+                        <div class="text-4xl mb-2">3️⃣</div>
+                        <h3 class="font-bold" data-translate-key="journey3Title">Setup Prompt</h3>
+                        <p class="text-sm" data-translate-key="journey3Desc">Once approved, the user is prompted to complete a one-time profile setup on their next login.</p>
+                    </div>
+                    <div class="flowchart-arrow">→</div>
+                    <div class="flowchart-node">
+                        <div class="text-4xl mb-2">4️⃣</div>
+                        <h3 class="font-bold" data-translate-key="journey4Title">Page Launched!</h3>
+                        <p class="text-sm" data-translate-key="journey4Desc">After setup, the user gains full access to manage their unique and shareable listings page.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="setup">
+                <h2 class="text-3xl font-bold text-center mb-8 text-[--primary]" data-translate-key="dataTitle">Connecting Your Data 🔌</h2>
+                <p class="text-center max-w-3xl mx-auto mb-12 text-[--text-light]" data-translate-key="dataDesc">Easy Listings is powered by your own Google Sheets, turning them into a simple, effective database. The setup is straightforward and gives you complete control over your content.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-[--card-bg] p-6 rounded-lg shadow-xl border border-[--border-color]">
+                        <h3 class="text-2xl font-bold mb-4 text-[--text]" data-translate-key="userDbTitle">👤 User Database Setup</h3>
+                        <p class="mb-4 text-[--text-light]" data-translate-key="userDbDesc">Manage user accounts and their status ("Waiting Approval", "Published", "Blocked") from a central Google Sheet.</p>
+                         <details>
+                            <summary data-translate-key="userDbCta">View Setup Instructions</summary>
+                            <div class="mt-4 p-4 bg-[--bg] rounded-md border border-[--border-color]">
+                                <p data-translate-key="userDbInst1">The application logic is ready to connect to a Google Sheet for user management. A backend script would be required to securely read this sheet and verify user credentials.</p>
+                                <div class="bg-yellow-100 text-yellow-800 p-2 rounded-md mt-2 text-sm" data-translate-key="userDbInst2">This process is currently mocked in the demo but is fully designed for a live production environment.</div>
+                            </div>
+                        </details>
+                    </div>
+                    <div class="bg-[--card-bg] p-6 rounded-lg shadow-xl border border-[--border-color]">
+                        <h3 class="text-2xl font-bold mb-4 text-[--text]" data-translate-key="listingDbTitle">🏠 Listings Database Setup</h3>
+                        <p class="mb-4 text-[--text-light]" data-translate-key="listingDbDesc">Sync your property data directly from a Google Sheet by deploying a simple script.</p>
+                        <details>
+                            <summary data-translate-key="listingDbCta">View Script & Instructions</summary>
+                             <div class="mt-4 p-4 bg-[--bg] rounded-md border border-[--border-color]">
+                                <ol class="list-decimal list-inside space-y-2 mb-4" data-translate-key="listingDbSteps">
+                                    <li>Create a Google Sheet with your property data.</li>
+                                    <li>Open `Extensions > Apps Script`.</li>
+                                    <li>Paste the provided script code below.</li>
+                                    <li>Deploy the script as a Web App.</li>
+                                    <li>Set access permissions to "Anyone".</li>
+                                    <li>Paste the generated URL into your settings.</li>
+                                </ol>
+                                <div class="code-block">
+                                    <textarea id="scriptCode" readonly>function doGet(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var data = sheet.getDataRange().getValues();
+  var headers = data.shift();
+  var listings = data.map(function(row) {
+    var listing = {};
+    headers.forEach(function(header, index) {
+      listing[header] = row[index];
+    });
+    return listing;
+  });
+  return ContentService
+    .createTextOutput(JSON.stringify(listings))
+    .setMimeType(ContentService.MimeType.JSON);
+}</textarea>
+                                    <button class="copy-btn" onclick="copyScript(event)" data-translate-key="copyBtn">Copy</button>
+                                </div>
+                            </div>
+                        </details>
+                    </div>
+                </div>
+            </section>
+
+            <section id="api-integration">
+                 <h2 class="text-3xl font-bold text-center mb-8 text-[--primary]" data-translate-key="apiTitle">API & Media Integration 🖼️</h2>
+                 <p class="text-center max-w-3xl mx-auto mb-12 text-[--text-light]" data-translate-key="apiDesc">Streamline your media management by integrating with ImageKit.io for fast, optimized delivery of images, videos, and PDFs.</p>
+                 <div class="bg-[--card-bg] p-6 rounded-lg shadow-xl border border-[--border-color] max-w-4xl mx-auto">
+                    <h3 class="text-2xl font-bold mb-4 text-[--text]" data-translate-key="apiKeyTitle">🚀 ImageKit.io for Media Storage & Rendering</h3>
+                    <p class="mb-4 text-[--text-light]" data-translate-key="apiKeyDesc">Using ImageKit allows for direct uploads from the application, real-time image optimization, and reliable hosting for all your media files.</p>
+                    <details>
+                        <summary data-translate-key="apiKeyCta">View ImageKit Setup Instructions</summary>
+                        <div class="mt-4 p-4 bg-[--bg] rounded-md border border-[--border-color]">
+                            <ol class="list-decimal list-inside space-y-2" data-translate-key="apiKeySteps">
+                                <li>Create a free account at <a href="https://imagekit.io/" target="_blank" class="text-[--primary] hover:underline">ImageKit.io</a>.</li>
+                                <li>In your dashboard, go to the "Developer" section in the sidebar.</li>
+                                <li>Under "API Keys", find and copy your <strong>Public API Key</strong>.</li>
+                                <li>Paste this key into the designated field in the application's Settings modal.</li>
+                                <li>For production, it is recommended to implement a secure, server-side authentication endpoint for uploads.</li>
+                            </ol>
+                        </div>
+                    </details>
+                </div>
+            </section>
+
+            <section id="tech-insights">
+                <h2 class="text-3xl font-bold text-center mb-8 text-[--primary]" data-translate-key="techTitle">Technical Insights 📊</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div class="bg-[--card-bg] p-6 rounded-lg shadow-xl border border-[--border-color]">
+                        <h3 class="text-2xl font-bold mb-4 text-[--text]" data-translate-key="techSubTitle">Client-Side Power</h3>
+                        <p class="mb-4 text-[--text-light]" data-translate-key="techDesc1">The application is built to be incredibly lightweight and fast by handling most operations directly in the user's browser (client-side). This chart illustrates how key features are managed.</p>
+                        <p class="text-[--text-light]" data-translate-key="techDesc2">While a backend is recommended for high-security production environments (e.g., for ImageKit uploads), the core application can run without server dependencies, making it easy to deploy.</p>
+                    </div>
+                    <div>
+                        <div class="chart-container" style="max-width: 500px;">
+                            <canvas id="techChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="cta-banner" class="bg-[--primary] text-white p-16  rounded-lg shadow-2xl text-center" style="margin-bottom: 50px;">
+                <h2 class="text-3xl font-bold" data-translate-key="finalCtaTitle">Ready to Launch Your Own Directory?</h2>
+                <p class="mt-4 mb-6 max-w-2xl mx-auto" data-translate-key="finalCtaDesc">Get lifetime access to Easy Listings and start building your professional, shareable catalog in minutes.</p>
+                <a href="https://your-lifetime-deal-url.com" target="_blank" class="bg-[--accent] text-[--secondary] font-bold py-3 px-8 rounded-lg text-lg inline-block transition transform hover:scale-105" data-translate-key="finalCtaBtn">Grab the Lifetime Deal</a>
+            </section>
+
+        </main>
+    </div>
+    
+    <footer class="bg-[var(--secondary)] text-white pt-6">
+        <div class="container mx-auto px-6 py-16">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div class="col-span-2 md:col-span-1">
+                    <div class="flex items-center gap-4 mb-4">
+                        <img src="https://bucket.mlcdn.com/a/3336/3336910/images/fa62e06dd2b6ed2d1d9e77e5dd944bef2904d5d1.png" alt="Easy Listings Logo" class="h-10 w-10 rounded-lg">
+                        <span class="text-xl font-bold" data-translate-key="appName">Easy Listings</span>
+                    </div>
+                    <p class="text-[var(--text-light)]" data-translate-key="footerSlogan">Display Your Properties. Define Your Brand.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4" data-translate-key="footerLinks">Quick Links</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#features" class="text-[var(--text-light)] hover:text-[var(--primary)] transition" data-translate-key="footerFeatures">Features</a></li>
+                        <li><a href="#pricing" class="text-[var(--text-light)] hover:text-[var(--primary)] transition" data-translate-key="footerPricing">Pricing</a></li>
+                        <li><a href="#" class="text-[var(--text-light)] hover:text-[var(--primary)] transition" data-translate-key="footerLogin">Login</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4" data-translate-key="footerLegal">Legal</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-[var(--text-light)] hover:text-[var(--primary)] transition" data-translate-key="footerPrivacy">Privacy Policy</a></li>
+                        <li><a href="#" class="text-[var(--text-light)] hover:text-[var(--primary)] transition" data-translate-key="footerTerms">Terms of Service</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4" data-translate-key="footerContact">Contact</h4>
+                    <ul class="space-y-2">
+                        <li><a href="mailto:hello@easylistings.website" class="text-[var(--text-light)] hover:text-[var(--primary)] transition">hello@easylistings.website</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="border-t border-gray-700 py-6">
+            <p class="text-center text-sm text-[var(--text-light)] mt-0" data-translate-key="footerCopyright">Copyright &copy; 2025 Easy Listings • All rights reserved.</p>
+            <div class="bebell-footer mb-6 p-0 rounded-lg max-w-md mx-auto">
+                <p class="m-0">
+                    <span data-translate-key="footerDev">Developed with</span> <span class="heart">💖</span> by
+                    <a href="https://bebelldigitalsolutions.com" class="bebell-link font-medium text-[var(--text-light)] dark:text-gray-300" target="_blank" rel="noopener">
+                        Bebell Digital Solutions
+                    </a>.
+                </p>
+            </div>
+        </div>
+    </footer>
+    
+    <button id="backToTopBtn"><i class="fas fa-arrow-up"></i></button>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        let featuresChart, techChart;
+        let currentLang = 'en';
+
+        const THEME_COLORS = {
+            primary: '#DF1783',
+            accent: '#4fd1c5',
+            secondary: '#2d3748',
+            primaryLight: '#f8a4d4',
+            text: '#2d3748',
+            bg: '#f7fafc',
+        };
+
+        const translations = {
+            en: {
+                appName: "Easy Listings",
+                topCta: "Get Lifetime Deal",
+                greeting: "Hey There!",
+                mainTitle: "Welcome to Easy Listings",
+                mainSubtitle: "A visual breakdown of our versatile, single-page application designed for customizable and shareable property directories.",
+                pillarsTitle: "Core Application Pillars 🏗️",
+                glanceTitle: "At a Glance",
+                glanceDesc: "The application is built on four key principles, ensuring a powerful and user-friendly experience. Each component is designed for flexibility and ease of use, making it a robust platform for any listing-based business.",
+                glanceStat: "Customizable by You",
+                journeyTitle: "The New User Journey 🗺️",
+                journey1Title: "Initial Login",
+                journey1Desc: "A new user attempts to log in with their email and password.",
+                journey2Title: "Admin Review",
+                journey2Desc: "The system flags the new account as 'Waiting Approval' for an admin to review.",
+                journey3Title: "Setup Prompt",
+                journey3Desc: "Once approved, the user is prompted to complete a one-time profile setup on their next login.",
+                journey4Title: "Page Launched!",
+                journey4Desc: "After setup, the user gains full access to manage their unique and shareable listings page.",
+                dataTitle: "Connecting Your Data 🔌",
+                dataDesc: "Easy Listings is powered by your own Google Sheets, turning them into a simple, effective database. The setup is straightforward and gives you complete control over your content.",
+                userDbTitle: "👤 User Database Setup",
+                userDbDesc: 'Manage user accounts and their status ("Waiting Approval", "Published", "Blocked") from a central Google Sheet.',
+                userDbCta: "View Setup Instructions",
+                userDbInst1: "The application logic is ready to connect to a Google Sheet for user management. A backend script would be required to securely read this sheet and verify user credentials.",
+                userDbInst2: "This process is currently mocked in the demo but is fully designed for a live production environment.",
+                listingDbTitle: "🏠 Listings Database Setup",
+                listingDbDesc: "Sync your property data directly from a Google Sheet by deploying a simple script.",
+                listingDbCta: "View Script & Instructions",
+                listingDbSteps: `<li>Create a Google Sheet with your property data.</li><li>Open \`Extensions > Apps Script\`.</li><li>Paste the provided script code below.</li><li>Deploy the script as a Web App.</li><li>Set access permissions to "Anyone".</li><li>Paste the generated URL into your settings.</li>`,
+                copyBtn: "Copy",
+                apiTitle: "API & Media Integration 🖼️",
+                apiDesc: "Streamline your media management by integrating with ImageKit.io for fast, optimized delivery of images, videos, and PDFs.",
+                apiKeyTitle: "🚀 ImageKit.io for Media",
+                apiKeyDesc: "Using ImageKit allows for direct uploads from the application, real-time image optimization, and reliable hosting for all your media files.",
+                apiKeyCta: "View ImageKit Setup Instructions",
+                apiKeySteps: `<li>Create a free account at <a href="https://imagekit.io/" target="_blank" class="text-[--primary] hover:underline">ImageKit.io</a>.</li><li>In your dashboard, go to the "Developer" section in the sidebar.</li><li>Under "API Keys", find and copy your <strong>Public API Key</strong>.</li><li>Paste this key into the designated field in the application's Settings modal.</li><li>For production, it is recommended to implement a secure, server-side authentication endpoint for uploads.</li>`,
+                techTitle: "Technical Insights 📊",
+                techSubTitle: "Client-Side Power",
+                techDesc1: "The application is built to be incredibly lightweight and fast by handling most operations directly in the user's browser (client-side). This chart illustrates how key features are managed.",
+                techDesc2: "While a backend is recommended for high-security production environments (e.g., for ImageKit uploads), the core application can run without server dependencies, making it easy to deploy.",
+                finalCtaTitle: "Ready to Launch Your Own Directory?",
+                finalCtaDesc: "Get lifetime access to Easy Listings and start building your professional, shareable catalog in minutes.",
+                finalCtaBtn: "Grab the Lifetime Deal",
+                footerSlogan: "Display Your Properties. Define Your Brand.",
+                footerLinks: "Quick Links",
+                footerFeatures: "Features",
+                footerPricing: "Pricing",
+                footerLogin: "Login",
+                footerLegal: "Legal",
+                footerPrivacy: "Privacy Policy",
+                footerTerms: "Terms of Service",
+                footerContact: "Contact",
+                footerCopyright: "Copyright &copy; 2025 Easy Listings • All rights reserved.",
+                footerDev: "Developed with",
+                agencyPlanBtn: "Agency Plan",
+                contactUsBtn: "Contact Us",
+                // Chart translations
+                chartFeaturesLabels: ['Dynamic Content', 'Admin Customization', 'Listing Management', 'User-Friendly Interface'],
+                chartTechLabels: ['ImageKit File Uploads', 'User Authentication (Demo)', 'Listing Data Sync'],
+                chartFeaturesLabel: 'Core Pillars',
+                chartTechLabel1: 'Handled Client-Side (in Browser)',
+                chartTechLabel2: 'Requires Backend for Production',
+            },
+            es: {
+                appName: "Easy Listings",
+                topCta: "Oferta de por Vida",
+                greeting: "¡Hola!",
+                mainTitle: "Bienvenido(a) a Easy Listings",
+                mainSubtitle: "Un desglose visual de nuestra versátil aplicación de página única diseñada para directorios de propiedades personalizables y compartibles.",
+                pillarsTitle: "Pilares Fundamentales de la Aplicación 🏗️",
+                glanceTitle: "De un Vistazo",
+                glanceDesc: "La aplicación se basa en cuatro principios clave, garantizando una experiencia potente y fácil de usar. Cada componente está diseñado para ser flexible y fácil de usar, convirtiéndola en una plataforma robusta para cualquier negocio basado en listados.",
+                glanceStat: "Personalizable por Ti",
+                journeyTitle: "El Viaje del Nuevo Usuario 🗺️",
+                journey1Title: "Inicio de Sesión Inicial",
+                journey1Desc: "Un nuevo usuario intenta iniciar sesión con su correo electrónico y contraseña.",
+                journey2Title: "Revisión del Admin",
+                journey2Desc: "El sistema marca la nueva cuenta como 'Esperando Aprobación' para que un administrador la revise.",
+                journey3Title: "Configuración Inicial",
+                journey3Desc: "Una vez aprobado, se le pide al usuario que complete una configuración de perfil única en su próximo inicio de sesión.",
+                journey4Title: "¡Página Lanzada!",
+                journey4Desc: "Después de la configuración, el usuario obtiene acceso completo para gestionar su página de listados única y compartible.",
+                dataTitle: "Conectando Tus Datos 🔌",
+                dataDesc: "Listados Fáciles funciona con tus propias Hojas de Cálculo de Google, convirtiéndolas en una base de datos simple y efectiva. La configuración es sencilla y te da control total sobre tu contenido.",
+                userDbTitle: "👤 Configuración de Base de Datos de Usuarios",
+                userDbDesc: 'Gestiona las cuentas de usuario y su estado ("Esperando Aprobación", "Publicado", "Bloqueado") desde una Hoja de Cálculo de Google central.',
+                userDbCta: "Ver Instrucciones de Configuración",
+                userDbInst1: "La lógica de la aplicación está lista para conectarse a una Hoja de Cálculo de Google para la gestión de usuarios. Se requeriría un script de backend para leer esta hoja de forma segura y verificar las credenciales de los usuarios.",
+                userDbInst2: "Este proceso está actualmente simulado en la demostración pero está completamente diseñado para un entorno de producción real.",
+                listingDbTitle: "🏠 Configuración de Base de Datos de Listados",
+                listingDbDesc: "Sincroniza los datos de tus propiedades directamente desde una Hoja de Cálculo de Google desplegando un simple script.",
+                listingDbCta: "Ver Script e Instrucciones",
+                listingDbSteps: `<li>Crea una Hoja de Cálculo de Google con los datos de tus propiedades.</li><li>Abre \`Extensiones > Apps Script\`.</li><li>Pega el código del script proporcionado a continuación.</li><li>Despliega el script como una Aplicación Web.</li><li>Establece los permisos de acceso a "Cualquiera".</li><li>Pega la URL generada en tu configuración.</li>`,
+                copyBtn: "Copiar",
+                apiTitle: "Integración de API y Medios 🖼️",
+                apiDesc: "Optimiza la gestión de tus medios integrando ImageKit.io para una entrega rápida y optimizada de imágenes, videos y PDFs.",
+                apiKeyTitle: "🚀 ImageKit.io para Medios",
+                apiKeyDesc: "Usar ImageKit permite subidas directas desde la aplicación, optimización de imágenes en tiempo real y un alojamiento fiable para todos tus archivos multimedia.",
+                apiKeyCta: "Ver Instrucciones de Configuración de ImageKit",
+                apiKeySteps: `<li>Crea una cuenta gratuita en <a href="https://imagekit.io/" target="_blank" class="text-[--primary] hover:underline">ImageKit.io</a>.</li><li>En tu panel, ve a la sección "Developer" en la barra lateral.</li><li>Bajo "API Keys", busca y copia tu <strong>Clave de API Pública</strong>.</li><li>Pega esta clave en el campo designado en el modal de Configuración de la aplicación.</li><li>Para producción, se recomienda implementar un punto final de autenticación seguro del lado del servidor para las subidas.</li>`,
+                techTitle: "Perspectivas Técnicas 📊",
+                techSubTitle: "Potencia del Lado del Cliente",
+                techDesc1: "La aplicación está construida para ser increíblemente ligera y rápida, manejando la mayoría de las operaciones directamente en el navegador del usuario (lado del cliente). Este gráfico ilustra cómo se gestionan las características clave.",
+                techDesc2: "Aunque se recomienda un backend para entornos de producción de alta seguridad (por ejemplo, para subidas a ImageKit), la aplicación principal puede funcionar sin dependencias del servidor, lo que facilita su despliegue.",
+                finalCtaTitle: "¿Listo para Lanzar tu Propio Directorio?",
+                finalCtaDesc: "Obtén acceso de por vida a Listados Fáciles y comienza a construir tu catálogo profesional y compartible en minutos.",
+                finalCtaBtn: "Obtener la Oferta de por Vida",
+                footerSlogan: "Muestra Tus Propiedades. Define Tu Marca.",
+                footerLinks: "Enlaces Rápidos",
+                footerFeatures: "Características",
+                footerPricing: "Precios",
+                footerLogin: "Iniciar Sesión",
+                footerLegal: "Legal",
+                footerPrivacy: "Política de Privacidad",
+                footerTerms: "Términos de Servicio",
+                footerContact: "Contacto",
+                footerCopyright: "Copyright &copy; 2025 Listados Fáciles • Todos los derechos reservados.",
+                footerDev: "Desarrollado con",
+                agencyPlanBtn: "Plan de Agencia",
+                contactUsBtn: "Contáctanos",
+                 // Chart translations
+                chartFeaturesLabels: ['Contenido Dinámico', 'Personalización de Admin', 'Gestión de Listados', 'Interfaz Amigable'],
+                chartTechLabels: ['Subidas de Archivos ImageKit', 'Autenticación de Usuario (Demo)', 'Sincronización de Datos de Listados'],
+                chartFeaturesLabel: 'Pilares Fundamentales',
+                chartTechLabel1: 'Manejado en el Cliente (Navegador)',
+                chartTechLabel2: 'Requiere Backend para Producción',
+            }
+        };
+
+        const setupChart = (ctx, type, data, options) => new Chart(ctx, { type, data, options });
+
+        const processLabels = (labels) => {
+            return labels.map(label => {
+                if (label.length > 16) {
+                    const words = label.split(' ');
+                    let currentLine = '';
+                    const lines = [];
+                    words.forEach(word => {
+                        if ((currentLine + ' ' + word).length > 16) {
+                            lines.push(currentLine);
+                            currentLine = word;
+                        } else {
+                            currentLine += (currentLine ? ' ' : '') + word;
+                        }
+                    });
+                    lines.push(currentLine);
+                    return lines;
+                }
+                return label;
+            });
+        };
+
+        const tooltipTitleCallback = (tooltipItems) => {
+            const item = tooltipItems[0];
+            let label = item.chart.data.labels[item.dataIndex];
+            return Array.isArray(label) ? label.join(' ') : label;
+        };
+        
+        const getTextColor = () => document.body.classList.contains('dark-mode') ? '#f7fafc' : '#2d3748';
+
+        const createChartOptions = () => ({
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: getTextColor(),
+                        font: { size: 14 }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        title: tooltipTitleCallback
+                    }
+                }
+            }
+        });
+
+        const featuresData = {
+            labels: translations[currentLang].chartFeaturesLabels,
+            datasets: [{
+                label: translations[currentLang].chartFeaturesLabel,
+                data: [25, 25, 25, 25],
+                backgroundColor: ['#EF4444', '#10B981', '#F59E0B', '#3B82F6'],
+                borderColor: '#ffffff',
+                borderWidth: 2
+            }]
+        };
+        const featuresCtx = document.getElementById('featuresChart').getContext('2d');
+        featuresChart = setupChart(featuresCtx, 'doughnut', featuresData, createChartOptions());
+
+        const techData = {
+            labels: processLabels(translations[currentLang].chartTechLabels),
+            datasets: [
+                {
+                    label: translations[currentLang].chartTechLabel1,
+                    data: [100, 100, 100],
+                    backgroundColor: THEME_COLORS.accent,
+                },
+                {
+                    label: translations[currentLang].chartTechLabel2,
+                    data: [50, 100, 0],
+                    backgroundColor: THEME_COLORS.primary,
+                }
+            ]
+        };
+        const techCtx = document.getElementById('techChart').getContext('2d');
+        const techChartOptions = {
+            ...createChartOptions(),
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    ticks: { color: getTextColor(), callback: (value) => value + '%' }
+                },
+                x: { ticks: { color: getTextColor() } }
+            }
+        };
+        techChart = setupChart(techCtx, 'bar', techData, techChartOptions);
+
+        const updateChartColors = () => {
+            const newColor = getTextColor();
+            if (featuresChart) {
+                featuresChart.options.plugins.legend.labels.color = newColor;
+                featuresChart.update();
+            }
+            if (techChart) {
+                techChart.options.plugins.legend.labels.color = newColor;
+                techChart.options.scales.y.ticks.color = newColor;
+                techChart.options.scales.x.ticks.color = newColor;
+                techChart.update();
+            }
+        };
+        
+        const updateChartsForLanguage = (lang) => {
+            const langTranslations = translations[lang];
+
+            if (featuresChart) {
+                featuresChart.data.labels = langTranslations.chartFeaturesLabels;
+                featuresChart.data.datasets[0].label = langTranslations.chartFeaturesLabel;
+                featuresChart.update();
+            }
+            if (techChart) {
+                techChart.data.labels = processLabels(langTranslations.chartTechLabels);
+                techChart.data.datasets[0].label = langTranslations.chartTechLabel1;
+                techChart.data.datasets[1].label = langTranslations.chartTechLabel2;
+                techChart.update();
+            }
+        };
+
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        darkModeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            updateChartColors();
+        });
+
+        let lastScrollTop = 0;
+        const topMenuBar = document.querySelector('.top-menu-bar');
+        const backToTopBtn = document.getElementById('backToTopBtn');
+        
+        window.addEventListener('scroll', function() {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            if (scrollTop > lastScrollTop && scrollTop > 70) {
+                topMenuBar.classList.add('hidden');
+            } else {
+                topMenuBar.classList.remove('hidden');
+            }
+            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+            
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                backToTopBtn.style.display = "block";
+            } else {
+                backToTopBtn.style.display = "none";
+            }
+        });
+        
+        backToTopBtn.addEventListener('click', () => {
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        });
+
+
+        function copyScript(event) {
+            const scriptText = document.getElementById('scriptCode');
+            scriptText.select();
+            document.execCommand('copy');
+            const copyButton = event.target;
+            const originalText = translations[currentLang].copyBtn;
+            copyButton.textContent = 'Copied!';
+            setTimeout(() => {
+                copyButton.textContent = originalText;
+            }, 2000);
+        }
+        window.copyScript = copyScript;
+
+        const translateBtn = document.getElementById('translateBtn');
+        
+        const translatePage = (lang) => {
+            document.querySelectorAll('[data-translate-key]').forEach(el => {
+                const key = el.getAttribute('data-translate-key');
+                if (translations[lang][key]) {
+                    // This is safe because we control the translation content
+                    el.innerHTML = translations[lang][key];
+                }
+            });
+        };
+
+        translateBtn.addEventListener('click', () => {
+            currentLang = currentLang === 'en' ? 'es' : 'en';
+            translatePage(currentLang);
+            updateChartsForLanguage(currentLang);
+        });
+    });
+    </script>
+</body>
+</html>
+
